@@ -50,4 +50,11 @@ class ContainerService {
 
     Future.successful(container)
   }
+
+  def removeContainer(containerId: ContainerId) = ???
+
+  def activeContainers(): Seq[Container] = ???
+
+  def inactiveContainers(): Seq[Container] = ???
 }
+
