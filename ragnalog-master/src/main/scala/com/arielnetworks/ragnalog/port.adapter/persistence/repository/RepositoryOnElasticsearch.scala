@@ -15,7 +15,8 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   indexName: String,
   typeName: String
 )
-  extends Repository[ID, E] {
+  extends Repository[ID, E]
+    with Translator[ID, E] {
 
   import ExecutionContext.Implicits.global
 
@@ -40,8 +41,4 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   override def deleteById(id: ID): Future[Unit] = ???
 
   override def resolveById(id: ID): Future[E] = ???
-
-  protected def toFieldsFromEntity(entity: E): Iterable[(String, Any)] = {
-    return List("a" -> "", "" -> "")
-  }
 }

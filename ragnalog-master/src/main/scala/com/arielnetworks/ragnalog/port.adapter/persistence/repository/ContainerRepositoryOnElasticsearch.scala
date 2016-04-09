@@ -5,6 +5,7 @@ import com.sksamuel.elastic4s.ElasticClient
 
 class ContainerRepositoryOnElasticsearch(elasticClient: ElasticClient)
   extends RepositoryOnElasticsearch[ContainerId, Container](elasticClient, ".ragnalog2", "container")
-    with ContainerRepository {
+    with ContainerRepository
+    with ContainerTranslator {
 
 }
