@@ -2,7 +2,7 @@ package com.arielnetworks.ragnalog.application
 
 import java.util.UUID
 
-import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId}
+import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository}
 
 import scala.concurrent.Future
 
@@ -18,7 +18,11 @@ trait IdPatternSpecification {
   def isSatisfied(id: String): Boolean
 }
 
-class ContainerService(idSpec: IdPatternSpecification) {
+class ContainerService
+(
+  idSpec: IdPatternSpecification,
+  containerRepository: ContainerRepository
+) {
 
   def createContainer(containerId: Option[String], containerName: Option[String], containerDescription: Option[String])
   : Future[Either[ContainerServiceError, Container]] = {
@@ -42,6 +46,7 @@ class ContainerService(idSpec: IdPatternSpecification) {
           case _ => x
         }
         Right(new Container(ContainerId(x), name, containerDescription))
+//        containerRepository.add()
         //TODO: containerRepository
       }
       case Left(x) => {

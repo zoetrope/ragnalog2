@@ -1,16 +1,15 @@
 package com.arielnetworks.ragnalog.domain.model.common
 
-import rx.lang.scala.Observable
-import org.elasticsearch.index.query.QueryBuilder
+import scala.concurrent.Future
 
-trait Repository[ID <: Identifier[_], E <: Entity[ID]] {
+trait Repository[ID <: Identifier[_], E <: Entity[ID], CTX <: EntityIOContext] {
 
-  def add(value: E): Observable[ID]
+  def add(value: E)(implicit context: CTX): Future[ID]
 
-  def addOnParent(value: E): Observable[ID]
+  def resolveById(id: ID)(implicit context: CTX): Future[E]
 
-  def resolveById(id: ID): Observable[E]
+  def update(value: E)(implicit context: CTX): Future[ID]
 
-  //TODO: QueryBuilderへの依存をなくす
-  def search(query: QueryBuilder): Observable[Seq[E]]
+  def deleteById(id: ID)(implicit context: CTX): Future[E]
+
 }

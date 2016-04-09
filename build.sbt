@@ -14,8 +14,8 @@ lazy val libraries = Seq(
   "com.typesafe.akka" %% "akka-http-experimental" % "2.4.3",
   "com.typesafe.akka" %% "akka-stream" % "2.4.3",
 
-  "com.sksamuel.elastic4s" %% "elastic4s-core" % "2.2.1",
-  "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.2.1",
+  "com.sksamuel.elastic4s" %% "elastic4s-core" % "2.3.0",
+  "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.3.0",
 
   "io.reactivex" %% "rxscala" % "0.26.0",
 
