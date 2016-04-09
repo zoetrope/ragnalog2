@@ -9,7 +9,6 @@ import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.{Failure, Success}
 
 
-
 abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID]]
 (
   elasticClient: ElasticClient,
@@ -20,45 +19,25 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
 
   import ExecutionContext.Implicits.global
 
-  override def add(entity: E): Future[Either[AdditionError, Unit]] = {
-
-    val p = Promise[Either[AdditionError, Unit]]()
-
+  override def add(entity: E): Future[Unit] = {
+    val p = Promise[Unit]()
     try {
       val f = elasticClient.execute(
         index into indexName / typeName id entity.id.value opType OpType.CREATE fields toFieldsFromEntity(entity)
       )
-
       f.onComplete {
-        case Success(r) => p.success(Right())
-        case Failure(e) =>{
-          println("*******************" + e.getMessage)
-          println(e.getCause.getMessage)
-          println(e.getCause.getCause.getMessage)
-          p.success(Left(new AlreadyExists))
-        }
+        case Success(r) => if (r.created) p.success() else p.failure(new RepositoryIOException("document was not created"))
+        case Failure(e) => p.failure(e)
       }
     } catch {
-      case e: Throwable => p.success(Left(new InfrastructureError(e)))
+      case e: Throwable => p.failure(e)
     }
-
-    return p.future
-
+    p.future
   }
 
-  override def update(value: E): Future[ID] = {
-    add(value) onSuccess {
-      case Right(_) =>
-      case Left(e) => e match {
-        case AlreadyExists() =>
-        case InfrastructureError(_) =>
-      }
-    }
+  override def update(value: E): Future[Unit] = ???
 
-    return Future.successful(value.id)
-  }
-
-  override def deleteById(id: ID): Future[E] = ???
+  override def deleteById(id: ID): Future[Unit] = ???
 
   override def resolveById(id: ID): Future[E] = ???
 
