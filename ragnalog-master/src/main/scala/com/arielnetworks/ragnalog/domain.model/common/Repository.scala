@@ -2,14 +2,14 @@ package com.arielnetworks.ragnalog.domain.model.common
 
 import scala.concurrent.Future
 
-trait Repository[ID <: Identifier[_], E <: Entity[ID], CTX <: EntityIOContext] {
+trait Repository[ID <: Identifier[_], E <: Entity[ID]] {
 
-  def add(value: E)(implicit context: CTX): Future[ID]
+  def add(value: E): Future[ID]
 
-  def resolveById(id: ID)(implicit context: CTX): Future[E]
+  def resolveById(id: ID): Future[E]
 
-  def update(value: E)(implicit context: CTX): Future[ID]
+  def update(value: E): Future[ID]
 
-  def deleteById(id: ID)(implicit context: CTX): Future[E]
+  def deleteById(id: ID): Future[E]
 
 }

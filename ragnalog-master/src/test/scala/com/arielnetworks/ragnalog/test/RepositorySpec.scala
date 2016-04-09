@@ -14,7 +14,6 @@ class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures
       .put("cluster.name", "ragnalog.elasticsearch")
 
     val client = ElasticClient.transport(settings.build,ElasticsearchClientUri("elasticsearch://localhost:9300"))
-    val client2 = ElasticClient.transport(settings.build,ElasticsearchClientUri("elasticsearch://localhost:9300"))
 
     val f = client.execute {
       index into ".ragnalog2" / "container" id "test_id2" opType OpType.CREATE fields(
