@@ -12,24 +12,23 @@ final case class InvalidId(message: String) extends ContainerServiceError
 
 final case class AlreadyExists(message: String) extends ContainerServiceError
 
+trait IdPatternSpecification {
+  def isSatisfied(id: String): Boolean
+}
 
-class ContainerService {
+class ContainerService(idSpec: IdPatternSpecification) {
 
   def createContainer(containerId: Option[String], containerName: Option[String], containerDescription: Option[String])
   : Future[Either[ContainerServiceError, Container]] = {
 
-    val idPattern = """^([a-z0-9_]+)$""".r
-
     val id = containerId match {
-      case Some(x) => x match {
-        case idPattern(y) => Right(y)
-        case _ => Left(InvalidId(s"Invalid ID: $x"))
-      }
+      case Some(x) =>
+        if (idSpec.isSatisfied(x)) Right(x)
+        else Left(InvalidId(s"Invalid ID: $x"))
       case None => containerName match {
-        case Some(x) => x match {
-          case idPattern(y) => Right(y)
-          case _ => Right(UUID.randomUUID().toString.replace("-", ""))
-        }
+        case Some(x) =>
+          if (idSpec.isSatisfied(x)) Right(x)
+          else Right(UUID.randomUUID().toString.replace("-", ""))
         case _ => Left(InvalidId(s""))
       }
     }

@@ -1,12 +1,14 @@
 package com.arielnetworks.ragnalog.application
 
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
-import org.scalatest.{BeforeAndAfter, DiagrammedAssertions, FunSpec, FunSuite}
+import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{DiagrammedAssertions, FunSpec}
 
 class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaFutures {
 
-  val containerService = new ContainerService
+  val idSpec = new ElasticsearchIdPatternSpecification
+  val containerService = new ContainerService(idSpec)
 
   describe("create a container") {
     describe("with all valid parameters") {
