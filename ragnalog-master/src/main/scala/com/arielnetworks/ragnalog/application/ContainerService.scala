@@ -10,6 +10,8 @@ sealed trait ContainerServiceError
 
 final case class InvalidId(message: String) extends ContainerServiceError
 
+final case class InvalidArgument(message: String) extends ContainerServiceError
+
 final case class AlreadyExists(message: String) extends ContainerServiceError
 
 trait IdPatternSpecification {
@@ -29,7 +31,7 @@ class ContainerService(idSpec: IdPatternSpecification) {
         case Some(x) =>
           if (idSpec.isSatisfied(x)) Right(x)
           else Right(UUID.randomUUID().toString.replace("-", ""))
-        case _ => Left(InvalidId(s""))
+        case _ => Left(InvalidArgument("either id or name is required"))
       }
     }
 

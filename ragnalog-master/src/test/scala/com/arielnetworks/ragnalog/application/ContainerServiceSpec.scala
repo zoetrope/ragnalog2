@@ -39,31 +39,49 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
 
     describe("without name") {
       it("should be created a container that name is the same as id") {
-
+        val future = containerService.createContainer(Some("test_id"), None, Some("test-description"))
+        whenReady(future) {
+          case Right(x) =>
+            assert(x.id == ContainerId("test_id"))
+            assert(x.name == "test_id")
+            assert(x.description.contains("test-description"))
+          case Left(x) => fail(x.toString)
+        }
       }
-
     }
 
     describe("without id and name") {
       it("should fail to create a container") {
-
-      }
-    }
-    describe("without id and invalid name") {
-      it("should fail to create a container") {
-
+        val future = containerService.createContainer(None, None, Some("test-description"))
+        whenReady(future) {
+          case Right(x) => fail()
+          case Left(InvalidArgument(x)) => // OK
+          case _ => fail()
+        }
       }
     }
 
     describe("without description") {
       it("should be created a container") {
-
+        val future = containerService.createContainer(Some("test_id"), Some("test-name"), None)
+        whenReady(future) {
+          case Right(x) =>
+            assert(x.id == ContainerId("test_id"))
+            assert(x.name == "test-name")
+            assert(x.description.isEmpty)
+          case Left(x) => fail(x.toString)
+        }
       }
     }
 
     describe("with invalid id") {
       it("should fail to create a container") {
-
+        val future = containerService.createContainer(Some("テスト"), Some("test-name"), Some("test-description"))
+        whenReady(future) {
+          case Right(x) => fail()
+          case Left(InvalidId(x)) => // OK
+          case _ => fail()
+        }
       }
     }
 
