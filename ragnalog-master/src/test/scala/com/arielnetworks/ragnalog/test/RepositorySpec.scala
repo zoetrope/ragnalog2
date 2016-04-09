@@ -7,6 +7,8 @@ import org.elasticsearch.common.settings.Settings
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{DiagrammedAssertions, FunSpec}
 
+import scala.concurrent.ExecutionContext
+
 class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures {
 
   describe("Test should work") {
@@ -21,6 +23,15 @@ class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures
         "description" -> "test-description"
         )
     }
+    import ExecutionContext.Implicits.global
+
+    f onFailure{
+      case e=>
+    }
+
+//    whenReady(f.failed) { result =>
+//      assert(result == "test_id2")
+//    }
     whenReady(f) { result =>
       assert(result.getId == "test_id2")
     }
