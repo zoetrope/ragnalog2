@@ -3,10 +3,18 @@ name := "ragnalog2"
 lazy val baseSettings = Seq(
   organization := "com.arielnetworks.ragnalog",
   version := "2.0.0-SNAPSHOT",
-  scalaVersion := "2.11.8"
+  scalaVersion := "2.11.8",
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-feature",
+    "-unchecked",
+    "-Xlint"
+    , "-Xfatal-warnings"
+  )
 )
 
 resolvers += "embulk-bintray" at "http://dl.bintray.com/embulk/maven/"
+
 
 lazy val libraries = Seq(
   "org.scala-lang" % "scala-reflect" % "2.11.8",

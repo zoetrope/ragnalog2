@@ -2,7 +2,6 @@ package com.arielnetworks.ragnalog.port.adapter.persistence.repository
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId}
-import org.elasticsearch.index.get.GetField
 
 trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
   protected def toFieldsFromEntity(entity: E): Map[String, Any]
@@ -15,7 +14,8 @@ trait ContainerTranslator extends Translator[ContainerId, Container] {
   protected def toFieldsFromEntity(container: Container): Map[String, Any] = {
     Map(
       "name" -> container.name,
-      "description" -> container.description.getOrElse("")
+      "description" -> container.description.getOrElse(""),
+      "isActive" -> container.isActive
     )
   }
 
@@ -23,7 +23,8 @@ trait ContainerTranslator extends Translator[ContainerId, Container] {
     new Container(
       ContainerId(id),
       fields.get("name").asInstanceOf[String],
-      Option(fields.get("description").asInstanceOf[String])
+      Option(fields.get("description").asInstanceOf[String]),
+      fields.get("isActive").asInstanceOf[Boolean]
     )
   }
 }

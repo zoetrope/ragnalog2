@@ -8,7 +8,6 @@ import org.elasticsearch.action.index.IndexRequest.OpType
 import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.{Failure, Success}
 
-
 abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID]]
 (
   elasticClient: ElasticClient,
@@ -23,12 +22,11 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   override def add(entity: E): Future[Unit] = {
     val p = Promise[Unit]()
     try {
-      val f = elasticClient.execute(
+      elasticClient.execute(
         index into indexName / typeName id entity.id.value opType OpType.CREATE fields toFieldsFromEntity(entity)
-      )
-      f.onComplete {
+      ) onComplete {
         case Success(r) =>
-          if (r.created) p.success()
+          if (r.created) p.success(Unit)
           else p.failure(new RepositoryIOException("could not create entity."))
         case Failure(e) => p.failure(e)
       }
@@ -41,11 +39,10 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   override def save(entity: E): Future[Unit] = {
     val p = Promise[Unit]()
     try {
-      val f = elasticClient.execute(
+      elasticClient.execute(
         update(entity.id.value) in indexName / typeName doc toFieldsFromEntity(entity)
-      )
-      f.onComplete {
-        case Success(r) => p.success()
+      ) onComplete {
+        case Success(r) => p.success(Unit)
         case Failure(e) => p.failure(e)
       }
     } catch {
@@ -57,12 +54,11 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   override def deleteById(id: ID): Future[Unit] = {
     val p = Promise[Unit]()
     try {
-      val f = elasticClient.execute(
+      elasticClient.execute(
         delete(id.value) from indexName / typeName
-      )
-      f.onComplete {
+      ) onComplete {
         case Success(r) =>
-          if (r.isFound) p.success()
+          if (r.isFound) p.success(Unit)
           else p.failure(new RepositoryIOException(s"could not delete entity(id:${id.value})."))
         case Failure(e) => p.failure(e)
       }
@@ -75,10 +71,9 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   override def resolveById(id: ID): Future[E] = {
     val p = Promise[E]()
     try {
-      val f = elasticClient.execute(
+      elasticClient.execute(
         get id id.value from indexName / typeName
-      )
-      f.onComplete {
+      ) onComplete {
         case Success(r) =>
           if (r.isExists) p.success(toEntityFromFields(r.getId, r.source))
           else p.failure(new RepositoryIOException(s"could not resolve entity(id:${id.value})."))

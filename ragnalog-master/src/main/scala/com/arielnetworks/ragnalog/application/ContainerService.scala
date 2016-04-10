@@ -45,7 +45,7 @@ class ContainerService
           case Some(y) => y
           case _ => x
         }
-        Right(new Container(ContainerId(x), name, containerDescription))
+        Right(new Container(ContainerId(x), name, containerDescription, true))
 //        containerRepository.add()
         //TODO: containerRepository
       }

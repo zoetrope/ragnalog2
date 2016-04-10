@@ -25,6 +25,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(x.id == ContainerId("test_id"))
             assert(x.name == "test-name")
             assert(x.description.contains("test-description"))
+            assert(x.isActive == true)
           case Left(x) => fail(x.toString)
         }
       }
@@ -38,6 +39,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(x.id.value.matches("^[a-z0-9]{32}$"))
             assert(x.name == "test-name")
             assert(x.description.contains("test-description"))
+            assert(x.isActive == true)
           case Left(x) => fail(x.toString)
         }
       }
@@ -51,18 +53,8 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(x.id == ContainerId("test_id"))
             assert(x.name == "test_id")
             assert(x.description.contains("test-description"))
+            assert(x.isActive == true)
           case Left(x) => fail(x.toString)
-        }
-      }
-    }
-
-    describe("without id and name") {
-      it("should fail to create a container") {
-        val future = containerService.createContainer(None, None, Some("test-description"))
-        whenReady(future) {
-          case Right(x) => fail()
-          case Left(InvalidArgument(x)) => // OK
-          case _ => fail()
         }
       }
     }
@@ -75,7 +67,19 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(x.id == ContainerId("test_id"))
             assert(x.name == "test-name")
             assert(x.description.isEmpty)
+            assert(x.isActive == true)
           case Left(x) => fail(x.toString)
+        }
+      }
+    }
+
+    describe("without id and name") {
+      it("should fail to create a container") {
+        val future = containerService.createContainer(None, None, Some("test-description"))
+        whenReady(future) {
+          case Right(x) => fail()
+          case Left(InvalidArgument(x)) => // OK
+          case _ => fail()
         }
       }
     }

@@ -14,7 +14,7 @@ class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures
   val containerRepository = new ContainerRepositoryOnElasticsearch(client)
 
   describe("Test should work") {
-    val container = new Container(ContainerId("test_id123"),"test-name", Some("test-description"))
+    val container = new Container(ContainerId("test_id123"),"test-name", Some("test-description"), true)
     val f = containerRepository.save(container)
     whenReady(f.failed) { result =>
       assert(true)
