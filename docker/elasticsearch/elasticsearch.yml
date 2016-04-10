@@ -1,0 +1,6 @@
+cluster.name: ragnalog.elasticsearch
+node.name: ragnalog
+bootstrap.mlockall: true
+http.max_content_length: 2gb
+discovery.zen.ping.multicast.enabled: false
+network.host: 0.0.0.0
