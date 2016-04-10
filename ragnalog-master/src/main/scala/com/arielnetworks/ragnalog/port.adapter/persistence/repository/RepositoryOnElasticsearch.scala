@@ -27,7 +27,9 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
         index into indexName / typeName id entity.id.value opType OpType.CREATE fields toFieldsFromEntity(entity)
       )
       f.onComplete {
-        case Success(r) => if (r.created) p.success() else p.failure(new RepositoryIOException("document was not created"))
+        case Success(r) =>
+          if (r.created) p.success()
+          else p.failure(new RepositoryIOException("could not create entity."))
         case Failure(e) => p.failure(e)
       }
     } catch {
@@ -36,9 +38,55 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
     p.future
   }
 
-  override def update(value: E): Future[Unit] = ???
+  override def save(entity: E): Future[Unit] = {
+    val p = Promise[Unit]()
+    try {
+      val f = elasticClient.execute(
+        update(entity.id.value) in indexName / typeName doc toFieldsFromEntity(entity)
+      )
+      f.onComplete {
+        case Success(r) => p.success()
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 
-  override def deleteById(id: ID): Future[Unit] = ???
+  override def deleteById(id: ID): Future[Unit] = {
+    val p = Promise[Unit]()
+    try {
+      val f = elasticClient.execute(
+        delete(id.value) from indexName / typeName
+      )
+      f.onComplete {
+        case Success(r) =>
+          if (r.isFound) p.success()
+          else p.failure(new RepositoryIOException(s"could not delete entity(id:${id.value})."))
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 
-  override def resolveById(id: ID): Future[E] = ???
+  override def resolveById(id: ID): Future[E] = {
+    val p = Promise[E]()
+    try {
+      val f = elasticClient.execute(
+        get id id.value from indexName / typeName
+      )
+      f.onComplete {
+        case Success(r) =>
+          if (r.isExists) p.success(toEntityFromFields(r.getId, r.source))
+          else p.failure(new RepositoryIOException(s"could not resolve entity(id:${id.value})."))
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 }

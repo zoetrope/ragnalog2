@@ -6,9 +6,9 @@ trait Repository[ID <: Identifier[_], E <: Entity[ID]] {
 
   def add(entity: E): Future[Unit]
 
-  def resolveById(id: ID): Future[E]
+  def save(entity: E): Future[Unit]
 
-  def update(value: E): Future[Unit]
+  def resolveById(id: ID): Future[E]
 
   def deleteById(id: ID): Future[Unit]
 
