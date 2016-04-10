@@ -8,6 +8,6 @@ trait ContainerRepository extends Repository[ContainerId, Container] {
 
   def countByStatus(isActive: ContainerStatus.Value): Future[Long]
 
-  def searchByStatus(from: Long, size: Long, status: ContainerStatus.Value): Future[Seq[Container]]
+  def searchByStatus(start: Int, limit: Int, status: ContainerStatus.Value): Future[Seq[Container]]
 
 }

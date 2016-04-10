@@ -1,6 +1,5 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.repository
 
-import com.arielnetworks.ragnalog.domain.model.common.RepositoryIOException
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
 import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
@@ -13,8 +12,41 @@ class ContainerRepositoryOnElasticsearch(elasticClient: ElasticClient)
     with ContainerRepository
     with ContainerTranslator {
 
-  def countByStatus(status: ContainerStatus.Value): Future[Long] = ???
+  def countByStatus(status: ContainerStatus.Value): Future[Long] = {
+    val p = Promise[Long]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          termQuery("status", status.toString)
+        }
+          size 0
+      ) onComplete {
+        case Success(r) => p.success(r.totalHits)
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 
-  def searchByStatus(from: Long, size: Long, status: ContainerStatus.Value): Future[Seq[Container]] = ???
+  def searchByStatus(start: Int, limit: Int, status: ContainerStatus.Value): Future[Seq[Container]] = {
+    val p = Promise[Seq[Container]]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          termQuery("status", status.toString)
+        }
+          from start
+          size limit
+      ) onComplete {
+        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.getSource)))
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 
 }
