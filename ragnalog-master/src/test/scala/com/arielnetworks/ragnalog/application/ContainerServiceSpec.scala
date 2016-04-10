@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.application
 
-import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerStatus}
+import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerService, ContainerStatus}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
@@ -15,12 +15,13 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
   val settings = Settings.settingsBuilder().put("cluster.name", "ragnalog.elasticsearch")
   val client = ElasticClient.transport(settings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))
   val containerRepository = new ContainerRepositoryOnElasticsearch(client)
-  val containerService = new ContainerService(idSpec, containerRepository)
+  val containerService = new ContainerService(containerRepository)
+  val administrationService = new AdministrationService(containerService, idSpec)
 
   describe("create a container") {
     describe("with all valid parameters") {
       it("should be created a container") {
-        val future = containerService.createContainer(Some("test_id_1"), Some("test-name"), Some("test-description"))
+        val future = administrationService.createContainer(Some("test_id_1"), Some("test-name"), Some("test-description"))
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
             assert(container.id == ContainerId("test_id_1"))
@@ -33,7 +34,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
 
     describe("without id") {
       it("should be created a container that id is UUID") {
-        val future = containerService.createContainer(None, Some("test-name"), Some("test-description"))
+        val future = administrationService.createContainer(None, Some("test-name"), Some("test-description"))
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
             assert(container.id.value.matches("^[a-z0-9]{32}$"))
@@ -46,7 +47,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
 
     describe("without name") {
       it("should be created a container that name is the same as id") {
-        val future = containerService.createContainer(Some("test_id_2"), None, Some("test-description"))
+        val future = administrationService.createContainer(Some("test_id_2"), None, Some("test-description"))
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
             assert(container.id == ContainerId("test_id_2"))
@@ -59,7 +60,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
 
     describe("without description") {
       it("should be created a container") {
-        val future = containerService.createContainer(Some("test_id_3"), Some("test-name"), None)
+        val future = administrationService.createContainer(Some("test_id_3"), Some("test-name"), None)
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
             assert(container.id == ContainerId("test_id_3"))
@@ -72,7 +73,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
 
     describe("without id and name") {
       it("should fail to create a container") {
-        val future = containerService.createContainer(None, None, Some("test-description"))
+        val future = administrationService.createContainer(None, None, Some("test-description"))
         whenReady(future.failed, timeout(Span(1, Seconds))) {
           case x: IllegalArgumentException => //OK
         }
@@ -81,7 +82,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
 
     describe("with invalid id") {
       it("should fail to create a container") {
-        val future = containerService.createContainer(Some("テスト"), Some("test-name"), Some("test-description"))
+        val future = administrationService.createContainer(Some("テスト"), Some("test-name"), Some("test-description"))
         whenReady(future.failed, timeout(Span(1, Seconds))) {
           case x: IllegalArgumentException => //OK
         }
