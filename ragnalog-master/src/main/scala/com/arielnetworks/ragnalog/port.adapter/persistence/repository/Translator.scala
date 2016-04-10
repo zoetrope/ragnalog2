@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.repository
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
-import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId}
+import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerStatus}
 
 trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
   protected def toFieldsFromEntity(entity: E): Map[String, Any]
@@ -15,7 +15,7 @@ trait ContainerTranslator extends Translator[ContainerId, Container] {
     Map(
       "name" -> container.name,
       "description" -> container.description.getOrElse(""),
-      "isActive" -> container.isActive
+      "status" -> container.status.toString
     )
   }
 
@@ -24,7 +24,7 @@ trait ContainerTranslator extends Translator[ContainerId, Container] {
       ContainerId(id),
       fields.get("name").asInstanceOf[String],
       Option(fields.get("description").asInstanceOf[String]),
-      fields.get("isActive").asInstanceOf[Boolean]
+      ContainerStatus.withName(fields.get("status").asInstanceOf[String])
     )
   }
 }

@@ -10,9 +10,9 @@ import scala.util.{Failure, Success}
 
 abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID]]
 (
-  elasticClient: ElasticClient,
-  indexName: String,
-  typeName: String
+  protected val elasticClient: ElasticClient,
+  protected val indexName: String,
+  protected val typeName: String
 )
   extends Repository[ID, E]
     with Translator[ID, E] {

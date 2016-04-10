@@ -1,16 +1,13 @@
 package com.arielnetworks.ragnalog.application
 
-import com.arielnetworks.ragnalog.domain.model.container.ContainerId
+import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerStatus}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
 import org.elasticsearch.common.settings.Settings
-import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{DiagrammedAssertions, FunSpec}
-
-import scala.util.{Failure, Success}
 
 class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaFutures {
 
@@ -29,7 +26,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(container.id == ContainerId("test_id_1"))
             assert(container.name == "test-name")
             assert(container.description.contains("test-description"))
-            assert(container.isActive == true)
+            assert(container.status == ContainerStatus.Active)
         }
       }
     }
@@ -42,7 +39,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(container.id.value.matches("^[a-z0-9]{32}$"))
             assert(container.name == "test-name")
             assert(container.description.contains("test-description"))
-            assert(container.isActive == true)
+            assert(container.status == ContainerStatus.Active)
         }
       }
     }
@@ -55,7 +52,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(container.id == ContainerId("test_id_2"))
             assert(container.name == "test_id_2")
             assert(container.description.contains("test-description"))
-            assert(container.isActive == true)
+            assert(container.status == ContainerStatus.Active)
         }
       }
     }
@@ -68,7 +65,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
             assert(container.id == ContainerId("test_id_3"))
             assert(container.name == "test-name")
             assert(container.description.isEmpty)
-            assert(container.isActive == true)
+            assert(container.status == ContainerStatus.Active)
         }
       }
     }

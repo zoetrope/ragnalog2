@@ -2,7 +2,7 @@ package com.arielnetworks.ragnalog.application
 
 import java.util.UUID
 
-import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository}
+import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.Failure
@@ -40,7 +40,7 @@ class ContainerService
           case Some(x) => x
           case _ => r
         }
-        val container = new Container(ContainerId(r), name, containerDescription, true)
+        val container = new Container(ContainerId(r), name, containerDescription, ContainerStatus.Active)
         containerRepository.add(container).map(_ => container)
       case Left(x) => Future.failed(x)
     }

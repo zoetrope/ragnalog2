@@ -10,8 +10,9 @@
           "type": "string",
           "index": "not_analyzed"
         },
-        "isActive": {
-          "type": "boolean"
+        "status": {
+          "type": "string",
+          "index": "not_analyzed"
         }
       }
     },
