@@ -4,8 +4,7 @@ import java.util.UUID
 
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
-import scala.util.Failure
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IdPatternSpecification {
   def isSatisfied(id: String): Boolean
@@ -48,8 +47,18 @@ class ContainerService
 
   def removeContainer(containerId: ContainerId) = ???
 
-  def activeContainers(): Seq[Container] = ???
+  def activeContainers(): Future[Seq[Container]] = {
+    for {
+      count <- containerRepository.countByStatus(ContainerStatus.Active)
+      containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Active)
+    } yield containers
+  }
 
-  def inactiveContainers(): Seq[Container] = ???
+  def inactiveContainers(): Future[Seq[Container]] = {
+    for {
+      count <- containerRepository.countByStatus(ContainerStatus.Inactive)
+      containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Inactive)
+    } yield containers
+  }
 }
 
