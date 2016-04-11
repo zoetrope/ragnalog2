@@ -8,6 +8,7 @@ import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
 import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationService
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait IdPatternSpecification {
   def isSatisfied(id: String): Boolean
@@ -51,11 +52,11 @@ class AdministrationService
   def removeContainer(containerId: ContainerId): Future[Unit] = {
     for {
       container <- containerService.resolvedById(containerId)
-      visualizationService.removeContainer(container)
-      registrationService.remove(container)
-      logFileService.removeAll(container)
-      containerService.removeContainer(containerId)
-    } yield new Unit
+      _ <- visualizationService.removeContainer(container)
+      _ <- registrationService.remove(container)
+      _ <- logFileService.removeAll(container)
+      _ <- containerService.removeContainer(containerId)
+    } yield Unit
   }
 
   def activeContainers(): Future[Seq[Container]] = {
@@ -69,29 +70,29 @@ class AdministrationService
   def updateContainer(containerId: ContainerId, name: String, description: String): Future[Unit] = {
     for {
       container <- containerService.resolvedById(containerId)
-      container.name = name
-      container.description = description
-      container.save()
-    } yield new Unit
+//      container.name = name
+//      container.description = description
+      _ <- container.save()
+    } yield Unit
   }
 
   def activateContainer(containerId: ContainerId): Future[Unit] = {
     for {
       container <- containerService.resolvedById(containerId)
-      container.activate()
-      visualizationService.addContainer(container)
-      registrationService.open(container)
-      container.save()
-    } yield new Unit
+      _ <- container.activate()
+      _ <- visualizationService.addContainer(container)
+      _ <- registrationService.open(container)
+      _ <- container.save()
+    } yield Unit
   }
 
   def deactivateContainer(containerId: ContainerId): Future[Unit] = {
     for {
       container <- containerService.resolvedById(containerId)
-      container.deactivate()
-      visualizationService.removeContainer(container)
-      registrationService.close(container)
-      container.save()
-    } yield new Unit
+      _ <- container.deactivate()
+      _ <- visualizationService.removeContainer(container)
+      _ <- registrationService.close(container)
+      _ <- container.save()
+    } yield Unit
   }
 }

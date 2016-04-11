@@ -15,7 +15,9 @@ class ContainerService
     containerRepository.add(container).map(_ => container)
   }
 
-  def removeContainer(containerId: ContainerId): Future[Unit] = ???
+  def removeContainer(containerId: ContainerId): Future[Unit] = {
+    containerRepository.deleteById(containerId)
+  }
 
   def activeContainers(): Future[Seq[Container]] = {
     for {
