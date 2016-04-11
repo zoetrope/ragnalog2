@@ -4,12 +4,12 @@ import com.arielnetworks.ragnalog.domain.model.container.Container
 
 import scala.concurrent.Future
 
-class RegistrationService {
-
+trait RegistrationAdapter {
   def open(container: Container): Future[Unit] = ???
 
   def close(container: Container): Future[Unit] = ???
 
 
   def remove(container: Container): Future[Unit] = ???
+
 }

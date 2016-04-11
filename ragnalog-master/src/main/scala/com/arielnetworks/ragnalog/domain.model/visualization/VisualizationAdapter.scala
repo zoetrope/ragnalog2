@@ -4,7 +4,7 @@ import com.arielnetworks.ragnalog.domain.model.container.Container
 
 import scala.concurrent.Future
 
-class VisualizationService {
+trait VisualizationAdapter {
 
   def addContainer(container: Container): Future[Unit] = ???
 

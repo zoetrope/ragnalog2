@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.domain.model.archive
+package com.arielnetworks.ragnalog.domain.model.logfile
 
 import com.arielnetworks.ragnalog.domain.model.container.Container
 

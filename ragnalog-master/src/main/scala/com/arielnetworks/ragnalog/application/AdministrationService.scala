@@ -2,13 +2,13 @@ package com.arielnetworks.ragnalog.application
 
 import java.util.UUID
 
-import com.arielnetworks.ragnalog.domain.model.archive.LogFileService
-import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerService, ContainerStatus}
-import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
-import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationService
+import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerService}
+import com.arielnetworks.ragnalog.domain.model.logfile.LogFileService
+import com.arielnetworks.ragnalog.domain.model.registration.RegistrationAdapter
+import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 trait IdPatternSpecification {
   def isSatisfied(id: String): Boolean
@@ -17,8 +17,8 @@ trait IdPatternSpecification {
 class AdministrationService
 (
   containerService: ContainerService,
-  visualizationService: VisualizationService,
-  registrationService: RegistrationService,
+  visualizationAdapter: VisualizationAdapter,
+  registrationAdapter: RegistrationAdapter,
   logFileService: LogFileService,
   idSpec: IdPatternSpecification
 ) {
@@ -52,8 +52,8 @@ class AdministrationService
   def removeContainer(containerId: ContainerId): Future[Unit] = {
     for {
       container <- containerService.resolvedById(containerId)
-      _ <- visualizationService.removeContainer(container)
-      _ <- registrationService.remove(container)
+      _ <- visualizationAdapter.removeContainer(container)
+      _ <- registrationAdapter.remove(container)
       _ <- logFileService.removeAll(container)
       _ <- containerService.removeContainer(containerId)
     } yield Unit
@@ -80,8 +80,8 @@ class AdministrationService
     for {
       container <- containerService.resolvedById(containerId)
       _ <- container.activate()
-      _ <- visualizationService.addContainer(container)
-      _ <- registrationService.open(container)
+      _ <- visualizationAdapter.addContainer(container)
+      _ <- registrationAdapter.open(container)
       _ <- container.save()
     } yield Unit
   }
@@ -90,8 +90,8 @@ class AdministrationService
     for {
       container <- containerService.resolvedById(containerId)
       _ <- container.deactivate()
-      _ <- visualizationService.removeContainer(container)
-      _ <- registrationService.close(container)
+      _ <- visualizationAdapter.removeContainer(container)
+      _ <- registrationAdapter.close(container)
       _ <- container.save()
     } yield Unit
   }

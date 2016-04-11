@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
+import com.arielnetworks.ragnalog.domain.model.logfile.LogFile
 
 sealed abstract class ArchiveType
 

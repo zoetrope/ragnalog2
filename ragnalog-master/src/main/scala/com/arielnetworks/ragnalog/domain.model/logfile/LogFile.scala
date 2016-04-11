@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.domain.model.archive
+package com.arielnetworks.ragnalog.domain.model.logfile
 
 sealed abstract class LogStatus
 

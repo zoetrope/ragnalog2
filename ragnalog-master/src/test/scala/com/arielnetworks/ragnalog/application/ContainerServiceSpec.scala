@@ -1,10 +1,11 @@
 package com.arielnetworks.ragnalog.application
 
-import com.arielnetworks.ragnalog.domain.model.archive.LogFileService
 import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerService, ContainerStatus}
-import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
-import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationService
+import com.arielnetworks.ragnalog.domain.model.logfile.LogFileService
+import com.arielnetworks.ragnalog.domain.model.registration.{RegistrationAdapter, RegistrationService}
+import com.arielnetworks.ragnalog.domain.model.visualization.{VisualizationAdapter, VisualizationService}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
+import com.arielnetworks.ragnalog.port.adapter.service.{EmbulkAdapter, KibanaAdapter}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
 import org.elasticsearch.common.settings.Settings
@@ -19,10 +20,10 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
   val client = ElasticClient.transport(settings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))
   val containerRepository = new ContainerRepositoryOnElasticsearch(client)
   val containerService = new ContainerService(containerRepository)
-  val visualizationService = new VisualizationService
-  val registrationService = new RegistrationService
+  val visualizationAdapter = new KibanaAdapter
+  val registrationAdapter = new EmbulkAdapter
   val logFileService = new LogFileService
-  val administrationService = new AdministrationService(containerService, visualizationService, registrationService, logFileService, idSpec)
+  val administrationService = new AdministrationService(containerService, visualizationAdapter, registrationAdapter, logFileService, idSpec)
 
   describe("create a container") {
     describe("with all valid parameters") {
