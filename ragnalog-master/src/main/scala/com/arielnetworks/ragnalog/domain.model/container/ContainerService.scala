@@ -15,7 +15,7 @@ class ContainerService
     containerRepository.add(container).map(_ => container)
   }
 
-  def removeContainer(containerId: ContainerId) = ???
+  def removeContainer(containerId: ContainerId): Future[Unit] = ???
 
   def activeContainers(): Future[Seq[Container]] = {
     for {
@@ -29,6 +29,10 @@ class ContainerService
       count <- containerRepository.countByStatus(ContainerStatus.Inactive)
       containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Inactive)
     } yield containers
+  }
+
+  def resolvedById(containerId: ContainerId): Future[Container] = {
+    containerRepository.resolveById(containerId)
   }
 }
 

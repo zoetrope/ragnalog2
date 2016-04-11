@@ -2,6 +2,8 @@ package com.arielnetworks.ragnalog.domain.model.container
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 
+import scala.concurrent.Future
+
 object ContainerStatus extends Enumeration {
   val Active, Inactive = Value
 }
@@ -18,8 +20,9 @@ case class Container
 )
   extends Entity[ContainerId] {
 
-  def activate() = ???
+  def activate(): Future[Unit] = ???
 
-  def deactivate() = ???
+  def deactivate(): Future[Unit] = ???
 
+  def save(): Future[Unit] = ???
 }
