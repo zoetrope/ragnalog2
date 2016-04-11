@@ -10,11 +10,9 @@ lazy val baseSettings = Seq(
     "-unchecked",
     "-Xlint"
     , "-Xfatal-warnings"
-  )
+  ),
+  resolvers += "embulk-bintray" at "http://dl.bintray.com/embulk/maven/"
 )
-
-resolvers += "embulk-bintray" at "http://dl.bintray.com/embulk/maven/"
-
 
 lazy val libraries = Seq(
   "org.scala-lang" % "scala-reflect" % "2.11.8",
