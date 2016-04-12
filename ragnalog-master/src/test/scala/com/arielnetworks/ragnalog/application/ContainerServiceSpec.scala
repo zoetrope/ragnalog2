@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.application
 
 import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerService, ContainerStatus}
-import com.arielnetworks.ragnalog.domain.model.logfile.LogFileService
+import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.domain.model.registration.{RegistrationAdapter, RegistrationService}
 import com.arielnetworks.ragnalog.domain.model.visualization.{VisualizationAdapter, VisualizationService}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
@@ -22,7 +22,7 @@ class ContainerServiceSpec extends FunSpec with DiagrammedAssertions with ScalaF
   val containerService = new ContainerService(containerRepository)
   val visualizationAdapter = new KibanaAdapter
   val registrationAdapter = new EmbulkAdapter
-  val logFileService = new LogFileService
+  val logFileService = new RawFileService
   val administrationService = new AdministrationService(containerService, visualizationAdapter, registrationAdapter, logFileService, idSpec)
 
   describe("create a container") {

@@ -3,7 +3,7 @@ package com.arielnetworks.ragnalog.application
 import java.util.UUID
 
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerService}
-import com.arielnetworks.ragnalog.domain.model.logfile.LogFileService
+import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationAdapter
 import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
 
@@ -19,7 +19,7 @@ class AdministrationService
   containerService: ContainerService,
   visualizationAdapter: VisualizationAdapter,
   registrationAdapter: RegistrationAdapter,
-  logFileService: LogFileService,
+  logFileService: RawFileService,
   idSpec: IdPatternSpecification
 ) {
 

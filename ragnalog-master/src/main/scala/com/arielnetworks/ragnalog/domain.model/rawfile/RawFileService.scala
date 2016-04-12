@@ -1,10 +1,10 @@
-package com.arielnetworks.ragnalog.domain.model.logfile
+package com.arielnetworks.ragnalog.domain.model.rawfile
 
 import com.arielnetworks.ragnalog.domain.model.container.Container
 
 import scala.concurrent.Future
 
-class LogFileService {
+class RawFileService {
 
   def removeAll(container: Container): Future[Unit] = ???
 }

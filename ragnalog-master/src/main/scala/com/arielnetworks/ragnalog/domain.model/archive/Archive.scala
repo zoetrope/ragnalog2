@@ -1,9 +1,39 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
-import com.arielnetworks.ragnalog.domain.model.logfile.LogFile
 
-sealed abstract class ArchiveType
+sealed trait ArchiveType {
+  def fromFileName(fileName: String): ArchiveType = {
+    if (fileName.endsWith(".zip")) Zip
+    else if (fileName.endsWith(".tar")) Tar
+    else if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) Tgz
+    else if (fileName.endsWith(".gz")) GZip
+    else None
+  }
+
+  def isArchive: Boolean = this match {
+    case Zip | Tar | Tgz => true
+    case _ => false
+  }
+
+  def isTar: Boolean = this match {
+    case Tar | Tgz => true
+    case _ => false
+  }
+
+  def isGZip: Boolean = this match {
+    case GZip | Tgz => true
+    case _ => false
+  }
+
+  def getArchiverName(): String = this match {
+    case Zip => "zip"
+    case Tar | Tgz => "tar"
+    case _ => "unknown"
+  }
+}
+
+object ArchiveType extends ArchiveType
 
 case object None extends ArchiveType
 
