@@ -1,5 +1,7 @@
 package com.arielnetworks.ragnalog.support
 
+import java.net.URLDecoder
+
 import org.scalatest.{DiagrammedAssertions, FunSpec}
 
 import scala.io.Source
@@ -67,6 +69,20 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
           "z/flat.tar/a.txt",
           "z/flat.tar/b.txt",
           "z/b.txt"))
+      }
+    }
+    describe("japanese name file created by windows") {
+      it("should be expanded") {
+        val url = getClass.getClassLoader.getResource("expander/日本語(windows).zip")
+        val list = ArchiveUtil.getFileList(URLDecoder.decode(url.getPath, "UTF-8"))
+        assert(list == List("日本語(windows)/a配下/テストa.txt", "日本語(windows)/テストb.txt"))
+      }
+    }
+    describe("japanese name file created by linux") {
+      it("should be expanded") {
+        val url = getClass.getClassLoader.getResource("expander/日本語(linux).tar.gz")
+        val list = ArchiveUtil.getFileList(URLDecoder.decode(url.getPath, "UTF-8"))
+        assert(list == List("日本語(linux)/テストb.txt", "日本語(linux)/a配下/テストa.txt"))
       }
     }
   }
