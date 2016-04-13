@@ -2,8 +2,6 @@ package com.arielnetworks.ragnalog.application
 
 import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerService, ContainerStatus}
 import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
-import com.arielnetworks.ragnalog.domain.model.registration.{RegistrationAdapter, RegistrationService}
-import com.arielnetworks.ragnalog.domain.model.visualization.{VisualizationAdapter, VisualizationService}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
 import com.arielnetworks.ragnalog.port.adapter.service.{EmbulkAdapter, KibanaAdapter}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification

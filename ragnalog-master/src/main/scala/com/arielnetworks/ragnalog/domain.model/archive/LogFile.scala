@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
-import com.arielnetworks.ragnalog.domain.model.common.Identifier
+import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 
 sealed abstract class LogStatus
 
@@ -31,4 +31,4 @@ case class LogFile
   count: Long,
   errorCount: Long,
   errorMessage: String
-)
+) extends Entity[LogFileId]

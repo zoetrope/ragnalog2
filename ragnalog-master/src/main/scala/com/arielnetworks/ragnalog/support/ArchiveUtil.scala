@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.support
 
-import java.io.{File, FileInputStream, InputStream}
+import java.io.{Closeable, File, FileInputStream, InputStream}
 import java.nio.file.Paths
 import java.util.zip.GZIPInputStream
 
@@ -32,63 +32,65 @@ object ArchiveUtil {
       .toList
   }
 
+  def using[A, R <: Closeable](r: R)(f: R => A): A = {
+    try {
+      f(r)
+    } finally {
+      r.close()
+    }
+  }
+
   def getFileList(fileName: String): Seq[String] = {
 
-    try {
-      val archiveType = ArchiveType.fromFileName(fileName)
-      val is = if (archiveType.isGZip) {
-        new GZIPInputStream(new FileInputStream(fileName))
-      } else {
-        new FileInputStream(fileName)
-      }
-      if (archiveType.isArchive) {
-        getFileListRecursive("", archiveType.getArchiverName(), is)
-      } else if (archiveType.isGZip) {
-        List(Paths.get(Paths.get(fileName).getFileName.toString, toUngzippedName(fileName)).toString)
-      } else {
-        List(Paths.get(fileName).getFileName.toString)
-      }
-    } finally {
-      if (is != null) {
-        is.close()
-      }
+    val archiveType = ArchiveType.fromFileName(fileName)
+
+    using(if (archiveType.isGZip) {
+      new GZIPInputStream(new FileInputStream(fileName))
+    } else {
+      new FileInputStream(fileName)
+    }) {
+      is =>
+        if (archiveType.isArchive) {
+          getFileListRecursive("", archiveType.getArchiverName(), is)
+        } else if (archiveType.isGZip) {
+          List(Paths.get(Paths.get(fileName).getFileName.toString, toUngzippedName(fileName)).toString)
+        } else {
+          List(Paths.get(fileName).getFileName.toString)
+        }
     }
   }
 
   private def getTargetStreamRecursive(basedir: String, archiveName: String, is: InputStream, targetFileName: String): Option[InputStream] = {
 
     val archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(archiveName, is)
-    Iterator.continually(archiveInputStream.getNextEntry())
+    Iterator.continually(archiveInputStream.getNextEntry)
       .takeWhile(_ != null)
       .filterNot(_.isDirectory)
-      .first(entry => {
+      .map(entry => {
         val childArchiveType = ArchiveType.fromFileName(entry.getName)
         val iis = if (childArchiveType.isGZip) {
           new GZIPInputStream(archiveInputStream)
         } else {
           archiveInputStream
         }
-
         val fileName = Paths.get(basedir, entry.getName).toString
         if (childArchiveType.isArchive) {
-          val s = getTargetStreamRecursive(fileName, childArchiveType.getArchiverName(), iis, targetFileName)
-          if (s != null) {
-            return s
-          }
+          getTargetStreamRecursive(fileName, childArchiveType.getArchiverName(), iis, targetFileName)
         } else if (childArchiveType.isGZip) {
           if (targetFileName == Paths.get(fileName, toUngzippedName(entry.getName)).toString) {
-            return Some(iis)
+            Some(iis)
+          } else {
+            None
           }
         } else if (fileName == targetFileName) {
-          return Some(iis)
+          Some(iis)
+        } else {
+          None
         }
-      })
-
-    return None
+      }).collectFirst { case Some(i) => i }
   }
 
   def getTargetStream(archiveFileName: String, targetFileName: String): Option[InputStream] = {
-
     val archiveType = ArchiveType.fromFileName(archiveFileName)
     val is =
       if (archiveType.isGZip) new GZIPInputStream(new FileInputStream(archiveFileName))
@@ -101,7 +103,7 @@ object ArchiveUtil {
         return Some(is)
       }
     }
-    return Some(is)
+    None
   }
 
   private def toUngzippedName(fileName: String): String = {
