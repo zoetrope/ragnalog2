@@ -36,5 +36,12 @@ class ContainerService
   def resolvedById(containerId: ContainerId): Future[Container] = {
     containerRepository.resolveById(containerId)
   }
+
+  def updateContainer(containerId: ContainerId, name: Option[String], description: Option[String]): Future[Unit] = {
+    for {
+      container <- resolvedById(containerId)
+      _ <- containerRepository.save(new Container(containerId, name.getOrElse(container.name), description, container.status))
+    } yield Unit
+  }
 }
 

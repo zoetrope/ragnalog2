@@ -67,13 +67,8 @@ class AdministrationService
     containerService.inactiveContainers()
   }
 
-  def updateContainer(containerId: ContainerId, name: String, description: String): Future[Unit] = {
-    for {
-      container <- containerService.resolvedById(containerId)
-//      container.name = name
-//      container.description = description
-      _ <- container.save()
-    } yield Unit
+  def updateContainer(containerId: ContainerId, name: Option[String], description: Option[String]): Future[Unit] = {
+      containerService.updateContainer(containerId, name, description)
   }
 
   def activateContainer(containerId: ContainerId): Future[Unit] = {
