@@ -1,13 +1,12 @@
 package com.arielnetworks.ragnalog.domain.model.container
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ContainerService
 (
   containerRepository: ContainerRepository
 ) {
-
-  import ExecutionContext.Implicits.global
 
   def createContainer(containerId: ContainerId, containerName: String, containerDescription: Option[String])
   : Future[Container] = {

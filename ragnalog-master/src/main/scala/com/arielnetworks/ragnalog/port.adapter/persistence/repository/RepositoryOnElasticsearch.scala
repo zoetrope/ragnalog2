@@ -6,7 +6,8 @@ import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
 import org.elasticsearch.action.index.IndexRequest.OpType
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID]]
@@ -17,8 +18,6 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
 )
   extends Repository[ID, E]
     with Translator[ID, E] {
-
-  import ExecutionContext.Implicits.global
 
   override def add(entity: E): Future[Unit] = {
     val p = Promise[Unit]()

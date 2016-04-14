@@ -5,15 +5,14 @@ import com.arielnetworks.ragnalog.port.adapter.persistence.translator.ContainerT
 import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 class ContainerRepositoryOnElasticsearch(elasticClient: ElasticClient)
   extends RepositoryOnElasticsearch[ContainerId, Container](elasticClient, ".ragnalog2", "container")
     with ContainerRepository
     with ContainerTranslator {
-
-  import ExecutionContext.Implicits.global
 
   def countByStatus(status: ContainerStatus.Value): Future[Long] = {
     val p = Promise[Long]()

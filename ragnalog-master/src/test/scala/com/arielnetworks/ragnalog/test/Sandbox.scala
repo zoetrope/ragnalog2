@@ -6,7 +6,6 @@ import org.scalatest.{DiagrammedAssertions, FunSpec}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 class Sandbox extends FunSpec with DiagrammedAssertions with ScalaFutures with FutureSupport {
 
@@ -25,5 +24,4 @@ class Sandbox extends FunSpec with DiagrammedAssertions with ScalaFutures with F
         println(ns)
     }
   }
-
 }

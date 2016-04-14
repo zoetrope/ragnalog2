@@ -13,7 +13,7 @@ sealed trait ArchiveType {
     else None
   }
 
-  def of(value: String): ArchiveType = {
+  def of(value: String): ArchiveType = value match {
     case "Zip" => Zip
     case "Tar" => Tar
     case "Tgz" => Tgz
@@ -63,7 +63,6 @@ case class Archive
   fileName: String,
   filePath: String,
   archiveType: ArchiveType,
-  status: String,
   size: Long,
   uploadedDate: DateTime,
   modifiedDate: DateTime,

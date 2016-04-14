@@ -7,11 +7,9 @@ import org.elasticsearch.common.settings.Settings
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{DiagrammedAssertions, FunSpec}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures {
-
-  import ExecutionContext.Implicits.global
 
   val settings = Settings.settingsBuilder().put("cluster.name", "ragnalog.elasticsearch")
   val client = ElasticClient.transport(settings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))

@@ -9,7 +9,6 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
       "fileName" -> archive.fileName,
       "filePath" -> archive.filePath,
       "archiveType" -> archive.archiveType.toString,
-      "status" -> archive.status,
       "size" -> archive.size,
       "uploadedDate" -> fromTimeStamp(archive.uploadedDate),
       "modifiedDate" -> fromTimeStamp(archive.modifiedDate)
@@ -22,7 +21,6 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
       fields.get("fileName").asInstanceOf[String],
       fields.get("filePath").asInstanceOf[String],
       ArchiveType.of(fields.get("archiveType").asInstanceOf[String]),
-      fields.get("status").asInstanceOf[String],
       fields.get("size").asInstanceOf[Long],
       toTimeStamp(fields.get("uploadedDate").asInstanceOf[String]),
       toTimeStamp(fields.get("modifiedDate").asInstanceOf[String]),

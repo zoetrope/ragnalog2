@@ -4,14 +4,13 @@ import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import org.joda.time.DateTime
 
 sealed trait LogStatus {
-  def of(value: String): LogStatus = {
+  def of(value: String): LogStatus = value match {
     case "Uploading" => Uploading
     case "Uploaded" => Uploaded
     case "Registering" => Registering
     case "Registered" => Registered
     case "Unregistered" => Unregistered
     case "Error" => Error
-    case _ => None
   }
 }
 

@@ -17,10 +17,7 @@ class UserService
     size: Long,
     uploadedDate: String,
     modifiedDate: String
-  ) = {
-
-    archiveService.createArchive()
-  }
+  ) = ???
 
   def removeArchiveFile() = ???
 
