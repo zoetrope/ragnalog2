@@ -1,5 +1,5 @@
-cluster.name: ragnalog.elasticsearch
-node.name: ragnalog
+cluster.name: ragnalog2.elasticsearch
+node.name: ragnalog2
 bootstrap.mlockall: true
 http.max_content_length: 2gb
 discovery.zen.ping.multicast.enabled: false

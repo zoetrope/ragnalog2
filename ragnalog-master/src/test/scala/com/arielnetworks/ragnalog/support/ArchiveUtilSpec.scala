@@ -144,4 +144,13 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
     }
   }
 
+  describe("exception") {
+    describe("not found file") {
+
+    }
+    describe("not found target") {
+
+    }
+  }
+
 }

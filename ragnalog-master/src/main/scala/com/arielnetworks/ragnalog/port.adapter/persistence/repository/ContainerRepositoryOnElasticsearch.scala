@@ -9,8 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
-class ContainerRepositoryOnElasticsearch(elasticClient: ElasticClient)
-  extends RepositoryOnElasticsearch[ContainerId, Container](elasticClient, ".ragnalog2", "container")
+class ContainerRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: String = "ragnalog2")
+  extends RepositoryOnElasticsearch[ContainerId, Container](elasticClient, indexName, "container")
     with ContainerRepository
     with ContainerTranslator {
 

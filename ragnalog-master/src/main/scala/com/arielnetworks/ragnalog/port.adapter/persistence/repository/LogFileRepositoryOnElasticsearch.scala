@@ -6,8 +6,8 @@ import com.sksamuel.elastic4s.ElasticClient
 
 import scala.concurrent.Future
 
-class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient)
-  extends RepositoryOnElasticsearch[LogFileId, LogFile](elasticClient, ".ragnalog2", "logFile")
+class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: String = ".ragnalog2")
+  extends RepositoryOnElasticsearch[LogFileId, LogFile](elasticClient, indexName, "logFile")
     with LogFileRepository
     with LogFileTranslator {
 

@@ -6,8 +6,8 @@ import com.sksamuel.elastic4s.ElasticClient
 
 import scala.concurrent.Future
 
-class ArchiveRepositoryOnElasticsearch(elasticClient: ElasticClient)
-  extends RepositoryOnElasticsearch[ArchiveId, Archive](elasticClient, ".ragnalog2", "archive")
+class ArchiveRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: String = ".ragnalog2")
+  extends RepositoryOnElasticsearch[ArchiveId, Archive](elasticClient, indexName, "archive")
     with ArchiveRepository
     with ArchiveTranslator {
 

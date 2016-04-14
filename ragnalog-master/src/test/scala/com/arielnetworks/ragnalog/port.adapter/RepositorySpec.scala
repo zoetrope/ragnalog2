@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.test
+package com.arielnetworks.ragnalog.port.adapter
 
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerStatus}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures {
 
-  val settings = Settings.settingsBuilder().put("cluster.name", "ragnalog.elasticsearch")
+  val settings = Settings.settingsBuilder().put("cluster.name", "ragnalog2.elasticsearch")
   val client = ElasticClient.transport(settings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))
   val containerRepository = new ContainerRepositoryOnElasticsearch(client)
 
