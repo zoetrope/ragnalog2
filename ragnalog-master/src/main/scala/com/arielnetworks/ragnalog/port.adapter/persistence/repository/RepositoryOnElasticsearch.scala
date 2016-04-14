@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.repository
 
 import com.arielnetworks.ragnalog.domain.model.common._
+import com.arielnetworks.ragnalog.port.adapter.persistence.translator.Translator
 import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
 import org.elasticsearch.action.index.IndexRequest.OpType

@@ -1,13 +1,6 @@
-package com.arielnetworks.ragnalog.port.adapter.persistence.repository
+package com.arielnetworks.ragnalog.port.adapter.persistence.translator
 
-import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerStatus}
-
-trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
-  protected def toFieldsFromEntity(entity: E): Map[String, Any]
-
-  protected def toEntityFromFields(id: String, fields: java.util.Map[String, Object]): E
-}
 
 trait ContainerTranslator extends Translator[ContainerId, Container] {
 

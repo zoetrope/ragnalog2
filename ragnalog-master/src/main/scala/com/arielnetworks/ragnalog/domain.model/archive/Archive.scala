@@ -13,6 +13,14 @@ sealed trait ArchiveType {
     else None
   }
 
+  def of(value: String): ArchiveType = {
+    case "Zip" => Zip
+    case "Tar" => Tar
+    case "Tgz" => Tgz
+    case "GZip" => GZip
+    case _ => None
+  }
+
   def isArchive: Boolean = this match {
     case Zip | Tar | Tgz => true
     case _ => false

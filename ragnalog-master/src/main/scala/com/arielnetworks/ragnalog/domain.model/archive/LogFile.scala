@@ -1,8 +1,21 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
+import org.joda.time.DateTime
 
-sealed abstract class LogStatus
+sealed trait LogStatus {
+  def of(value: String): LogStatus = {
+    case "Uploading" => Uploading
+    case "Uploaded" => Uploaded
+    case "Registering" => Registering
+    case "Registered" => Registered
+    case "Unregistered" => Unregistered
+    case "Error" => Error
+    case _ => None
+  }
+}
+
+object LogStatus extends LogStatus
 
 case object Uploading extends LogStatus
 
@@ -22,13 +35,13 @@ case class LogFile
 (
   id: LogFileId,
   filePath: String,
-  fileType: String,
+  fileType: Option[String],
   status: LogStatus,
-  index: String,
-  from: String,
-  to: String,
-  extra: String,
-  count: Long,
-  errorCount: Long,
-  errorMessage: String
+  index: Option[String],
+  from: Option[DateTime],
+  to: Option[DateTime],
+  extra: Option[String],
+  count: Option[Long],
+  errorCount: Option[Long],
+  errorMessage: Option[String]
 ) extends Entity[LogFileId]

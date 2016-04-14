@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.repository
 
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
+import com.arielnetworks.ragnalog.port.adapter.persistence.translator.ContainerTranslator
 import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
 
