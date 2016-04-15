@@ -1,0 +1,21 @@
+in:
+  type: file
+  path_prefix: /tmp/ragnalog/sample.csv
+  parser:
+    charset: UTF-8
+    newline: CRLF
+    type: csv
+    columns:
+      - {name: timestamp, type: timestamp, format: '%m/%d/%Y %H:%M:%S.%L', timezone: '+0900'}
+filters:
+  - type: ragnalog
+    columns:
+      extra: ap1
+out:
+  type: elasticsearch
+  nodes:
+    - {host: localhost, port: 9300 }
+  cluster_name: ragnalog2.elasticsearch
+  bulk_actions: 30000
+  index: ragnalog-test-csv
+  index_type: csv

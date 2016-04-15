@@ -1,0 +1,22 @@
+in:
+  type: sar
+  file_path: /tmp/ragnalog/sample.sar
+  sar_options: -A -U
+  sadf_paths:
+    - '9': /opt/sysstat-9.0.6/sadf
+    - '10': /opt/sysstat-10.0.5/sadf
+    - '11': /opt/sysstat-11.0.7/sadf
+  exclude_fields:
+    - interrupts.*
+filters:
+  - type: ragnalog
+    columns:
+      extra: ap1
+out:
+  type: elasticsearch
+  nodes:
+    - {host: localhost, port: 9300 }
+  cluster_name: ragnalog2.elasticsearch
+  bulk_actions: 30000
+  index: ragnalog-test-sar
+  index_type: sar

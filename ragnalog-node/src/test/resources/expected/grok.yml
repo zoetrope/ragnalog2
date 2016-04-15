@@ -1,0 +1,38 @@
+in:
+  type: file
+  path_prefix: /tmp/ragnalog/sample.log
+  parser:
+    charset: UTF-8
+    newline: CRLF
+    type: grok
+    grok_pattern: "%{APACHELOG}"
+    grok_pattern_files:
+      - /tmp/ragnalog/grok-patterns
+    timestamp_parser: sdf
+    columns:
+      - { name: bytes_sent , type: long }
+      - { name: connection_status , type: string }
+      - { name: http_version , type: string }
+      - { name: logical_username , type: string }
+      - { name: raw_request , type: string }
+      - { name: referrer , type: string }
+      - { name: remote_addr , type: string }
+      - { name: request , type: string }
+      - { name: response_time , type: long }
+      - { name: status , type: long }
+      - { name: timestamp , type: timestamp , format: "%d/%b/%Y:%T %z" }
+      - { name: user_agent , type: string }
+      - { name: username , type: string }
+      - { name: verb , type: string }
+filters:
+  - type: ragnalog
+    columns:
+      extra: ap1
+out:
+  type: elasticsearch
+  nodes:
+    - {host: localhost, port: 9300 }
+  cluster_name: ragnalog2.elasticsearch
+  bulk_actions: 30000
+  index: ragnalog-test-grok
+  index_type: apache.access

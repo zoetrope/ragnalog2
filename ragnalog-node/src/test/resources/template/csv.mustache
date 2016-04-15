@@ -1,0 +1,21 @@
+in:
+  type: file
+  path_prefix: {{input_file}}
+  parser:
+    charset: UTF-8
+    newline: CRLF
+    type: csv
+    columns:
+      - {name: timestamp, type: timestamp, format: '%m/%d/%Y %H:%M:%S.%L', timezone: '+0900'}
+filters:
+  - type: ragnalog
+    columns:
+      extra: {{extra}}
+out:
+  type: elasticsearch
+  nodes:
+    - {host: {{elasticsearch.host}}, port: {{elasticsearch.port}} }
+  cluster_name: {{elasticsearch.cluster_name}}
+  bulk_actions: 30000
+  index: {{index_name}}
+  index_type: csv

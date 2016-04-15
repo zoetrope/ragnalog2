@@ -1,0 +1,22 @@
+in:
+  type: sar
+  file_path: {{input_file}}
+  sar_options: {{sar.sar_options}}
+  sadf_paths: {{#sar.sadf_paths}}
+    {{key}}: {{value}}
+  {{/sar.sadf_paths}}
+  exclude_fields: {{#sar.exclude_fields}}
+    - {{.}}
+  {{/sar.exclude_fields}}
+filters:
+  - type: ragnalog
+    columns:
+      extra: {{extra}}
+out:
+  type: elasticsearch
+  nodes:
+    - {host: {{elasticsearch.host}}, port: {{elasticsearch.port}} }
+  cluster_name: {{elasticsearch.cluster_name}}
+  bulk_actions: 30000
+  index: {{index_name}}
+  index_type: sar

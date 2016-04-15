@@ -7,16 +7,18 @@ import org.fusesource.scalate.TemplateEngine
 
 class EmbulkYamlGenerator {
 
-  def generate(uri: URL) = {
+  def generate(uri: URL): String = {
     val engine = new TemplateEngine
     engine.workingDirectory = new File("./tmp")
 
     val bindings =
       Map("name" -> "Scalate",
-          "config" -> Map("hoge"->"Scala"))
+        "config.name" -> "fuuuuu",
+        "config" -> Map("hoge" -> "Scala"))
 
     val output = engine.layout(uri.getPath, bindings)
     println(output)
 
+    output
   }
 }
