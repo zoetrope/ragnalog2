@@ -30,6 +30,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
       val typeConfig = logTypesSetting.get(req.logType).get
       val archiveFilePath = req.archiveFileName
 
+      //TODO: move to application layer
       var targetFile = File.createTempFile("temp", "log", new File(embulkSetting.temporaryPath))
       ArchiveUtil.getTargetStream(archiveFilePath, req.filePath).map(stream => {
         Files.copy(stream, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)

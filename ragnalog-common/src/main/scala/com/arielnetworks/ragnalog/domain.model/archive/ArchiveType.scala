@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
 sealed trait ArchiveType {
-  def fromFileName(fileName: String): ArchiveType = {
+  def fromExtension(fileName: String): ArchiveType = {
     if (fileName.endsWith(".zip")) Zip
     else if (fileName.endsWith(".tar")) Tar
     else if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) Tgz

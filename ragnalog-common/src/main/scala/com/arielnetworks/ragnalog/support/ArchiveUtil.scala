@@ -17,7 +17,7 @@ object ArchiveUtil {
       .takeWhile(_ != null)
       .filterNot(_.isDirectory)
       .map(entry => {
-        val childArchiveType = ArchiveType.fromFileName(entry.getName)
+        val childArchiveType = ArchiveType.fromExtension(entry.getName)
         val iis = if (childArchiveType.isGZip) new GZIPInputStream(archiveInputStream) else archiveInputStream
         val fileName = Paths.get(basedir, entry.getName).toString
 
@@ -35,7 +35,7 @@ object ArchiveUtil {
 
   def getFileList(fileName: String): Seq[String] = {
 
-    val archiveType = ArchiveType.fromFileName(fileName)
+    val archiveType = ArchiveType.fromExtension(fileName)
 
     using(if (archiveType.isGZip) {
       new GZIPInputStream(new FileInputStream(fileName))
@@ -60,7 +60,7 @@ object ArchiveUtil {
       .takeWhile(_ != null)
       .filterNot(_.isDirectory)
       .map(entry => {
-        val childArchiveType = ArchiveType.fromFileName(entry.getName)
+        val childArchiveType = ArchiveType.fromExtension(entry.getName)
         val iis = if (childArchiveType.isGZip) {
           new GZIPInputStream(archiveInputStream)
         } else {
@@ -84,7 +84,7 @@ object ArchiveUtil {
   }
 
   def getTargetStream(archiveFileName: String, targetFileName: String): Option[InputStream] = {
-    val archiveType = ArchiveType.fromFileName(archiveFileName)
+    val archiveType = ArchiveType.fromExtension(archiveFileName)
     val is =
       if (archiveType.isGZip) new GZIPInputStream(new FileInputStream(archiveFileName))
       else new FileInputStream(archiveFileName)
