@@ -1,5 +1,6 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
+//TODO: This class should not be here
 sealed trait ArchiveType {
   def fromExtension(fileName: String): ArchiveType = {
     if (fileName.endsWith(".zip")) Zip

@@ -12,22 +12,16 @@ import scala.concurrent.Future
 
 class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends RegistrationService {
 
-
   val embulkSetting = embulkConfiguration
-  //  val elasticsearchSetting = config.getElasticsearch
-
   val logTypesSetting = embulkSetting.types
-
-  val embulkEmbed = EmbulkEmbedFactory.create(embulkSetting).get //TODO:
-
-  //  val uploadedDir = config.getUploader().getUploadedDir
+  val embulkFacadeFactory = new EmbulkFacadeFactory(embulkConfiguration)
 
   val generator = new EmbulkYamlGenerator(Map())
   val preprocessors: Map[String, Preprocessor] = Map()
 
   def run(req: RegistrationRequest): Future[RegistrationResponse] = {
     try {
-      val typeConfig = logTypesSetting.get(req.logType).get
+      val typeConfig = logTypesSetting.get(req.logType).get //TODO:
       val archiveFilePath = req.archiveFileName
 
       //TODO: move to application layer
@@ -44,34 +38,23 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
       }
 
       // generate config file
-      //      val configPath = generator.generate(req.getLogType(), targetFile.toPath(), indexName, req.getExtra())
       val configPath = generator.generate(new URL(typeConfig.template), Map(
         "indexName" -> indexName,
         "extra" -> req.extra,
         "input_file" -> targetFile
       ))
       //      logger.info("generated yaml: " + configPath);
-      val loader = embulkEmbed.newConfigLoader()
-      val config = loader.fromYamlFile(new File(configPath))
+      val embulkFacade = embulkFacadeFactory.create(configPath)
 
       // guess
       if (typeConfig.doGuess) {
-        val diff = embulkEmbed.guess(config)
-        config.merge(diff)
+        embulkFacade.guess()
       }
 
-      //      logger.info(config)
       // run
       //      logger.info("embulk running...")
-      val result = embulkEmbed.run(config)
+      val res = embulkFacade.run()
       //      logger.info("embulk done.")
-      val errorCount = result.getIgnoredExceptions.size()
-      val res =
-        if (result.getIgnoredExceptions.isEmpty) {
-          new RegistrationResponse("", errorCount)
-        } else {
-          new RegistrationResponse(result.getIgnoredExceptions.size + " errors. first message: " + result.getIgnoredExceptions.get(0).getMessage, errorCount)
-        }
 
       Future.successful(res)
     } catch {
