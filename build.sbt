@@ -25,7 +25,7 @@ lazy val libraries = Seq(
   "com.sksamuel.elastic4s" %% "elastic4s-core" % "2.3.0",
   "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.3.0",
 
-  "org.scalatra.scalate" %% "scalate-core" % "1.7.1",
+  "org.antlr" % "ST4" % "4.0.8",
 
   "io.reactivex" %% "rxscala" % "0.26.0",
 

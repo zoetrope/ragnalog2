@@ -1,6 +1,6 @@
 in:
   type: file
-  path_prefix: /tmp/ragnalog/sample.csv
+  path_prefix: /tmp/ragnalog/sample.log
   parser:
     charset: UTF-8
     newline: CRLF
@@ -17,5 +17,5 @@ out:
     - {host: localhost, port: 9300 }
   cluster_name: ragnalog2.elasticsearch
   bulk_actions: 30000
-  index: ragnalog-test-csv
+  index: ragnalog-test
   index_type: csv

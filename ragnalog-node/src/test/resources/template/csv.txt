@@ -1,6 +1,6 @@
 in:
   type: file
-  path_prefix: {{input_file}}
+  path_prefix: <input_file>
   parser:
     charset: UTF-8
     newline: CRLF
@@ -10,12 +10,12 @@ in:
 filters:
   - type: ragnalog
     columns:
-      extra: {{extra}}
+      extra: <extra>
 out:
   type: elasticsearch
   nodes:
-    - {host: {{elasticsearch.host}}, port: {{elasticsearch.port}} }
-  cluster_name: {{elasticsearch.cluster_name}}
+    - {host: <elasticsearch/host>, port: <elasticsearch/port> }
+  cluster_name: <elasticsearch/cluster_name>
   bulk_actions: 30000
-  index: {{index_name}}
+  index: <index_name>
   index_type: csv

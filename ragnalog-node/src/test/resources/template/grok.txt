@@ -1,16 +1,15 @@
 in:
   type: file
-  path_prefix: {{input_file}}
+  path_prefix: <input_file>
   parser:
     charset: UTF-8
     newline: CRLF
     type: grok
     grok_pattern: "%{APACHELOG}"
     grok_pattern_files:
-    {{#grok.grok_pattern_files}}
-      - {{.}}
-    {{/grok.grok_pattern_files}}
-    timestamp_parser: sdf
+<grok/grok_pattern_files:{file|
+      - <file>
+}>    timestamp_parser: sdf
     columns:
       - { name: bytes_sent , type: long }
       - { name: connection_status , type: string }
@@ -29,12 +28,12 @@ in:
 filters:
   - type: ragnalog
     columns:
-      extra: {{extra}}
+      extra: <extra>
 out:
   type: elasticsearch
   nodes:
-    - {host: {{elasticsearch.host}}, port: {{elasticsearch.port}} }
-  cluster_name: {{elasticsearch.cluster_name}}
+    - {host: <elasticsearch/host>, port: <elasticsearch/port> }
+  cluster_name: <elasticsearch/cluster_name>
   bulk_actions: 30000
-  index: {{index_name}}
+  index: <index_name>
   index_type: apache.access
