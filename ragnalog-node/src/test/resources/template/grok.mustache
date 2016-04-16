@@ -6,7 +6,10 @@ in:
     newline: CRLF
     type: grok
     grok_pattern: "%{APACHELOG}"
-    grok_pattern_files: {{grok.pattern_files}}
+    grok_pattern_files:
+    {{#grok.grok_pattern_files}}
+      - {{.}}
+    {{/grok.grok_pattern_files}}
     timestamp_parser: sdf
     columns:
       - { name: bytes_sent , type: long }

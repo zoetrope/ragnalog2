@@ -7,7 +7,7 @@ in:
     type: grok
     grok_pattern: "%{APACHELOG}"
     grok_pattern_files:
-      - /tmp/ragnalog/grok-patterns
+      - /home/ragnalog/grok-patterns
     timestamp_parser: sdf
     columns:
       - { name: bytes_sent , type: long }
@@ -34,5 +34,5 @@ out:
     - {host: localhost, port: 9300 }
   cluster_name: ragnalog2.elasticsearch
   bulk_actions: 30000
-  index: ragnalog-test-grok
+  index: ragnalog-test
   index_type: apache.access

@@ -2,12 +2,14 @@ in:
   type: sar
   file_path: {{input_file}}
   sar_options: {{sar.sar_options}}
-  sadf_paths: {{#sar.sadf_paths}}
-    {{key}}: {{value}}
-  {{/sar.sadf_paths}}
-  exclude_fields: {{#sar.exclude_fields}}
+  sadf_paths:
+    {{#sar.sadf_paths}}
+    - {{_1}} : {{_2}}
+    {{/sar.sadf_paths}}
+  exclude_fields:
+    {{#sar.exclude_fields}}
     - {{.}}
-  {{/sar.exclude_fields}}
+{{/sar.exclude_fields}}
 filters:
   - type: ragnalog
     columns:
