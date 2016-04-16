@@ -17,7 +17,7 @@ class EmbulkYamlGenerator {
         "config" -> Map("hoge" -> "Scala"))
 
     val output = engine.layout(uri.getPath, bindings)
-    println(output)
+//    println(output)
 
     output
   }
