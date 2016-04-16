@@ -1,11 +1,12 @@
 package com.arielnetworks.ragnalog.support
 
-import java.io.{Closeable, File, FileInputStream, InputStream}
+import java.io.{File, FileInputStream, InputStream}
 import java.nio.file.Paths
 import java.util.zip.GZIPInputStream
 
 import com.arielnetworks.ragnalog.domain.model.archive.ArchiveType
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
+import com.arielnetworks.ragnalog.support.LoanSupport._
 
 object ArchiveUtil {
 
@@ -30,14 +31,6 @@ object ArchiveUtil {
       })
       .flatten
       .toList
-  }
-
-  def using[A, R <: Closeable](r: R)(f: R => A): A = {
-    try {
-      f(r)
-    } finally {
-      r.close()
-    }
   }
 
   def getFileList(fileName: String): Seq[String] = {

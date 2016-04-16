@@ -16,6 +16,7 @@ case class TypeConfiguration
   filters: Seq[String],
   timeField: String,
   template: String,
+  preprocessor: String,
   doGuess: Boolean
 )
 

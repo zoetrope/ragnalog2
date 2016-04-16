@@ -1,6 +1,6 @@
-package com.arielnetworks.ragnalog.application.archive.data
+package com.arielnetworks.ragnalog.application
 
-case class RegisterFileRequest
+case class RegistrationRequest
 (
   containerId: String,
   archiveId: String,
@@ -8,4 +8,6 @@ case class RegisterFileRequest
   filePath: String,
   logType: String,
   extra: String,
-  priority: Int)
+  indexName: String,
+  priority: Int
+)

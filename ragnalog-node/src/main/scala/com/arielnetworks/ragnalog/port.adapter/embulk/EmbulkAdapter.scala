@@ -1,10 +1,21 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
+import java.io.{File, InputStream}
+import java.net.URL
+import java.nio.file.{Files, Path, Paths, StandardCopyOption}
+import java.util.stream.Collectors
+
+import com.arielnetworks.ragnalog.application.{RegistrationRequest, RegistrationResponse}
 import com.arielnetworks.ragnalog.domain.model.RegistrationService
-import com.google.inject.{Guice, Module}
-import org.embulk.plugin.{PluginClassLoaderFactory, PluginClassLoaderModule}
+import com.arielnetworks.ragnalog.support.ArchiveUtil
+import com.arielnetworks.ragnalog.support.LoanSupport._
+import com.google.inject.{Binder, Guice, Module}
+import org.embulk.EmbulkEmbed
+import org.embulk.plugin.{InjectedPluginSource, PluginClassLoaderFactory, PluginClassLoaderModule}
+import org.embulk.spi.{FilterPlugin, InputPlugin, OutputPlugin, ParserPlugin}
 
 import scala.collection.JavaConversions._
+import scala.concurrent.Future
 
 class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends RegistrationService {
 
@@ -12,146 +23,125 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
   val injector = Guice.createInjector(modules)
   val factory = injector.getInstance(classOf[PluginClassLoaderFactory])
 
-/*
-  embulkSetting = config.getEmbulk();
-  val elasticsearchSetting = config.getElasticsearch();
+  val embulkSetting = embulkConfiguration
+  //  val elasticsearchSetting = config.getElasticsearch
 
-  logTypesSetting = embulkSetting.getTypes();
+  val logTypesSetting = embulkSetting.types
 
-  //TODO: 設定が見つからなかったときにエラー出す
   val embulkEmbed = prepare(embulkSetting)
 
-  uploadedDir = config.getUploader().getUploadedDir();
+  //  val uploadedDir = config.getUploader().getUploadedDir
 
-  generatorMap = ImmutableMap.< String, ConfigurationGenerator > builder()
-    .put("grok", new GrokConfigurationGenerator(embulkSetting, elasticsearchSetting))
-    .put("sar", new SarConfigurationGenerator(embulkSetting, elasticsearchSetting))
-    .put("csv", new CsvConfigurationGenerator(embulkSetting, elasticsearchSetting))
-    .build();
+  val generator = new EmbulkYamlGenerator(Map())
+  val preprocessors: Map[String, Preprocessor] = Map()
 
-
-  val logTypesSetting: Map[String, TypeConfiguration]
-  val factory: PluginClassLoaderFactory
-  val uploadedDir: String
-  val generatorMap: Map[String, ConfigurationGenerator]
-  val embulkSetting: EmbulkConfiguration
-
+  def recursiveListFiles(f: File): Array[File] = {
+    val these = f.listFiles
+    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
+  }
 
   def prepare(config: EmbulkConfiguration): EmbulkEmbed = {
 
     val bootstrap = new EmbulkEmbed.Bootstrap()
-    val systemConfig = bootstrap.getSystemConfigLoader().newConfigSource()
-    systemConfig.set("log_path", config.getLogPath());
+    val systemConfig = bootstrap.getSystemConfigLoader.newConfigSource
+
+    systemConfig.set("log_path", config.logPath)
     bootstrap.setSystemConfig(systemConfig)
 
-    for (Map.Entry < String, EmbulkConfiguration.PluginConfiguration > entry: config.getPlugins ().entrySet())
-    {
+    for ((key, value) <- config.plugins) {
 
-      logger.info("add plugin: " + entry.getValue().getFullName());
-      Path classpath = Paths.get(config.getPluginsPath(), entry.getValue().getFullName(), "classpath");
+      val classpath = Paths.get(config.pluginsPath, value.fullName, "classpath")
 
-      List < URL > urls;
+      //TODO: need recover?
+      val urls = recursiveListFiles(classpath.toFile).map(f => f.toURI.toURL).toList
+
+      val pluginLoader = factory.create(urls, Thread.currentThread.getContextClassLoader)
       try {
-        urls = Files.list(classpath).map(x -> {
-          try {
-            return x.toUri().toURL();
-          } catch (MalformedURLException e) {
-            return null;
-          }
-        }).collect(Collectors.toList());
-      } catch (IOException e) {
-        logger.error(e);
-        continue;
-      }
-
-      PluginClassLoader pluginLoader = factory.create(urls, Thread.currentThread().getContextClassLoader());
-
-      try {
-        Class <?> pluginClass = pluginLoader.loadClass(entry.getValue().getClassName());
+        val pluginClass = pluginLoader.loadClass(value.className)
         bootstrap.addModules(new Module() {
-          @Override
-          public void configure(Binder binder) {
+          override
+          def configure(binder: Binder) {
             InjectedPluginSource.registerPluginTo(
               binder,
-              getPluginType(entry.getValue().getType()),
-              entry.getKey(),
+              getPluginType(value.typeName).get, //TODO
+              key,
               pluginClass
-            );
+            )
           }
-        });
-      } catch (ClassNotFoundException e) {
-        logger.error(e);
+        })
+      } catch {
+        case e: Throwable =>
       }
-
     }
-
-    return bootstrap.initialize();
+    bootstrap.initialize()
   }
 
-  //TODO: もうちょっとマシな実装にしよう
-  private Class <?> getPluginType(String pluginType) {
-    switch(pluginType) {
-      case "input":
-      return InputPlugin.class;
-      case "parser":
-      return ParserPlugin.class;
-      case "filter":
-      return FilterPlugin.class;
-      case "output":
-      return OutputPlugin.class;
-      default:
-      return null;
+  private def getPluginType(pluginType: String): Option[Class[_]] = {
+    pluginType match {
+      case "input" => Some(classOf[InputPlugin])
+      case "parser" => Some(classOf[ParserPlugin])
+      case "filter" => Some(classOf[FilterPlugin])
+      case "output" => Some(classOf[OutputPlugin])
+      case _ => None
     }
   }
 
-  def run (req:RegistrationRequest):Future[RegistrationResponse] = {
+  def run(req: RegistrationRequest): Future[RegistrationResponse] = {
     try {
-      val typeConfig = logTypesSetting.get(req.getLogType())
-      val generator = generatorMap.get(typeConfig.getParser())
+      val typeConfig = logTypesSetting.get(req.logType).get
+      //      val generator = generatorMap.get(typeConfig.parser)
 
-      val archiveFilePath = Paths.get(uploadedDir, req.getContainerId(), req.getArchiveId(), req.getArchiveFileName()).toString();
+      val archiveFilePath = req.archiveFileName
 
-      val targetFile = File.createTempFile("temp", "log", new File(embulkSetting.getTemporaryPath()));
-      try (InputStream is = ArchiveUtil.getTargetStream(archiveFilePath, req.getFilePath())) {
-        Files.copy(is, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-      }
+      var targetFile = File.createTempFile("temp", "log", new File(embulkSetting.temporaryPath))
+      ArchiveUtil.getTargetStream(archiveFilePath, req.filePath).map(stream => {
+        Files.copy(stream, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)
+      }) //TODO: close stream, handle error
 
-      val indexName = IndexBuilder.getFullIndex(req.getContainerId(), req.getLogType(), req.getArchiveId(), req.getFilePath());
+      val indexName = req.indexName
 
       // preprocess
-      targetFile = generator.preprocess(targetFile);
+      if (!typeConfig.preprocessor.isEmpty) {
+        targetFile = preprocessors.get(typeConfig.preprocessor).map(p => p.preprocess(targetFile)).getOrElse(targetFile)
+      }
 
       // generate config file
-      String configPath = generator.generate(req.getLogType(), targetFile.toPath(), indexName, req.getExtra());
-      logger.info("generated yaml: " + configPath);
-      ConfigLoader loader = embulkEmbed.newConfigLoader();
-      ConfigSource config = loader.fromYamlFile(new File(configPath));
+      //      val configPath = generator.generate(req.getLogType(), targetFile.toPath(), indexName, req.getExtra())
+      val configPath = generator.generate(new URL(typeConfig.template), Map(
+        "indexName" -> indexName,
+        "extra" -> req.extra,
+        "input_file" -> targetFile
+      ))
+      //      logger.info("generated yaml: " + configPath);
+      val loader = embulkEmbed.newConfigLoader()
+      val config = loader.fromYamlFile(new File(configPath))
 
       // guess
-      if (typeConfig.isDoGuess()) {
-        ConfigDiff diff = embulkEmbed.guess(config);
-        config.merge(diff);
+      if (typeConfig.doGuess) {
+        val diff = embulkEmbed.guess(config)
+        config.merge(diff)
       }
 
-      logger.info(config);
-
+      //      logger.info(config)
       // run
-      logger.info("embulk running...");
-      ExecutionResult result = embulkEmbed.run(config);
-      logger.info("embulk done.");
-      RegisterResponse res = new RegisterResponse();
-      res.setErrorCount(result.getIgnoredExceptions().size());
-      if (result.getIgnoredExceptions().isEmpty()) {
-        res.setErrorMessage("");
-      } else {
-        res.setErrorMessage(result.getIgnoredExceptions().size() + " errors. first message: " + result.getIgnoredExceptions().get(0).getMessage());
+      //      logger.info("embulk running...")
+      val result = embulkEmbed.run(config)
+      //      logger.info("embulk done.")
+      val errorCount = result.getIgnoredExceptions.size()
+      val res =
+        if (result.getIgnoredExceptions.isEmpty) {
+          new RegistrationResponse("", errorCount)
+        } else {
+          new RegistrationResponse(result.getIgnoredExceptions.size + " errors. first message: " + result.getIgnoredExceptions.get(0).getMessage, errorCount)
+        }
+
+      Future.successful(res)
+    } catch {
+      case e: Throwable => {
+        //logger.error(e)
+        Future.failed(e)
       }
-      return Observable.just(res);
-    } catch (Throwable e) {
-      logger.error(e);
-      return Observable.error(e);
     }
 
   }
-  */
 }

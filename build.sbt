@@ -44,6 +44,7 @@ lazy val root = (project in file("."))
 
 lazy val master = (project in file("ragnalog-master"))
   .aggregate(common)
+  .dependsOn(common)
   .settings(baseSettings:_*)
   .settings(
     libraryDependencies ++= libraries
@@ -51,6 +52,7 @@ lazy val master = (project in file("ragnalog-master"))
 
 lazy val node = (project in file("ragnalog-node"))
   .aggregate(common)
+  .dependsOn(common)
   .settings(baseSettings:_*)
   .settings(
     libraryDependencies ++= libraries

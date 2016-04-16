@@ -7,12 +7,15 @@ import org.stringtemplate.v4.ST
 import scala.io.Source
 
 
-class EmbulkYamlGenerator(bindings: Map[String, Any]) {
+class EmbulkYamlGenerator(baseParams: Map[String, Any]) {
 
-  def generate(uri: URL): String = {
-    val template = Source.fromURL(uri).getLines().mkString(System.lineSeparator())
+  def generate(templateYamlPath: URL, specificParams: Map[String, Any]): String = {
+    val template = Source.fromURL(templateYamlPath).getLines().mkString(System.lineSeparator())
     val st = new ST(template)
-    bindings.foreach { case (key, value) =>
+
+    val params = baseParams ++ specificParams
+
+    params.foreach { case (key, value) =>
       value match {
         case items: List[_] => items.foreach(item => st.add(key, item))
         case itemMap: Map[_, _] => itemMap.foreach { case (k: String, v: Object) => st.addAggr(s"$key.{key, value}", k, v) }
