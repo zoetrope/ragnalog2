@@ -16,7 +16,9 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
   val logTypesSetting = embulkSetting.types
   val embulkFacadeFactory = new EmbulkFacadeFactory(embulkConfiguration)
 
+  //TODO: set base parameter
   val generator = new EmbulkYamlGenerator(Map())
+  //TODO: set preprocessors
   val preprocessors: Map[String, Preprocessor] = Map()
 
   def run(req: RegistrationRequest): Future[RegistrationResponse] = {
@@ -30,21 +32,22 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
         Files.copy(stream, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)
       }) //TODO: close stream, handle error
 
-      val indexName = req.indexName
-
       // preprocess
       if (!typeConfig.preprocessor.isEmpty) {
-        targetFile = preprocessors.get(typeConfig.preprocessor).map(p => p.preprocess(targetFile)).getOrElse(targetFile)
+        targetFile = preprocessors.get(typeConfig.preprocessor)
+          .map(p => p.preprocess(targetFile))
+          .getOrElse(targetFile)
       }
 
       // generate config file
-      val configPath = generator.generate(new URL(typeConfig.template), Map(
-        "indexName" -> indexName,
+      //TODO: build parameters
+      val generatedYamlPath = generator.generate(new URL(typeConfig.template), Map(
+        "indexName" -> req.indexName,
         "extra" -> req.extra,
         "input_file" -> targetFile
       ))
       //      logger.info("generated yaml: " + configPath);
-      val embulkFacade = embulkFacadeFactory.create(configPath)
+      val embulkFacade = embulkFacadeFactory.create(generatedYamlPath)
 
       // guess
       if (typeConfig.doGuess) {

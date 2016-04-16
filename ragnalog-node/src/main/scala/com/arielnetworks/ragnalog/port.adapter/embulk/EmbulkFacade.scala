@@ -24,6 +24,7 @@ class EmbulkFacade(embulkEmbed:EmbulkEmbed, configPath:String) {
       if (result.getIgnoredExceptions.isEmpty) {
         new RegistrationResponse("", errorCount)
       } else {
+        //TODO: This message should be assemble by Application layer.
         new RegistrationResponse(result.getIgnoredExceptions.size + " errors. first message: " + result.getIgnoredExceptions.get(0).getMessage, errorCount)
       }
 
