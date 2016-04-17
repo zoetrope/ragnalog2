@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.application
 
-case class RegistrationRequest
+case class RegistrationCommand
 (
   containerId: String,
   archiveId: String,

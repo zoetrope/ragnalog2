@@ -2,7 +2,7 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io.File
 
-import com.arielnetworks.ragnalog.application.RegistrationResponse
+import com.arielnetworks.ragnalog.application.RegistrationResult
 import org.embulk.EmbulkEmbed
 
 class EmbulkFacade(embulkEmbed:EmbulkEmbed, configPath:String) {
@@ -16,16 +16,16 @@ class EmbulkFacade(embulkEmbed:EmbulkEmbed, configPath:String) {
   }
 
   //TODO: Should this class have RegistrationResponse?
-  def run(): RegistrationResponse = {
+  def run(): RegistrationResult = {
 
     val result = embulkEmbed.run(config)
     val errorCount = result.getIgnoredExceptions.size()
     val res =
       if (result.getIgnoredExceptions.isEmpty) {
-        new RegistrationResponse("", errorCount)
+        new RegistrationResult("", errorCount)
       } else {
         //TODO: This message should be assemble by Application layer.
-        new RegistrationResponse(result.getIgnoredExceptions.size + " errors. first message: " + result.getIgnoredExceptions.get(0).getMessage, errorCount)
+        new RegistrationResult(result.getIgnoredExceptions.size + " errors. first message: " + result.getIgnoredExceptions.get(0).getMessage, errorCount)
       }
 
     return res

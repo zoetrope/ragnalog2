@@ -1,22 +1,24 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
+import org.embulk.plugin.PluginType
+
 case class PluginConfiguration
 (
-  typeName: String,
+  pluginType: String, //TODO:
   className: String,
-  fullName: String,
+  pluginName: String,
   params: Map[String, Any]
 )
 
-case class TypeConfiguration
+case class RegistrationConfiguration
 (
-  name: String,
-  description: String,
+  logType: String,
+  description: Option[String],
   parser: String,
   filters: Seq[String],
   timeField: String,
   template: String,
-  preprocessor: String,
+  preprocessor: Option[String],
   doGuess: Boolean
 )
 
@@ -26,6 +28,6 @@ case class EmbulkConfiguration
   logPath: String,
   temporaryPath: String,
   plugins: Map[String, PluginConfiguration],
-  types: Map[String, TypeConfiguration]
+  registrations: Map[String, RegistrationConfiguration]
 )
 

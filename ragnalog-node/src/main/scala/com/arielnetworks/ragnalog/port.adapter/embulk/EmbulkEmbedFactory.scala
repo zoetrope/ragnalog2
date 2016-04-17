@@ -37,7 +37,7 @@ object EmbulkEmbedFactory {
   private def loadPlugin(bootstrap: EmbulkEmbed.Bootstrap, pluginsPath: String, pluginConfiguration: Map[String, PluginConfiguration]) = {
     for ((key, value) <- pluginConfiguration) {
 
-      val classpath = Paths.get(pluginsPath, value.fullName, "classpath")
+      val classpath = Paths.get(pluginsPath, value.pluginName, "classpath")
 
       //TODO: need recover?
       val urls = recursiveListFiles(classpath.toFile).map(f => f.toURI.toURL).toList
@@ -49,7 +49,7 @@ object EmbulkEmbedFactory {
         def configure(binder: Binder) {
           InjectedPluginSource.registerPluginTo(
             binder,
-            getPluginType(value.typeName).get, //TODO
+            getPluginType(value.pluginType).get, //TODO
             key,
             pluginClass
           )
