@@ -20,35 +20,41 @@ object EmbulkEmbedFactory {
 
     try {
       val bootstrap = new EmbulkEmbed.Bootstrap()
-      val systemConfig = bootstrap.getSystemConfigLoader.newConfigSource
-
-      systemConfig.set("log_path", config.logPath)
-      bootstrap.setSystemConfig(systemConfig)
-
-      for ((key, value) <- config.plugins) {
-
-        val classpath = Paths.get(config.pluginsPath, value.fullName, "classpath")
-
-        //TODO: need recover?
-        val urls = recursiveListFiles(classpath.toFile).map(f => f.toURI.toURL).toList
-
-        val pluginLoader = factory.create(urls, Thread.currentThread.getContextClassLoader)
-        val pluginClass = pluginLoader.loadClass(value.className)
-        bootstrap.addModules(new Module() {
-          override
-          def configure(binder: Binder) {
-            InjectedPluginSource.registerPluginTo(
-              binder,
-              getPluginType(value.typeName).get, //TODO
-              key,
-              pluginClass
-            )
-          }
-        })
-      }
+      configure(bootstrap, config.logPath)
+      loadPlugin(bootstrap, config.pluginsPath, config.plugins)
       Some(bootstrap.initialize())
     } catch {
       case e: Throwable => None
+    }
+  }
+
+  private def configure(bootstrap: EmbulkEmbed.Bootstrap, logPath: String) = {
+    val systemConfig = bootstrap.getSystemConfigLoader.newConfigSource
+    systemConfig.set("log_path", logPath)
+    bootstrap.setSystemConfig(systemConfig)
+  }
+
+  private def loadPlugin(bootstrap: EmbulkEmbed.Bootstrap, pluginsPath: String, pluginConfiguration: Map[String, PluginConfiguration]) = {
+    for ((key, value) <- pluginConfiguration) {
+
+      val classpath = Paths.get(pluginsPath, value.fullName, "classpath")
+
+      //TODO: need recover?
+      val urls = recursiveListFiles(classpath.toFile).map(f => f.toURI.toURL).toList
+
+      val pluginLoader = factory.create(urls, Thread.currentThread.getContextClassLoader)
+      val pluginClass = pluginLoader.loadClass(value.className)
+      bootstrap.addModules(new Module() {
+        override
+        def configure(binder: Binder) {
+          InjectedPluginSource.registerPluginTo(
+            binder,
+            getPluginType(value.typeName).get, //TODO
+            key,
+            pluginClass
+          )
+        }
+      })
     }
   }
 
