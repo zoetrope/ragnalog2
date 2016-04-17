@@ -3,8 +3,10 @@ package com.arielnetworks.ragnalog.port.adapter.kibana
 import com.arielnetworks.ragnalog.domain.model.archive.LogFile
 import org.joda.time.DateTime
 import org.stringtemplate.v4.ST
+import com.arielnetworks.ragnalog.support.JodaTimeSupport._
 
 class GraphLinkGenerator(hostName: String) {
+
 
   def generate(templates: Seq[GraphLinkTemplate], logFiles: Seq[LogFile]): Seq[GraphLink] = {
     val filesGroupedByLogType = logFiles.filter(f => f.fileType.isDefined).groupBy(_.fileType.get) //TODO
@@ -15,7 +17,7 @@ class GraphLinkGenerator(hostName: String) {
         val from = files.collect({ case d if d.from.isDefined => d.from.get }).min //TODO: need getOrElse?
         val to = files.collect({ case d if d.to.isDefined => d.to.get }).max
         val link = apply(template, files, from, to)
-        val count = files.map(_.count).sum.getOrElse(0L)
+        val count = files.map(_.count.getOrElse(0L)).sum
 
         new GraphLink(link, from, to, template.name, template.logType, template.description, count)
       }
