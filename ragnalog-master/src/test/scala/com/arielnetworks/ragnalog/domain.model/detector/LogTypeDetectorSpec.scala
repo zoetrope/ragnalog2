@@ -13,6 +13,6 @@ class LogTypeDetectorSpec extends FunSpec with DiagrammedAssertions {
   )
   describe("detect") {
     val logType = detector.detect("/tmp/apache.access.log")
-    assert(logType == Some("apache.access"))
+    assert(logType.contains("apache.access"))
   }
 }
