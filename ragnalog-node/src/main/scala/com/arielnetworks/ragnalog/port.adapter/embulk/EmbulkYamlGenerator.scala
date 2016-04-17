@@ -15,6 +15,7 @@ class EmbulkYamlGenerator(baseParams: Map[String, Any]) {
 
     val params = baseParams ++ specificParams
 
+    //TODO: to recursive?
     params.foreach { case (key, value) =>
       value match {
         case items: List[_] => items.foreach(item => st.add(key, item))

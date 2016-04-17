@@ -20,37 +20,37 @@ object EmbulkEmbedFactory {
 
     try {
       val bootstrap = new EmbulkEmbed.Bootstrap()
-      configure(bootstrap, config.logPath)
-      loadPlugin(bootstrap, config.pluginsPath, config.plugins)
+      configure(bootstrap, config)
+      loadPlugin(bootstrap, config)
       Some(bootstrap.initialize())
     } catch {
       case e: Throwable => None
     }
   }
 
-  private def configure(bootstrap: EmbulkEmbed.Bootstrap, logPath: String) = {
+  private def configure(bootstrap: EmbulkEmbed.Bootstrap, config: EmbulkConfiguration) = {
     val systemConfig = bootstrap.getSystemConfigLoader.newConfigSource
-    systemConfig.set("log_path", logPath)
+    systemConfig.set("log_path", config.logFilePath)
     bootstrap.setSystemConfig(systemConfig)
   }
 
-  private def loadPlugin(bootstrap: EmbulkEmbed.Bootstrap, pluginsPath: String, pluginConfiguration: Map[String, PluginConfiguration]) = {
-    for ((key, value) <- pluginConfiguration) {
+  private def loadPlugin(bootstrap: EmbulkEmbed.Bootstrap, config: EmbulkConfiguration) = {
+    for ((pluginName, plugin) <- config.plugins) {
 
-      val classpath = Paths.get(pluginsPath, value.pluginName, "classpath")
+      val classpath = Paths.get(config.pluginsDirectory, plugin.pluginName, "classpath")
 
       //TODO: need recover?
       val urls = recursiveListFiles(classpath.toFile).map(f => f.toURI.toURL).toList
 
       val pluginLoader = factory.create(urls, Thread.currentThread.getContextClassLoader)
-      val pluginClass = pluginLoader.loadClass(value.className)
+      val pluginClass = pluginLoader.loadClass(plugin.className)
       bootstrap.addModules(new Module() {
         override
         def configure(binder: Binder) {
           InjectedPluginSource.registerPluginTo(
             binder,
-            getPluginType(value.pluginType).get, //TODO
-            key,
+            getPluginType(plugin.pluginType).get, //TODO
+            pluginName,
             pluginClass
           )
         }
