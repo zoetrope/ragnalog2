@@ -8,7 +8,7 @@ import org.embulk.EmbulkEmbed
 import org.embulk.plugin.{InjectedPluginSource, PluginClassLoaderFactory, PluginClassLoaderModule}
 import org.embulk.spi.{FilterPlugin, InputPlugin, OutputPlugin, ParserPlugin}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConversions._ //TODO: deprecated
 
 object EmbulkEmbedFactory {
 

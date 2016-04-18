@@ -5,7 +5,7 @@ import java.util
 import org.scalatest.matchers.{MatchResult, Matcher}
 import org.yaml.snakeyaml.Yaml
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConversions._ //TODO: deprecated
 import scala.collection.mutable
 
 trait CustomMatchers {
