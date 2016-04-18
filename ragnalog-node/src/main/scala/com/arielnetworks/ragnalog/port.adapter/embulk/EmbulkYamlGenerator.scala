@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
-import java.net.URL
+import java.nio.file.Path
 
 import org.stringtemplate.v4.ST
 
@@ -9,8 +9,8 @@ import scala.io.Source
 
 class EmbulkYamlGenerator(baseParams: Map[String, Any]) {
 
-  def generate(templateYamlPath: URL, specificParams: Map[String, Any]): String = {
-    val template = Source.fromURL(templateYamlPath).getLines().mkString(System.lineSeparator())
+  def generate(templateYamlPath: Path, specificParams: Map[String, Any]): String = {
+    val template = Source.fromFile(templateYamlPath.toFile).getLines().mkString(System.lineSeparator())
     val st = new ST(template)
 
     val params = baseParams ++ specificParams

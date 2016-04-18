@@ -40,7 +40,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
 
       // generate config file
       //TODO: build parameters
-      val generatedYamlPath = generator.generate(registrationConfig.template.toUri.toURL, Map(
+      val generatedYamlPath = generator.generate(registrationConfig.template, Map(
         "indexName" -> command.indexName,
         "extra" -> command.extra,
         "input_file" -> targetFile
