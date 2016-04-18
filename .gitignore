@@ -2,3 +2,7 @@
 target/
 .idea/
 esdata/
+tmp
+
+etc/embulk/bin/
+etc/embulk/plugins/

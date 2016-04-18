@@ -1,5 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
+import java.nio.file.Paths
+
 import com.arielnetworks.ragnalog.test.CustomMatchers
 import org.scalatest.Matchers._
 import org.scalatest.{DiagrammedAssertions, FunSpec}
@@ -24,8 +26,8 @@ class EmbulkYamlGeneratorSpec extends FunSpec with DiagrammedAssertions with Cus
       val grokParams = Map(
         "grok/grok_pattern_files" -> List("/home/ragnalog/grok-patterns")
       )
-      val uri = getClass.getClassLoader.getResource("template/grok.txt")
-      val actual = generator.generate(uri, grokParams)
+      val uri = getClass.getClassLoader.getResource("template/grok.template")
+      val actual = generator.generate(Paths.get(uri.getPath), grokParams)
       val expected = Source.fromURL(getClass.getClassLoader.getResource("expected/grok.yml")).getLines().mkString(System.lineSeparator())
       actual should sameYaml(expected)
     }
@@ -39,14 +41,14 @@ class EmbulkYamlGeneratorSpec extends FunSpec with DiagrammedAssertions with Cus
         ),
         "sar/exclude_fields" -> List("interrupts.*")
       )
-      val uri = getClass.getClassLoader.getResource("template/sar.txt")
-      val actual = generator.generate(uri, sarParams)
+      val uri = getClass.getClassLoader.getResource("template/sar.template")
+      val actual = generator.generate(Paths.get(uri.getPath), sarParams)
       val expected = Source.fromURL(getClass.getClassLoader.getResource("expected/sar.yml")).getLines().mkString(System.lineSeparator())
       actual should sameYaml(expected)
     }
     describe("csv") {
-      val uri = getClass.getClassLoader.getResource("template/csv.txt")
-      val actual = generator.generate(uri, Map.empty)
+      val uri = getClass.getClassLoader.getResource("template/csv.template")
+      val actual = generator.generate(Paths.get(uri.getPath), Map.empty)
       val expected = Source.fromURL(getClass.getClassLoader.getResource("expected/csv.yml")).getLines().mkString(System.lineSeparator())
       actual should sameYaml(expected)
     }

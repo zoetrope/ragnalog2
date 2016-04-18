@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io.File
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
 
 import com.google.inject.{Binder, Guice, Module}
 import org.embulk.EmbulkEmbed
@@ -9,6 +9,7 @@ import org.embulk.plugin.{InjectedPluginSource, PluginClassLoaderFactory, Plugin
 import org.embulk.spi.{FilterPlugin, InputPlugin, OutputPlugin, ParserPlugin}
 
 import scala.collection.JavaConversions._ //TODO: deprecated
+import scala.util.{Failure, Success, Try}
 
 object EmbulkEmbedFactory {
 
@@ -16,30 +17,39 @@ object EmbulkEmbedFactory {
   val injector = Guice.createInjector(modules)
   val factory = injector.getInstance(classOf[PluginClassLoaderFactory])
 
-  def create(config: EmbulkConfiguration): Option[EmbulkEmbed] = {
+  def create(config: EmbulkConfiguration): Try[EmbulkEmbed] = {
 
     try {
       val bootstrap = new EmbulkEmbed.Bootstrap()
       configure(bootstrap, config)
       loadPlugin(bootstrap, config)
-      Some(bootstrap.initialize())
+      Success(bootstrap.initialize())
     } catch {
-      case e: Throwable => None
+      case e: Throwable => Failure(e)
     }
   }
 
   private def configure(bootstrap: EmbulkEmbed.Bootstrap, config: EmbulkConfiguration) = {
+//    if (!Files.exists(config.logFilePath)) {
+//      throw new IllegalArgumentException(s"${config.logFilePath} is not exist")
+//    }
+
     val systemConfig = bootstrap.getSystemConfigLoader.newConfigSource
-    systemConfig.set("log_path", config.logFilePath)
+    systemConfig.set("log_path", config.logFilePath.toString)
     bootstrap.setSystemConfig(systemConfig)
   }
 
   private def loadPlugin(bootstrap: EmbulkEmbed.Bootstrap, config: EmbulkConfiguration) = {
+    if (!Files.exists(config.pluginsDirectory)) {
+      throw new IllegalArgumentException(s"${config.pluginsDirectory} is not exist")
+    }
+
     for ((pluginName, plugin) <- config.plugins) {
+      val classpath = config.pluginsDirectory.resolve(plugin.pluginName).resolve("classpath")
+      if (!Files.exists(classpath)) {
+        throw new IllegalArgumentException(s"$classpath is not exist")
+      }
 
-      val classpath = Paths.get(config.pluginsDirectory, plugin.pluginName, "classpath")
-
-      //TODO: need recover?
       val urls = recursiveListFiles(classpath.toFile).map(f => f.toURI.toURL).toList
 
       val pluginLoader = factory.create(urls, Thread.currentThread.getContextClassLoader)
@@ -49,7 +59,7 @@ object EmbulkEmbedFactory {
         def configure(binder: Binder) {
           InjectedPluginSource.registerPluginTo(
             binder,
-            getPluginType(plugin.pluginType).get, //TODO
+            getPluginType(plugin.pluginType),
             pluginName,
             pluginClass
           )
@@ -58,13 +68,13 @@ object EmbulkEmbedFactory {
     }
   }
 
-  private def getPluginType(pluginType: String): Option[Class[_]] = {
+  private def getPluginType(pluginType: String): Class[_] = {
     pluginType match {
-      case "input" => Some(classOf[InputPlugin])
-      case "parser" => Some(classOf[ParserPlugin])
-      case "filter" => Some(classOf[FilterPlugin])
-      case "output" => Some(classOf[OutputPlugin])
-      case _ => None
+      case "input" => classOf[InputPlugin]
+      case "parser" => classOf[ParserPlugin]
+      case "filter" => classOf[FilterPlugin]
+      case "output" => classOf[OutputPlugin]
+      case x => throw new IllegalArgumentException(s"$x is invalid plugin type")
     }
   }
 

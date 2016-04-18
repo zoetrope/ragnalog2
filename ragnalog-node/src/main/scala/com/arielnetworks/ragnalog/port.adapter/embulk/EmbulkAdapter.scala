@@ -27,7 +27,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
       val archiveFilePath = command.archiveFileName
 
       //TODO: move to application layer
-      var targetFile = File.createTempFile("temp", "log", new File(embulkSetting.workingDirectory))
+      var targetFile = File.createTempFile("temp", "log", embulkSetting.workingDirectory.toFile)
       ArchiveUtil.getTargetStream(archiveFilePath, command.filePath).map(stream => {
         Files.copy(stream, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)
       }) //TODO: close stream, handle error
@@ -40,7 +40,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
 
       // generate config file
       //TODO: build parameters
-      val generatedYamlPath = generator.generate(new URL(registrationConfig.template), Map(
+      val generatedYamlPath = generator.generate(registrationConfig.template, Map(
         "indexName" -> command.indexName,
         "extra" -> command.extra,
         "input_file" -> targetFile
