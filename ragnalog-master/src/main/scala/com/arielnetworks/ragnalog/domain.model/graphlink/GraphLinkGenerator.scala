@@ -1,10 +1,11 @@
-package com.arielnetworks.ragnalog.port.adapter.kibana
+package com.arielnetworks.ragnalog.domain.model.graphlink
 
 import com.arielnetworks.ragnalog.domain.model.archive.LogFile
+import com.arielnetworks.ragnalog.support.JodaTimeSupport._
 import org.joda.time.DateTime
 import org.stringtemplate.v4.ST
-import com.arielnetworks.ragnalog.support.JodaTimeSupport._
 
+//TODO: Is this Domain Model?
 class GraphLinkGenerator(hostName: String) {
 
 

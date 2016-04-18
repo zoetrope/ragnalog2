@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.port.adapter.kibana
+package com.arielnetworks.ragnalog.domain.model.graphlink
 
 import org.joda.time.DateTime
 
