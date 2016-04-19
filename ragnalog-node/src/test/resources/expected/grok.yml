@@ -25,9 +25,9 @@ in:
       - { name: username , type: string }
       - { name: verb , type: string }
 filters:
-  - type: ragnalog
+  - type: insert
     columns:
-      extra: ap1
+      - extra: ap1
 out:
   type: elasticsearch
   nodes:

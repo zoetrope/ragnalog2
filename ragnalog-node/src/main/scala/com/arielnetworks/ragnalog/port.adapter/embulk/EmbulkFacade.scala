@@ -5,10 +5,10 @@ import java.io.File
 import com.arielnetworks.ragnalog.application.RegistrationResult
 import org.embulk.EmbulkEmbed
 
-class EmbulkFacade(embulkEmbed:EmbulkEmbed, configPath:String) {
+class EmbulkFacade(embulkEmbed: EmbulkEmbed, yaml: String) {
 
   val loader = embulkEmbed.newConfigLoader()
-  val config = loader.fromYamlFile(new File(configPath))
+  val config = loader.fromYamlString(yaml)
 
   def guess() = {
     val diff = embulkEmbed.guess(config)
@@ -35,5 +35,5 @@ class EmbulkFacade(embulkEmbed:EmbulkEmbed, configPath:String) {
 class EmbulkFacadeFactory(embulkConfiguration: EmbulkConfiguration) {
   val embulkEmbed = EmbulkEmbedFactory.create(embulkConfiguration).get //TODO:
 
-  def create(configPath:String): EmbulkFacade = new EmbulkFacade(embulkEmbed, configPath)
+  def create(configPath: String): EmbulkFacade = new EmbulkFacade(embulkEmbed, configPath)
 }

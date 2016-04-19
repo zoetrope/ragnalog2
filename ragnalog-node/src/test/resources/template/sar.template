@@ -9,9 +9,9 @@ in:
 <sar/exclude_fields:{field|
     - <field>
 }>filters:
-  - type: ragnalog
+  - type: insert
     columns:
-      extra: <extra>
+      - extra: <extra>
 out:
   type: elasticsearch
   nodes:

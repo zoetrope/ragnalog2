@@ -8,9 +8,9 @@ in:
     columns:
       - {name: timestamp, type: timestamp, format: '%m/%d/%Y %H:%M:%S.%L', timezone: '+0900'}
 filters:
-  - type: ragnalog
+  - type: insert
     columns:
-      extra: <extra>
+      - extra: <extra>
 out:
   type: elasticsearch
   nodes:

@@ -18,19 +18,27 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
 
   val embulkEmbed = EmbulkEmbedFactory.create(config)
   val baseParams = Map[String, Any](
-    "input_file" -> "/tmp/ragnalog/sample.log",
-    "extra" -> "ap1",
-    "index_name" -> "ragnalog-test",
     "elasticsearch/host" -> "localhost",
     "elasticsearch/port" -> "9300",
     "elasticsearch/cluster_name" -> "ragnalog2.elasticsearch"
   )
+  val specificParams = Map[String, Any](
+    "input_file" -> getClass.getClassLoader.getResource("log/apache_access_100.log").getPath,
+    "extra" -> "ap1",
+    "index_name" -> "ragnalog-test-20160419"
+  )
   val generator = new EmbulkYamlGenerator(baseParams)
-//  val yaml = generator.generate()
-//  val embulkFacade = new EmbulkFacade(embulkEmbed.get, yaml)
+  val regConfig = config.registrations.get("apache.access").get
+  val grokConfig = config.plugins.get("grok").get
+  val yaml = generator.generate(regConfig.template, specificParams ++ grokConfig.params)
+  val embulkFacade = new EmbulkFacade(embulkEmbed.get, yaml)
 
-  describe(""){
-
+  describe("run") {
+    println("*********************************:")
+    println(yaml)
+    println("*********************************:")
+    val result = embulkFacade.run()
+    assert(result != null)
   }
 }
 

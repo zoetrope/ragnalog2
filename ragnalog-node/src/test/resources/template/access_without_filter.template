@@ -25,10 +25,6 @@ in:
       - { name: user_agent , type: string }
       - { name: username , type: string }
       - { name: verb , type: string }
-filters:
-  - type: insert
-    columns:
-      - extra: <extra>
 out:
   type: elasticsearch
   nodes:

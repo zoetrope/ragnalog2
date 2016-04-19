@@ -17,7 +17,7 @@ trait EmbulkTestSupport {
     pluginType = "parser",
     className = "org.embulk.parser.grok.GrokParserPlugin",
     pluginName = "embulk-parser-grok-0.1.7",
-    params = Map("patternFiles" -> List(grokPatternFilePath.toString))
+    params = Map("grok/grok_pattern_files" -> List(grokPatternFilePath.toString))
   )
   val elasticsearchPluginConfig = PluginConfiguration(
     pluginType = "output",
@@ -26,13 +26,15 @@ trait EmbulkTestSupport {
     params = Map()
   )
 
+  val grokTemplate = getClass.getClassLoader.getResource("template/access_without_filter.template")
+
   val apacheAccessConfig = RegistrationConfiguration(
     name = "Apache access log",
     description = None,
     parser = "grok",
     filters = Seq(),
     timeField = "timestamp",
-    template = Paths.get(""),
+    template = Paths.get(grokTemplate.getPath),
     preprocessor = None,
     doGuess = false
   )
