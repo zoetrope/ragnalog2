@@ -7,11 +7,12 @@ import com.arielnetworks.ragnalog.port.adapter.embulk.{PluginConfiguration, Regi
 trait EmbulkTestSupport {
 
   val userDir = System.getProperty("user.dir")
-  val embulkPluginDir = Paths.get(System.getProperty("user.dir"), "etc/embulk/plugins/gems")
+  val embulkBinPath = Paths.get(System.getProperty("user.dir"), "etc/embulk/bin/embulk")
+  val embulkBundleDir = Paths.get(System.getProperty("user.dir"), "etc/embulk")
   val embulkWorkingDir = Paths.get(System.getProperty("user.dir"), "tmp/embulk/work")
   val embulkLogDir = Paths.get(System.getProperty("user.dir"), "tmp/embulk/log")
   val embulkLogFilePath = embulkLogDir.resolve("embulk.log")
-  val grokPatternFilePath = embulkPluginDir.resolve("embulk-parser-grok-0.1.7").resolve("pattern").resolve("grok-patterns")
+  val grokPatternFilePath = embulkBundleDir.resolve("embulk-parser-grok-0.1.7").resolve("pattern").resolve("grok-patterns")
 
   val grokPluginConfig = PluginConfiguration(
     pluginType = "parser",

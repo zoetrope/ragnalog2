@@ -27,10 +27,9 @@ lazy val libraries = Seq(
 
   "org.antlr" % "ST4" % "4.0.8",
 
-  "io.reactivex" %% "rxscala" % "0.26.0",
+  "org.apache.commons" % "commons-compress" % "1.9",
 
-  "org.embulk" % "embulk-core" % "0.8.8",
-  "org.embulk" % "embulk-standards" % "0.8.8",
+  "io.reactivex" %% "rxscala" % "0.26.0",
 
   "org.scalactic" %% "scalactic" % "2.2.6",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
@@ -45,7 +44,7 @@ lazy val root = (project in file("."))
 lazy val master = (project in file("ragnalog-master"))
   .aggregate(common)
   .dependsOn(common)
-  .settings(baseSettings:_*)
+  .settings(baseSettings: _*)
   .settings(
     libraryDependencies ++= libraries
   )
@@ -53,13 +52,13 @@ lazy val master = (project in file("ragnalog-master"))
 lazy val node = (project in file("ragnalog-node"))
   .aggregate(common)
   .dependsOn(common)
-  .settings(baseSettings:_*)
+  .settings(baseSettings: _*)
   .settings(
     libraryDependencies ++= libraries
   )
 
 lazy val common = (project in file("ragnalog-common"))
-  .settings(baseSettings:_*)
+  .settings(baseSettings: _*)
   .settings(
     libraryDependencies ++= libraries
   )

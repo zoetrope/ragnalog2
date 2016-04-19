@@ -6,7 +6,8 @@ import org.scalatest.{DiagrammedAssertions, FunSpec}
 class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTestSupport {
 
   val config = EmbulkConfiguration(
-    embulkPluginDir,
+    embulkBinPath,
+    embulkBundleDir,
     embulkWorkingDir,
     embulkLogFilePath,
     Map(
@@ -16,7 +17,6 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
     Map("apache.access" -> apacheAccessConfig)
   )
 
-  val embulkEmbed = EmbulkEmbedFactory.create(config)
   val baseParams = Map[String, Any](
     "elasticsearch/host" -> "localhost",
     "elasticsearch/port" -> "9300",
@@ -31,7 +31,7 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
   val regConfig = config.registrations.get("apache.access").get
   val grokConfig = config.plugins.get("grok").get
   val yaml = generator.generate(regConfig.template, specificParams ++ grokConfig.params)
-  val embulkFacade = new EmbulkFacade(embulkEmbed.get, yaml)
+  val embulkFacade = new EmbulkFacade(config, yaml)
 
   describe("run") {
     println("*********************************:")

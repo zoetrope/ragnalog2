@@ -24,7 +24,8 @@ case class RegistrationConfiguration
 
 case class EmbulkConfiguration
 (
-  pluginsDirectory: Path,
+  embulkPath: Path,
+  bundleDirectory: Path,
   workingDirectory: Path,
   logFilePath: Path,
   plugins: Map[String, PluginConfiguration],
