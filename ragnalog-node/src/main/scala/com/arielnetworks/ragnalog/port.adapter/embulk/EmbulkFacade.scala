@@ -1,10 +1,12 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io.File
+
 import scala.sys.process.Process
 import scala.language.postfixOps
-
 import com.arielnetworks.ragnalog.application.RegistrationResult
+
+import scala.util.{Failure, Success, Try}
 
 case class PluginInfo(name: String, versions: Seq[String])
 
@@ -23,13 +25,16 @@ class EmbulkFacade(config: EmbulkConfiguration) {
     null
   }
 
-  def plugins(): Seq[PluginInfo] = {
-    val ret = Process(s"$embulk gem list -b $bundleDir") !!
-
-    val pattern = """^(embulk-\S+) \((.*)\)$""".r
-    ret.split(System.lineSeparator()).collect({
-      case pattern(name, versions) => PluginInfo(name, versions.split(",").map(_.trim).toList)
-    })
+  def plugins(): Try[Seq[PluginInfo]] = {
+    try {
+      val ret = Process(s"$embulk gem list -b $bundleDir") !!
+      val pluginNamePattern = """^(embulk-\S+) \((.*)\)$""".r
+      Success(ret.split(System.lineSeparator()).collect({
+        case pluginNamePattern(name, versions) => PluginInfo(name, versions.split(",").map(_.trim).toList)
+      }))
+    } catch {
+      case e: Throwable => Failure(e)
+    }
   }
 }
 

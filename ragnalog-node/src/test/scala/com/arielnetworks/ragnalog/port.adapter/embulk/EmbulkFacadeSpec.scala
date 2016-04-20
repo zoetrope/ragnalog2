@@ -5,6 +5,8 @@ import java.nio.file.Paths
 import com.arielnetworks.ragnalog.test.EmbulkTestSupport
 import org.scalatest.{DiagrammedAssertions, FunSpec}
 
+import scala.util.{Failure, Success}
+
 class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTestSupport {
 
   val config = EmbulkConfiguration(
@@ -47,16 +49,18 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
   }
 
   describe("plugins") {
-
-    println("*********************************:")
-    println(yaml)
-    println("*********************************:")
-    val result = embulkFacade.plugins()
-    println(result)
-    assert(result != null)
+    it("should be c") {
+      embulkFacade.plugins() match {
+        case Success(r) =>
+          assert(r.exists(p => p.name == "embulk-output-elasticsearch"))
+          assert(r.exists(p => p.name == "embulk-parser-grok"))
+          assert(r.exists(p => p.name == "embulk-filter-insert"))
+        case Failure(e) => fail(e)
+      }
+    }
   }
 
-  describe("invalid") {
+  ignore("invalid") {
     describe("invalid embulk path") {
 
       val invalidConfig = EmbulkConfiguration(
@@ -68,10 +72,7 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
       )
 
       val embulkFacade = new EmbulkFacade(invalidConfig)
-
-      val result = embulkFacade.plugins()
-
-      assert(result != null)
+      embulkFacade.plugins()
     }
     describe("invalid bundle dir") {
 
