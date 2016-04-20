@@ -6,28 +6,34 @@ import scala.language.postfixOps
 
 import com.arielnetworks.ragnalog.application.RegistrationResult
 
-class EmbulkFacade(config: EmbulkConfiguration, yaml: String) {
+case class PluginInfo(name: String, versions: Seq[String])
+
+class EmbulkFacade(config: EmbulkConfiguration) {
+
+  val embulk = config.embulkPath
+  val bundleDir = config.bundleDirectory
 
 
   def guess() = {
   }
 
   //TODO: Should this class have RegistrationResponse?
-  def run(): RegistrationResult = {
+  def run(yaml: String): RegistrationResult = {
 
     null
   }
 
-  def plugins(): Seq[String] = {
-    val ret = Process(config.embulkPath.toString + " gem list -b " + config.bundleDirectory.toString) !!
+  def plugins(): Seq[PluginInfo] = {
+    val ret = Process(s"$embulk gem list -b $bundleDir") !!
 
-    println(ret)
-
-    ret.split("\n").filter(_.startsWith("embulk-"))
+    val pattern = """^(embulk-\S+) \((.*)\)$""".r
+    ret.split(System.lineSeparator()).collect({
+      case pattern(name, versions) => PluginInfo(name, versions.split(",").map(_.trim).toList)
+    })
   }
 }
 
 class EmbulkFacadeFactory(embulkConfiguration: EmbulkConfiguration) {
 
-  def create(configPath: String): EmbulkFacade = new EmbulkFacade(embulkConfiguration, configPath)
+  def create(configPath: String): EmbulkFacade = new EmbulkFacade(embulkConfiguration)
 }

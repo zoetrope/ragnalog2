@@ -1,5 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
+import java.nio.file.Paths
+
 import com.arielnetworks.ragnalog.test.EmbulkTestSupport
 import org.scalatest.{DiagrammedAssertions, FunSpec}
 
@@ -10,10 +12,6 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
     embulkBundleDir,
     embulkWorkingDir,
     embulkLogFilePath,
-    Map(
-      "grok" -> grokPluginConfig,
-      "elasticsearch" -> elasticsearchPluginConfig
-    ),
     Map("apache.access" -> apacheAccessConfig)
   )
 
@@ -28,17 +26,62 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
     "index_name" -> "ragnalog-test-20160419"
   )
   val generator = new EmbulkYamlGenerator(baseParams)
-  val regConfig = config.registrations.get("apache.access").get
-  val grokConfig = config.plugins.get("grok").get
-  val yaml = generator.generate(regConfig.template, specificParams ++ grokConfig.params)
-  val embulkFacade = new EmbulkFacade(config, yaml)
+  val accessConfig = config.registrations.get("apache.access").get
+  val yaml = generator.generate(accessConfig.template, specificParams ++ accessConfig.params)
+  val embulkFacade = new EmbulkFacade(config)
 
   describe("run") {
+    describe("register apache access log") {
+
+    }
+    describe("parse error") {
+
+    }
+    describe("elasticsearch is down") {
+
+    }
+  }
+
+  describe("guess") {
+
+  }
+
+  describe("plugins") {
+
     println("*********************************:")
     println(yaml)
     println("*********************************:")
-    val result = embulkFacade.run()
+    val result = embulkFacade.plugins()
+    println(result)
     assert(result != null)
+  }
+
+  describe("invalid") {
+    describe("invalid embulk path") {
+
+      val invalidConfig = EmbulkConfiguration(
+        Paths.get("invalid path"),
+        embulkBundleDir,
+        embulkWorkingDir,
+        embulkLogFilePath,
+        Map("apache.access" -> apacheAccessConfig)
+      )
+
+      val embulkFacade = new EmbulkFacade(invalidConfig)
+
+      val result = embulkFacade.plugins()
+
+      assert(result != null)
+    }
+    describe("invalid bundle dir") {
+
+    }
+    describe("plugin not found") {
+
+    }
+    describe("invalid yaml") {
+
+    }
   }
 }
 

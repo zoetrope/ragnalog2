@@ -2,14 +2,6 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.nio.file.Path
 
-case class PluginConfiguration
-(
-  pluginType: String, //TODO: to enum?
-  className: String,
-  pluginName: String,
-  params: Map[String, Any]
-)
-
 case class RegistrationConfiguration
 (
   name: String,
@@ -19,7 +11,8 @@ case class RegistrationConfiguration
   timeField: String,
   template: Path,
   preprocessor: Option[String],
-  doGuess: Boolean
+  doGuess: Boolean,
+    params: Map[String, Any]
 )
 
 case class EmbulkConfiguration
@@ -28,7 +21,6 @@ case class EmbulkConfiguration
   bundleDirectory: Path,
   workingDirectory: Path,
   logFilePath: Path,
-  plugins: Map[String, PluginConfiguration],
   registrations: Map[String, RegistrationConfiguration]
 )
 

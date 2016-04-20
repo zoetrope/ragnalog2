@@ -55,7 +55,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
 
       // run
       //      logger.info("embulk running...")
-      val result = embulkFacade.run()
+      val result = embulkFacade.run(generatedYamlPath)
       //      logger.info("embulk done.")
 
       Future.successful(result)
