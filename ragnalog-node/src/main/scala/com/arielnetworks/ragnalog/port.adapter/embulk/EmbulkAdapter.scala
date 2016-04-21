@@ -9,6 +9,7 @@ import com.arielnetworks.ragnalog.domain.model.RegistrationService
 import com.arielnetworks.ragnalog.support.ArchiveUtil
 
 import scala.concurrent.Future
+import scalax.file.defaultfs.DefaultPath
 
 class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends RegistrationService {
 
@@ -27,7 +28,10 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
       val archiveFilePath = command.archiveFileName
 
       //TODO: move to application layer
-      var targetFile = File.createTempFile("temp", "log", embulkSetting.workingDirectory.toFile)
+      val jfile: File = embulkSetting.workingDirectory match {
+        case x: DefaultPath => x.jfile
+      }
+      var targetFile = File.createTempFile("temp", "log", jfile)
       ArchiveUtil.getTargetStream(archiveFilePath, command.filePath).map(stream => {
         Files.copy(stream, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)
       }) //TODO: close stream, handle error

@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
-import java.nio.file.Path
+import scalax.file.Path
 
 case class RegistrationConfiguration
 (

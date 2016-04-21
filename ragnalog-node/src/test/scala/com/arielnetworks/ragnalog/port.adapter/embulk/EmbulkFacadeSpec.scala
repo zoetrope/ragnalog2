@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
-import java.nio.file.Paths
+import scalax.file.Path
 
 import com.arielnetworks.ragnalog.support.ElasticsearchTestSupport
 import com.arielnetworks.ragnalog.test.EmbulkTestSupport
@@ -83,7 +83,7 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
     describe("invalid embulk path") {
 
       val invalidConfig = EmbulkConfiguration(
-        Paths.get("invalid path"),
+        Path("invalid path"),
         embulkBundleDir,
         embulkWorkingDir,
         Map("apache.access" -> apacheAccessConfig)

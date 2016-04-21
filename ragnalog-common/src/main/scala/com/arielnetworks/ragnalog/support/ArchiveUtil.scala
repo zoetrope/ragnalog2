@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.support
 
 import java.io.{File, FileInputStream, InputStream}
-import java.nio.file.Paths
+import scalax.file.Path
 import java.util.zip.GZIPInputStream
 
 import com.arielnetworks.ragnalog.domain.model.archive.ArchiveType
@@ -19,12 +19,12 @@ object ArchiveUtil {
       .map(entry => {
         val childArchiveType = ArchiveType.fromExtension(entry.getName)
         val iis = if (childArchiveType.isGZip) new GZIPInputStream(archiveInputStream) else archiveInputStream
-        val fileName = Paths.get(basedir, entry.getName).toString
+        val fileName = Path(basedir, entry.getName).toString
 
         if (childArchiveType.isArchive) {
           getFileListRecursive(fileName, childArchiveType.getArchiverName(), iis)
         } else if (childArchiveType.isGZip) {
-          List(Paths.get(fileName, toUngzippedName(entry.getName)).toString)
+          List(Path(fileName, toUngzippedName(entry.getName)).toString)
         } else {
           List(fileName)
         }
@@ -46,9 +46,9 @@ object ArchiveUtil {
         if (archiveType.isArchive) {
           getFileListRecursive("", archiveType.getArchiverName(), is)
         } else if (archiveType.isGZip) {
-          List(Paths.get(Paths.get(fileName).getFileName.toString, toUngzippedName(fileName)).toString)
+          List(Path(Path(fileName).name, toUngzippedName(fileName)).toString)
         } else {
-          List(Paths.get(fileName).getFileName.toString)
+          List(Path(fileName).name)
         }
     }
   }
@@ -66,11 +66,11 @@ object ArchiveUtil {
         } else {
           archiveInputStream
         }
-        val fileName = Paths.get(basedir, entry.getName).toString
+        val fileName = Path(basedir, entry.getName).toString
         if (childArchiveType.isArchive) {
           getTargetStreamRecursive(fileName, childArchiveType.getArchiverName(), iis, targetFileName)
         } else if (childArchiveType.isGZip) {
-          if (targetFileName == Paths.get(fileName, toUngzippedName(entry.getName)).toString) {
+          if (targetFileName == Path(fileName, toUngzippedName(entry.getName)).toString) {
             Some(iis)
           } else {
             None

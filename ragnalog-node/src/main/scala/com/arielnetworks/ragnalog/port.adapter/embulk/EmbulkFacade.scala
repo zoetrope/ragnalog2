@@ -1,7 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
-import java.io.File
-import java.nio.file.Path
+import scalax.file.Path
 
 import scala.sys.process.{Process, ProcessLogger}
 import scala.language.postfixOps

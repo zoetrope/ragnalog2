@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
-import java.nio.file.Paths
+import scalax.file.Path
 
 import com.arielnetworks.ragnalog.test.CustomMatchers
 import org.scalatest.Matchers._
@@ -20,14 +20,14 @@ class EmbulkYamlGeneratorSpec extends FunSpec with DiagrammedAssertions with Cus
       "elasticsearch/port" -> "9300",
       "elasticsearch/cluster_name" -> "ragnalog2.elasticsearch"
     )
-    val generator = new EmbulkYamlGenerator(Paths.get(System.getProperty("user.dir"), "tmp/embulk/work"), baseParams)
+    val generator = new EmbulkYamlGenerator(Path(System.getProperty("user.dir"), '/') / Path("tmp", "embulk", "work"), baseParams)
 
     describe("grok") {
       val grokParams = Map(
         "grok/grok_pattern_files" -> List("/home/ragnalog/grok-patterns")
       )
       val uri = getClass.getClassLoader.getResource("template/grok.template")
-      val actual = Source.fromFile(generator.generate(Paths.get(uri.getPath), grokParams).toFile).getLines().mkString(System.lineSeparator())
+      val actual = generator.generate(Path(uri.getPath, '/'), grokParams).string
       val expected = Source.fromURL(getClass.getClassLoader.getResource("expected/grok.yml")).getLines().mkString(System.lineSeparator())
       actual should sameYaml(expected)
     }
@@ -42,13 +42,13 @@ class EmbulkYamlGeneratorSpec extends FunSpec with DiagrammedAssertions with Cus
         "sar/exclude_fields" -> List("interrupts.*")
       )
       val uri = getClass.getClassLoader.getResource("template/sar.template")
-      val actual = Source.fromFile(generator.generate(Paths.get(uri.getPath), sarParams).toFile).getLines().mkString(System.lineSeparator())
+      val actual = generator.generate(Path(uri.getPath, '/'), sarParams).string
       val expected = Source.fromURL(getClass.getClassLoader.getResource("expected/sar.yml")).getLines().mkString(System.lineSeparator())
       actual should sameYaml(expected)
     }
     describe("csv") {
       val uri = getClass.getClassLoader.getResource("template/csv.template")
-      val actual = Source.fromFile(generator.generate(Paths.get(uri.getPath), Map.empty).toFile).getLines().mkString(System.lineSeparator())
+      val actual = generator.generate(Path(uri.getPath, '/'), Map.empty).string
       val expected = Source.fromURL(getClass.getClassLoader.getResource("expected/csv.yml")).getLines().mkString(System.lineSeparator())
       actual should sameYaml(expected)
     }

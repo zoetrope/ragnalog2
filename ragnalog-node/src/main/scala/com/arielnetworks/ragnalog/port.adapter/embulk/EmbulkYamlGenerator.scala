@@ -1,18 +1,20 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io._
-import java.nio.file.{Files, Path}
+import java.nio.file.Files
 
+import scalax.file.Path
 import com.arielnetworks.ragnalog.support.LoanSupport
 import org.stringtemplate.v4.ST
 
-import scala.io.Source
+import scala.io.{Codec, Source}
+import scalax.file.defaultfs.DefaultPath
 
 
 class EmbulkYamlGenerator(workDir: Path, baseParams: Map[String, Any]) extends LoanSupport {
 
   def generate(templateYamlPath: Path, specificParams: Map[String, Any]): Path = {
-    val template = Source.fromFile(templateYamlPath.toFile).getLines().mkString(System.lineSeparator())
+    val template = templateYamlPath.string
     val st = new ST(template)
 
     val params = baseParams ++ specificParams
@@ -27,11 +29,14 @@ class EmbulkYamlGenerator(workDir: Path, baseParams: Map[String, Any]) extends L
     }
     val yaml = st.render()
 
-    Files.createDirectories(workDir)
-    val generatedYaml = File.createTempFile("temp", ".yml", workDir.toFile)
+    workDir.createDirectory(failIfExists = false)
+    val jfile: File = workDir match {
+      case x: DefaultPath => x.jfile
+    }
+    val generatedYaml = File.createTempFile("temp", ".yml", jfile)
     using[Unit, PrintWriter](new PrintWriter(generatedYaml)) { writer =>
       writer.write(yaml)
     }
-    generatedYaml.toPath
+    Path(generatedYaml)
   }
 }

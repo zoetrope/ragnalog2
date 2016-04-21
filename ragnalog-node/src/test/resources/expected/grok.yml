@@ -5,7 +5,7 @@ in:
     charset: UTF-8
     newline: CRLF
     type: grok
-    grok_pattern: "%{APACHELOG}"
+    grok_pattern: "%{COMMONAPACHELOG}"
     grok_pattern_files:
       - /home/ragnalog/grok-patterns
     timestamp_parser: sdf

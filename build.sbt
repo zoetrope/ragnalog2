@@ -27,6 +27,9 @@ lazy val libraries = Seq(
 
   "org.antlr" % "ST4" % "4.0.8",
 
+  "com.github.scala-incubator.io" %% "scala-io-core" % "0.4.3",
+  "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.3",
+
   "org.apache.commons" % "commons-compress" % "1.9",
 
   "io.reactivex" %% "rxscala" % "0.26.0",
