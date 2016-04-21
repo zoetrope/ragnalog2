@@ -17,7 +17,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
   val embulkFacadeFactory = new EmbulkFacadeFactory(embulkConfiguration)
 
   //TODO: set base parameter
-  val generator = new EmbulkYamlGenerator(Map())
+  val generator = new EmbulkYamlGenerator(embulkSetting.workingDirectory, Map())
   //TODO: set preprocessors
   val preprocessors: Map[String, Preprocessor] = Map()
 
@@ -46,7 +46,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
         "input_file" -> targetFile
       ))
       //      logger.info("generated yaml: " + configPath);
-      val embulkFacade = embulkFacadeFactory.create(generatedYamlPath)
+      val embulkFacade = embulkFacadeFactory.create()
 
       // guess
       if (registrationConfig.doGuess) {
@@ -58,7 +58,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
       val result = embulkFacade.run(generatedYamlPath)
       //      logger.info("embulk done.")
 
-      Future.successful(result)
+      Future.successful(new RegistrationResult("", 0))
     } catch {
       case e: Throwable => {
         //logger.error(e)

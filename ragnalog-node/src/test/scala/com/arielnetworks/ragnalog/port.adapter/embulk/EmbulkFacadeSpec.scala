@@ -2,13 +2,16 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.nio.file.Paths
 
+import com.arielnetworks.ragnalog.support.ElasticsearchTestSupport
 import com.arielnetworks.ragnalog.test.EmbulkTestSupport
-import org.scalatest.{DiagrammedAssertions, FunSpec}
+import org.scalatest.{BeforeAndAfterAll, DiagrammedAssertions, FunSpec}
 
 import scala.util.{Failure, Success}
 
-class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTestSupport {
+class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndAfterAll
+  with EmbulkTestSupport with ElasticsearchTestSupport {
 
+  val testIndexName = "ragnalog-test-embulkfacade"
   val config = EmbulkConfiguration(
     embulkBinPath,
     embulkBundleDir,
@@ -25,15 +28,27 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
   val specificParams = Map[String, Any](
     "input_file" -> getClass.getClassLoader.getResource("log/apache_access_100.log").getPath,
     "extra" -> "ap1",
-    "index_name" -> "ragnalog-test-20160419"
+    "index_name" -> testIndexName
   )
-  val generator = new EmbulkYamlGenerator(baseParams)
+  val generator = new EmbulkYamlGenerator(config.workingDirectory, baseParams)
   val accessConfig = config.registrations.get("apache.access").get
   val yaml = generator.generate(accessConfig.template, specificParams ++ accessConfig.params)
   val embulkFacade = new EmbulkFacade(config)
 
+  override protected def afterAll() = {
+    clearIndex(testIndexName)
+  }
+
   describe("run") {
     describe("register apache access log") {
+      val ret = embulkFacade.run(yaml)
+
+      if(ret.isFailure){
+        ret.failed.get.printStackTrace()
+      }
+      println("******************:")
+      println(ret)
+      println("******************:")
 
     }
     describe("parse error") {
@@ -48,7 +63,7 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with EmbulkTest
 
   }
 
-  describe("plugins") {
+  ignore("plugins") {
     it("should be c") {
       embulkFacade.plugins() match {
         case Success(r) =>

@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io.File
+import java.nio.file.Path
 
 import scala.sys.process.Process
 import scala.language.postfixOps
@@ -20,9 +21,14 @@ class EmbulkFacade(config: EmbulkConfiguration) {
   }
 
   //TODO: Should this class have RegistrationResponse?
-  def run(yaml: String): RegistrationResult = {
+  def run(yaml: Path): Try[String] = {
+    try {
+      val ret = Process(s"$embulk run $yaml -b $bundleDir") !!
 
-    null
+      Success(ret)
+    } catch {
+      case e: Throwable => Failure(e)
+    }
   }
 
   def plugins(): Try[Seq[PluginInfo]] = {
@@ -40,5 +46,5 @@ class EmbulkFacade(config: EmbulkConfiguration) {
 
 class EmbulkFacadeFactory(embulkConfiguration: EmbulkConfiguration) {
 
-  def create(configPath: String): EmbulkFacade = new EmbulkFacade(embulkConfiguration)
+  def create(): EmbulkFacade = new EmbulkFacade(embulkConfiguration)
 }

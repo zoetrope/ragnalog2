@@ -2,7 +2,7 @@ package com.arielnetworks.ragnalog.support
 
 import java.io.Closeable
 
-object LoanSupport {
+trait LoanSupport {
   def using[A, R <: Closeable](r: R)(f: R => A): A = {
     try {
       f(r)
@@ -11,3 +11,5 @@ object LoanSupport {
     }
   }
 }
+
+object LoanSupport extends LoanSupport
