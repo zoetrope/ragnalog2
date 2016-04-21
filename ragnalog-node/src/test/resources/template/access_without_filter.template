@@ -5,26 +5,24 @@ in:
     charset: UTF-8
     newline: CRLF
     type: grok
-    grok_pattern: "%{COMMONAPACHELOG}"
+    grok_pattern: "%{COMBINEDAPACHELOG}"
     grok_pattern_files:
 <grok/grok_pattern_files:{file|
       - <file>
 }>    timestamp_parser: sdf
     columns:
-      - { name: bytes_sent , type: long }
-      - { name: connection_status , type: string }
-      - { name: http_version , type: string }
-      - { name: logical_username , type: string }
-      - { name: raw_request , type: string }
-      - { name: referrer , type: string }
-      - { name: remote_addr , type: string }
-      - { name: request , type: string }
-      - { name: response_time , type: long }
-      - { name: status , type: long }
+      - { name: clientip , type: string }
+      - { name: ident , type: string }
+      - { name: auth , type: string }
       - { name: timestamp , type: timestamp , format: "%d/%b/%Y:%T %z" }
-      - { name: user_agent , type: string }
-      - { name: username , type: string }
       - { name: verb , type: string }
+      - { name: request , type: string }
+      - { name: httpversion , type: string }
+      - { name: rawrequest , type: string }
+      - { name: response , type: long }
+      - { name: bytes , type: long }
+      - { name: referrer , type: string }
+      - { name: agent , type: string }
 out:
   type: elasticsearch
   nodes:

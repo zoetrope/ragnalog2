@@ -3,7 +3,7 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 import java.io.File
 import java.nio.file.Path
 
-import scala.sys.process.Process
+import scala.sys.process.{Process, ProcessLogger}
 import scala.language.postfixOps
 import com.arielnetworks.ragnalog.application.RegistrationResult
 
@@ -23,9 +23,19 @@ class EmbulkFacade(config: EmbulkConfiguration) {
   //TODO: Should this class have RegistrationResponse?
   def run(yaml: Path): Try[String] = {
     try {
-      val ret = Process(s"$embulk run $yaml -b $bundleDir") !!
+      val stdout = new StringBuilder
+      val stderr = new StringBuilder
 
-      Success(ret)
+      val ret = Process(s"$embulk run $yaml -b $bundleDir") ! ProcessLogger(s=>stdout.append(s + "\n"), s => stderr.append(s + "\n"))
+
+      println(s"ret: $ret")
+      println("****************************")
+      println(s"stdout: ${stdout.toString}")
+      println("****************************")
+      println(s"stderr: ${stderr.toString}")
+      println("****************************")
+
+      Success(stdout.toString)
     } catch {
       case e: Throwable => Failure(e)
     }

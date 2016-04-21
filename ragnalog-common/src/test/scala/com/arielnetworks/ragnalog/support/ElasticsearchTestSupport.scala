@@ -28,6 +28,7 @@ trait ElasticsearchTestSupport {
   }
 
   def clearIndex(indexName: String) = {
+    println(s"delete $indexName")
     val future = elasticClient.execute {
       deleteIndex(indexName)
     }

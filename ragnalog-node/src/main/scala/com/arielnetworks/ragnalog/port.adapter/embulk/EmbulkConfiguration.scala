@@ -20,7 +20,6 @@ case class EmbulkConfiguration
   embulkPath: Path,
   bundleDirectory: Path,
   workingDirectory: Path,
-  logFilePath: Path,
   registrations: Map[String, RegistrationConfiguration]
 )
 

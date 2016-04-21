@@ -16,7 +16,6 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
     embulkBinPath,
     embulkBundleDir,
     embulkWorkingDir,
-    embulkLogFilePath,
     Map("apache.access" -> apacheAccessConfig)
   )
 
@@ -36,25 +35,30 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
   val embulkFacade = new EmbulkFacade(config)
 
   override protected def afterAll() = {
-    clearIndex(testIndexName)
+//    clearIndex(testIndexName)
   }
 
   describe("run") {
     describe("register apache access log") {
-      val ret = embulkFacade.run(yaml)
+      it("should be registered in Elasticsearc") {
+        val ret = embulkFacade.run(yaml)
 
-      if(ret.isFailure){
-        ret.failed.get.printStackTrace()
+        if (ret.isFailure) {
+          ret.failed.get.printStackTrace()
+        }
+        println("******************:")
+        println(ret)
+        println("******************:")
+
       }
-      println("******************:")
-      println(ret)
-      println("******************:")
-
     }
     describe("parse error") {
 
     }
     describe("elasticsearch is down") {
+
+    }
+    describe("unknown grok pattern") {
 
     }
   }
@@ -82,7 +86,6 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
         Paths.get("invalid path"),
         embulkBundleDir,
         embulkWorkingDir,
-        embulkLogFilePath,
         Map("apache.access" -> apacheAccessConfig)
       )
 

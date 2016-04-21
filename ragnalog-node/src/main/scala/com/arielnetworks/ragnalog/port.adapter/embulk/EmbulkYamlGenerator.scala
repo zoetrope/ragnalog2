@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io._
-import java.nio.file.Path
+import java.nio.file.{Files, Path}
 
 import com.arielnetworks.ragnalog.support.LoanSupport
 import org.stringtemplate.v4.ST
@@ -27,6 +27,7 @@ class EmbulkYamlGenerator(workDir: Path, baseParams: Map[String, Any]) extends L
     }
     val yaml = st.render()
 
+    Files.createDirectories(workDir)
     val generatedYaml = File.createTempFile("temp", ".yml", workDir.toFile)
     using[Unit, PrintWriter](new PrintWriter(generatedYaml)) { writer =>
       writer.write(yaml)
