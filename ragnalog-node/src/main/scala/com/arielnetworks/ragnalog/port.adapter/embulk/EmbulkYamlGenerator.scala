@@ -34,6 +34,9 @@ class EmbulkYamlGenerator(workDir: Path, baseParams: Map[String, Any]) extends L
       case x: DefaultPath => x.jfile
     }
     val generatedYaml = File.createTempFile("temp", ".yml", jfile)
+    println("---------------------")
+    println(yaml)
+    println("---------------------")
     using[Unit, PrintWriter](new PrintWriter(generatedYaml)) { writer =>
       writer.write(yaml)
     }
