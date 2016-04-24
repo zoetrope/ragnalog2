@@ -7,8 +7,8 @@ import {syncHistoryWithStore} from "react-router-redux";
 import App from "./containers/App";
 import MainSection from "./components/MainSection";
 import HelloWorld from "./components/HelloWorld";
-import Container from "./components/Container";
-import Containers from "./components/Containers";
+import Container from "./components/container/Container";
+import Containers from "./components/containers/Containers";
 import configureStore from "./store/configureStore";
 
 //Needed for React Developer Tools

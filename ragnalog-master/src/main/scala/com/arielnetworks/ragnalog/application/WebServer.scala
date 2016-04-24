@@ -2,18 +2,17 @@ package com.arielnetworks.ragnalog.application
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
-import akka.stream.ActorMaterializer
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.RouteResult._
+import akka.stream.ActorMaterializer
 import com.arielnetworks.ragnalog.application.archive.data.GetContainersResult
-import scala.io.StdIn
-import spray.json._
 import spray.json.DefaultJsonProtocol._
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import spray.json._
+
+import scala.io.StdIn
 
 object WebServer extends CorsSupport {
   def main(args: Array[String]) {
@@ -39,7 +38,7 @@ object WebServer extends CorsSupport {
           }
         }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(route2HandlerFlow(route), "localhost", 8080)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine()

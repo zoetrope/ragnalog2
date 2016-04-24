@@ -8,8 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import * as Styles from 'material-ui/styles'
 import IconButton from 'material-ui/IconButton';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import ContainerModalDialog from './ContainerModalDialog';
 
 const style = {
   margin: 12
@@ -21,15 +20,15 @@ class Containers extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {open: false};
+    this.state = {openDialog: true};
   }
 
   handleOpen = () => {
-    this.setState({open: true});
+    this.setState({openDialog: true});
   };
 
   handleClose = () => {
-    this.setState({open: false});
+    this.setState({openDialog: false});
   };
 
   render() {
@@ -46,20 +45,6 @@ class Containers extends Component {
         <MenuItem primaryText="Delete"/>
       </IconMenu>
     );
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        disabled={true}
-        onTouchTap={this.handleClose}
-      />,
-    ];
-
 
     return <div>
       <h2>Containers</h2>
@@ -69,14 +54,9 @@ class Containers extends Component {
         icon={<FontIcon className="material-icons">add_circle</FontIcon>}
         onTouchTap={this.handleOpen}
       />
-      <Dialog
-        title="Dialog With Actions"
-        actions={actions}
-        modal={true}
-        open={this.state.open}
-      >
-        Only actions can close this dialog.
-      </Dialog>
+      <ContainerModalDialog
+        open={this.state.openDialog}
+      />
       <Table selectable={false}>
         <TableHeader displaySelectAll={false}>
           <TableRow>
