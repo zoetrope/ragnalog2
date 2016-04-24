@@ -2,11 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import injectTapEventPlugin from "react-tap-event-plugin";
 import {Provider} from "react-redux";
-import {Router, Route,IndexRoute, browserHistory} from "react-router";
+import {Router, Route, IndexRoute, browserHistory} from "react-router";
 import {syncHistoryWithStore} from "react-router-redux";
 import App from "./containers/App";
 import MainSection from "./components/MainSection";
 import HelloWorld from "./components/HelloWorld";
+import Container from "./components/Container";
+import Containers from "./components/Containers";
 import configureStore from "./store/configureStore";
 
 //Needed for React Developer Tools
@@ -28,6 +30,8 @@ ReactDOM.render(
         <IndexRoute component={HelloWorld}/>
         <Route path="/todos" component={MainSection}/>
         <Route path="/hello" component={HelloWorld}/>
+        <Route path="/containers" component={Containers}/>
+        <Route path="/container/:id" component={Container}/>
       </Route>
     </Router>
   </Provider>,
