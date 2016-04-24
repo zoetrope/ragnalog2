@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import injectTapEventPlugin from "react-tap-event-plugin";
-import {createStore} from 'redux';
-import {Provider} from 'react-redux';
-
-import App from './containers/App';
-import configureStore from './store/configureStore';
+import {Provider} from "react-redux";
+import {Router, Route,IndexRoute, browserHistory} from "react-router";
+import {syncHistoryWithStore} from "react-router-redux";
+import App from "./containers/App";
+import MainSection from "./components/MainSection";
+import HelloWorld from "./components/HelloWorld";
+import configureStore from "./store/configureStore";
 
 //Needed for React Developer Tools
 window.React = React;
@@ -17,10 +19,17 @@ window.React = React;
 injectTapEventPlugin();
 
 const store = configureStore();
+const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router history={history}>
+      <Route path="/" component={App}>
+        <IndexRoute component={HelloWorld}/>
+        <Route path="/todos" component={MainSection}/>
+        <Route path="/hello" component={HelloWorld}/>
+      </Route>
+    </Router>
   </Provider>,
   document.getElementById("root")
 );
