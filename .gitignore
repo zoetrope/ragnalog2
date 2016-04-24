@@ -3,6 +3,7 @@ target/
 .idea/
 esdata/
 tmp
+node_modules/
 
 etc/embulk/bin/
 etc/embulk/jruby/
