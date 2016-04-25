@@ -5,8 +5,6 @@ import {Provider} from "react-redux";
 import {Router, Route, IndexRoute, browserHistory} from "react-router";
 import {syncHistoryWithStore} from "react-router-redux";
 import App from "./containers/App";
-import MainSection from "./components/MainSection";
-import HelloWorld from "./components/HelloWorld";
 import Container from "./components/container/Container";
 import Containers from "./components/containers/Containers";
 import configureStore from "./store/configureStore";
@@ -27,9 +25,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={HelloWorld}/>
-        <Route path="/todos" component={MainSection}/>
-        <Route path="/hello" component={HelloWorld}/>
+        <IndexRoute component={Containers}/>
         <Route path="/containers" component={Containers}/>
         <Route path="/container/:id" component={Container}/>
       </Route>
