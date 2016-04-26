@@ -8,6 +8,7 @@ import App from "./containers/App";
 import Container from "./components/container/Container";
 import Containers from "./components/containers/Containers";
 import configureStore from "./store/configureStore";
+import ReconnectingWebSocket from "reconnectingwebsocket"
 
 //Needed for React Developer Tools
 window.React = React;
@@ -33,3 +34,17 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root")
 );
+
+const ws = new ReconnectingWebSocket('ws://localhost:8686/socket');
+
+ws.onopen = function () {
+  console.log("onopen")
+};
+
+ws.onerror = function (error) {
+  console.log('WebSocket Error ' + error);
+};
+
+ws.onmessage = function (e) {
+  console.log('Server: ' + e.data);
+};
