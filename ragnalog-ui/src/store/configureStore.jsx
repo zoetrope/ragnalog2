@@ -8,7 +8,7 @@ export default function configureStore(initialState) {
   const store = createStore(
     rootReducer,
     initialState,
-    compose(applyMiddleware(thunkMiddlware), window.devToolsExtension ? window.devToolsExtension() : undefined)
+    window.devToolsExtension ? compose(applyMiddleware(thunkMiddlware), window.devToolsExtension()) : applyMiddleware(thunkMiddlware)
   );
 
   if (module.hot) {
