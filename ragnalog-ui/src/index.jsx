@@ -39,6 +39,7 @@ const ws = new ReconnectingWebSocket('ws://localhost:8686/socket');
 
 ws.onopen = function () {
   console.log("onopen")
+  ws.send("fffffffffffff")
 };
 
 ws.onerror = function (error) {
