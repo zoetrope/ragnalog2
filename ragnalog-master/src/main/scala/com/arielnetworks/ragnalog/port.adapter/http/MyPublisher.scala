@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.application.http
+package com.arielnetworks.ragnalog.port.adapter.http
 
 import akka.actor.Props
 import akka.stream.actor.ActorPublisher

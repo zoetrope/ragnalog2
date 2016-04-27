@@ -1,19 +1,16 @@
-package com.arielnetworks.ragnalog.application
+package com.arielnetworks.ragnalog.port.adapter.http
 
 import java.util.UUID
 
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
+import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.RouteResult._
+import akka.stream.scaladsl.{Flow, GraphDSL, Merge, Sink, Source}
 import akka.stream.{ActorMaterializer, FlowShape, OverflowStrategy}
-import akka.stream.actor.ActorPublisher
-import akka.stream.scaladsl.{Flow, FlowOps, GraphDSL, Merge, Sink, Source}
 import com.arielnetworks.ragnalog.application.archive.data.GetContainersResult
-import com.arielnetworks.ragnalog.application.http.{MyData, MyPublisher}
 import spray.json.DefaultJsonProtocol._
 
 import scala.collection.mutable

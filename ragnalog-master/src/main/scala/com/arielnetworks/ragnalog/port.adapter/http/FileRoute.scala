@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.application.http
+package com.arielnetworks.ragnalog.port.adapter.http
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
