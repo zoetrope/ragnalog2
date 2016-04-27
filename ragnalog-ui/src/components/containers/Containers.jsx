@@ -1,14 +1,17 @@
-import React, {Component, PropTypes} from 'react';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import FontIcon from 'material-ui/FontIcon';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import * as Styles from 'material-ui/styles'
-import IconButton from 'material-ui/IconButton';
-import ContainerModalDialog from './ContainerModalDialog';
+import React, {Component, PropTypes} from "react";
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from "material-ui/Table";
+import RaisedButton from "material-ui/RaisedButton";
+import TextField from "material-ui/TextField";
+import FontIcon from "material-ui/FontIcon";
+import IconMenu from "material-ui/IconMenu";
+import MenuItem from "material-ui/MenuItem";
+import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
+import * as Styles from "material-ui/styles";
+import IconButton from "material-ui/IconButton";
+import ContainerModalDialog from "./ContainerModalDialog";
+import * as Actions from "../../actions/ContainerAction";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
 const style = {
   margin: 12
@@ -17,6 +20,8 @@ const iconStyles = {
   marginRight: 24
 };
 class Containers extends Component {
+
+  static propTypes = {};
 
   constructor(props) {
     super(props);
@@ -30,6 +35,10 @@ class Containers extends Component {
   handleClose = () => {
     this.setState({openDialog: false});
   };
+  
+  componentWillMount() {
+    this.props.fetchContainers();
+  }
 
   render() {
 
@@ -94,4 +103,12 @@ class Containers extends Component {
   }
 }
 
-export default Containers;
+function mapStateToProps(state) {
+  return {dictionary: state.dictionary};
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(Actions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Containers);

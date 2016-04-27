@@ -11,7 +11,7 @@ import spray.json.DefaultJsonProtocol._
 
 import scala.io.StdIn
 
-object WebServer extends App with CorsSupport {
+object WebServer extends App  {
 
   implicit val system = ActorSystem("my-system")
   implicit val materializer = ActorMaterializer()
@@ -27,6 +27,7 @@ object WebServer extends App with CorsSupport {
         getFromResource("/web/index.html")
       }
     } ~
+      (new RestRoute).route ~
       path("socket") {
         get {
           handleWebSocketMessages(socket.webSocketFlow)
