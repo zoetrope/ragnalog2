@@ -4,7 +4,7 @@ import injectTapEventPlugin from "react-tap-event-plugin";
 import {Provider} from "react-redux";
 import {Router, Route, IndexRoute, browserHistory} from "react-router";
 import {syncHistoryWithStore} from "react-router-redux";
-import App from "./containers/App";
+import App from "./components/app/App";
 import Container from "./components/container/Container";
 import Containers from "./components/containers/Containers";
 import configureStore from "./store/configureStore";

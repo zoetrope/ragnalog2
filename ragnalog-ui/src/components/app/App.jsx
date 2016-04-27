@@ -1,10 +1,10 @@
 import React, {Component, PropTypes} from "react";
-import Header from "../components/Header";
+import Header from "./Header";
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import * as MyRawTheme from "../ragnalog_theme";
+import * as RagnalogTheme from "./RagnalogTheme";
 
-const muiTheme = getMuiTheme(MyRawTheme);
+const muiTheme = getMuiTheme(RagnalogTheme);
 
 export default class App extends Component {
   render() {

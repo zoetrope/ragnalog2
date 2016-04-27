@@ -1,4 +1,4 @@
-import * as types from '../constants/ActionTypes';
+import * as types from './ActionTypes';
 
 export function addContainer(id, name, description) {
   return {type: types.ADD_CONTAINER, name, description};

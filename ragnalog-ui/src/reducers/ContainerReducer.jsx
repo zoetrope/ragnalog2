@@ -1,4 +1,4 @@
-import {ADD_CONTAINER, DELETE_CONTAINER, EDIT_CONTAINER} from '../constants/ActionTypes';
+import {ADD_CONTAINER, DELETE_CONTAINER, EDIT_CONTAINER} from '../actions/ActionTypes';
 
 const initialState = [{
   text: 'Use Redux',
@@ -6,7 +6,7 @@ const initialState = [{
   id: 0
 }];
 
-export default function ContainerReducers(state = initialState, action) {
+export default function ContainerReducer(state = initialState, action) {
   switch (action.type) {
     case ADD_CONTAINER:
       return [{
