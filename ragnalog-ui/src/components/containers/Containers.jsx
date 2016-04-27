@@ -35,7 +35,7 @@ class Containers extends Component {
   handleClose = () => {
     this.setState({openDialog: false});
   };
-  
+
   componentWillMount() {
     this.props.fetchContainers();
   }
@@ -66,6 +66,9 @@ class Containers extends Component {
       <ContainerModalDialog
         open={this.state.openDialog}
       />
+      <div>
+        containers: {this.props.containers}
+      </div>
       <Table selectable={false}>
         <TableHeader displaySelectAll={false}>
           <TableRow>
@@ -104,7 +107,12 @@ class Containers extends Component {
 }
 
 function mapStateToProps(state) {
-  return {dictionary: state.dictionary};
+  console.log(state.ContainerReducer);
+  return {
+    isFetching: state.ContainerReducer.isFetching,
+    fetchingError: state.ContainerReducer.fetchingError,
+    containers: state.ContainerReducer.containers
+  };
 }
 
 function mapDispatchToProps(dispatch) {

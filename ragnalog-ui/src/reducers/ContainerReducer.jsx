@@ -1,5 +1,4 @@
 import {handleActions} from 'redux-actions';
-import Immutable from 'immutable';
 import {
   FETCH_CONTAINERS_REQUEST,
   FETCH_CONTAINERS_SUCCESS,
@@ -7,27 +6,28 @@ import {
 } from '../actions/ActionTypes';
 
 export default handleActions({
-  [FETCH_CONTAINERS_REQUEST]: state => state.merge(
-    Immutable.Map({
+  [FETCH_CONTAINERS_REQUEST]: state => (
+    {
       isFetching: true,
       fetchingError: null
-    })
+    }
   ),
-  [FETCH_CONTAINERS_SUCCESS]: (state, action) => state.merge(
-    Immutable.Map({
+  [FETCH_CONTAINERS_SUCCESS]: (state, action) => (
+    {
       ...action.payload,
       isFetching: false,
       fetchingError: null
-    })
+    }
   ),
-  [FETCH_CONTAINERS_FAILURE]: (state, action) => state.merge(
-    Immutable.Map({
+  [FETCH_CONTAINERS_FAILURE]: (state, action) => (
+    {
       isFetching: false,
       fetchingError: action.payload
-    })
+    }
   )
-}, Immutable.fromJS({
+}, {
   isFetching: false,
   fetchingError: null,
   containers: []
-}));
+});
+
