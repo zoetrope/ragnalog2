@@ -20,8 +20,12 @@ const iconStyles = {
   marginRight: 24
 };
 class Containers extends Component {
-
-  static propTypes = {};
+  
+  static propTypes = {
+    isFetching: PropTypes.bool.isRequired,
+    fetchingError: PropTypes.string,
+    containers: PropTypes.array
+  };
 
   constructor(props) {
     super(props);
