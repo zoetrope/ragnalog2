@@ -26,7 +26,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Containers}/>
+        <IndexRoute component={Container}/>
         <Route path="/containers" component={Containers}/>
         <Route path="/container/:id" component={Container}/>
       </Route>

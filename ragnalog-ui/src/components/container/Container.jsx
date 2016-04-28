@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import Uploader from "./Uploader"
 import {Link} from 'react-router'
 
 class Container extends Component {
@@ -6,6 +7,7 @@ class Container extends Component {
   render() {
     return <div>
       <h1>Container</h1>
+      <Uploader />
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/todos">TODOS</Link></li>

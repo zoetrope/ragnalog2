@@ -29,7 +29,7 @@ class Containers extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {openDialog: true};
+    this.state = {openDialog: false};
   }
 
   handleOpen = () => {
