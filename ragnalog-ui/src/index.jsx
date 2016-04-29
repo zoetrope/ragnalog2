@@ -28,7 +28,7 @@ ReactDOM.render(
       <Route path="/" component={App}>
         <IndexRoute component={Container}/>
         <Route path="/containers" component={Containers}/>
-        <Route path="/container/:id" component={Container}/>
+        <Route path="/containers/:id" component={Container}/>
       </Route>
     </Router>
   </Provider>,
