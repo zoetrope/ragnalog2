@@ -28,10 +28,11 @@ class Uploader extends Component {
     const uploadFolderButton = ReactDOM.findDOMNode(this.refs.uploadFolderButton);
     const dropArea = ReactDOM.findDOMNode(this.refs.dropArea);
 
+    this.containerId = "default";
+
     const flow = new Flow({
         'target': (file, chunk) => {
-          // const target = serverHost + '/api/container/' + this.containerId + '/archive/' + file.uniqueIdentifier;
-          const target = serverHost + '/api/archive/';
+          const target = serverHost + '/api/containers/' + this.containerId + '/archive/' + file.uniqueIdentifier;
           console.log(target);
           return target;
         },
