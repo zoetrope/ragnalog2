@@ -35,17 +35,17 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-const ws = new ReconnectingWebSocket('ws://localhost:8686/socket');
-
-ws.onopen = function () {
-  console.log("onopen")
-  ws.send("fffffffffffff")
-};
-
-ws.onerror = function (error) {
-  console.log('WebSocket Error ' + error);
-};
-
-ws.onmessage = function (e) {
-  console.log('Server: ' + e.data);
-};
+// const ws = new ReconnectingWebSocket('ws://localhost:8686/socket');
+//
+// ws.onopen = function () {
+//   console.log("onopen")
+//   ws.send("fffffffffffff")
+// };
+//
+// ws.onerror = function (error) {
+//   console.log('WebSocket Error ' + error);
+// };
+//
+// ws.onmessage = function (e) {
+//   console.log('Server: ' + e.data);
+// };

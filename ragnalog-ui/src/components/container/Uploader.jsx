@@ -19,6 +19,8 @@ const paperStyle = {
   background: theme.palette.primary2Color
 };
 
+const serverHost = "http://localhost:8686"; //TODO: set to store?
+
 class Uploader extends Component {
 
   componentDidMount() {
@@ -26,11 +28,32 @@ class Uploader extends Component {
     const uploadFolderButton = ReactDOM.findDOMNode(this.refs.uploadFolderButton);
     const dropArea = ReactDOM.findDOMNode(this.refs.dropArea);
 
-    const flow = new Flow();
+    const flow = new Flow({
+        'target': (file, chunk) => {
+          // const target = serverHost + '/api/container/' + this.containerId + '/archive/' + file.uniqueIdentifier;
+          const target = serverHost + '/api/archive/';
+          console.log(target);
+          return target;
+        },
+        "testChunks": false
+      }
+    );
     flow.assignBrowse(uploadFileButton);
-    flow.assignBrowse(uploadFolderButton);
+    flow.assignBrowse(uploadFolderButton, true);
     flow.assignDrop(dropArea);
-
+    flow.on('fileAdded', function (file, event) {
+      console.log("fileAdded", file, event);
+    });
+    flow.on('fileSuccess', function (file, message) {
+      console.log("fileSuccess", file, message);
+    });
+    flow.on('fileError', function (file, message) {
+      console.log("fileError", file, message);
+    });
+    flow.on('filesSubmitted', function (files, event) {
+      console.log("filesSubmitted", files, event);
+      flow.upload();
+    });
     // this.props.flow.assignBrowse(uploadFileButton);
     // this.props.flow.assignDrop(uploadFolderButton);
   }
