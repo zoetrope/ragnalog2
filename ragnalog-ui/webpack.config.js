@@ -9,6 +9,7 @@ module.exports = {
   output: {
     path: __dirname + "/../ragnalog-master/src/main/resources/web",
     filename: "bundle.js",
+    publicPath: "/"
   },
   module: {
     preLoaders: [
