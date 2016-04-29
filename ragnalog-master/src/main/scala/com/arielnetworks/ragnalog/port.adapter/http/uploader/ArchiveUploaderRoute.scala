@@ -19,8 +19,6 @@ import scalax.file.Path
 
 class ArchiveUploaderRoute extends RouteService {
 
-  implicit val containersFormat = jsonFormat2(GetContainersResult)
-
   def route(implicit m: Materializer, ec: ExecutionContext): Route =
     pathPrefix("containers" / Segment) { containerId =>
       path("archive" / Segment) { hash =>
@@ -28,12 +26,12 @@ class ArchiveUploaderRoute extends RouteService {
 
           val filePath = Path("/", "tmp", containerId, hash)
 
-          val uploader = ArchiveUploaderFactory.getOrCreate(filePath)
+          val uploader = ArchiveBuilderStore.getOrCreate(filePath)
 
           println(s"uploading: ${filePath.path}")
 
           // collect all parts of the multipart as it arrives into a map
-          val allPartsF: Future[Map[String, Any]] = formData.parts.mapAsync[(String, Any)](1) {
+          val allPartsFuture: Future[Map[String, Any]] = formData.parts.mapAsync[(String, Any)](1) {
 
             case body: BodyPart if body.name == "file" =>
               println(s"bodyPart: ${body.name}")
@@ -51,10 +49,14 @@ class ArchiveUploaderRoute extends RouteService {
           }.runFold(Map.empty[String, Any])((map, tuple) => map + tuple)
 
           // when processing have finished create a response for the user
-          onSuccess(allPartsF) { allParts =>
+          onSuccess(allPartsFuture) { allParts =>
             println(s"complete: ${allParts}")
 
-            uploader.append(allParts)
+            val allChunkWasUploaded = uploader.append(allParts)
+
+            if (allChunkWasUploaded) {
+              ArchiveBuilderStore.remove(uploader.filePath)
+            }
 
             complete {
               "ok!"

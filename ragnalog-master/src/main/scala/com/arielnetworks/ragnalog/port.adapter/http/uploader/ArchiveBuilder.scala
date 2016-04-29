@@ -1,10 +1,11 @@
 package com.arielnetworks.ragnalog.port.adapter.http.uploader
 
-import scalax.file.Path
 import java.io.{File, FileInputStream, FileOutputStream}
-import java.util.concurrent.ConcurrentHashMap
+
+import com.arielnetworks.ragnalog.support.LoanSupport
 
 import scala.collection.mutable
+import scalax.file.Path
 import scalax.file.defaultfs.DefaultPath
 
 case class ArchiveChunk
@@ -20,10 +21,11 @@ case class ArchiveChunk
   currentChunkSize: Int
 )
 
-class ArchiveUploader(filePath: Path) {
+class ArchiveBuilder(val filePath: Path) extends LoanSupport {
 
   val chunks = mutable.ListBuffer[ArchiveChunk]()
 
+  //TODO: error handling
   def append(parts: Map[String, Any]): Boolean = {
 
     val chunk = for {
@@ -44,11 +46,11 @@ class ArchiveUploader(filePath: Path) {
       case Some(c) =>
         chunks.synchronized {
           chunks += c
-          val allChunksUploaded = chunks.size == c.totalChunks
-          if (allChunksUploaded) {
+          val allChunkWasUploaded = chunks.size == c.totalChunks
+          if (allChunkWasUploaded) {
             concatenate()
           }
-          allChunksUploaded
+          allChunkWasUploaded
         }
       case None => false
     }
@@ -63,16 +65,16 @@ class ArchiveUploader(filePath: Path) {
     val dest = filePath match {
       case x: DefaultPath => x.jfile
     }
-    val output = new FileOutputStream(dest)
 
-    chunks.sortBy(_.chunkNumber).foreach[Unit](chunk => {
-      println(s"transfer: $chunk")
-      val input = new FileInputStream(chunk.file)
-      input.getChannel.transferTo(0, input.getChannel.size(), output.getChannel)
-      input.close()
-      chunk.file.delete()
-    })
+    using(new FileOutputStream(dest)) { output =>
+      chunks.sortBy(_.chunkNumber).foreach[Unit](chunk => {
+        println(s"transfer: $chunk")
+        using(new FileInputStream(chunk.file)) { input =>
+          input.getChannel.transferTo(0, input.getChannel.size(), output.getChannel)
+        }
+        chunk.file.delete()
+      })
+    }
 
-    output.close()
   }
 }
