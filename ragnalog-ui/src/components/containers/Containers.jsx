@@ -12,6 +12,7 @@ import ContainerModalDialog from "./ContainerModalDialog";
 import * as Actions from "../../actions/ContainerAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import * as theme from "../../RagnalogTheme";
 
 const style = {
   margin: 12
@@ -49,7 +50,7 @@ class Containers extends Component {
     const rightIconMenu = (
       <IconMenu iconButtonElement={
           <IconButton>
-            <MoreVertIcon color={Styles.colors.grey400} />
+            <MoreVertIcon color={theme.palette.accent1Color} />
           </IconButton>
         }
       >

@@ -6,7 +6,6 @@ class Container extends Component {
 
   render() {
     return <div>
-      <h1>Container</h1>
       <Uploader />
       <ul>
         <li><Link to="/">Home</Link></li>

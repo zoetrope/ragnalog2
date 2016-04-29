@@ -1,0 +1,18 @@
+{
+  "containers": {
+    "isFetching": "boolean",
+    "fetchingError": "string",
+    "items": [
+      {
+        "id": "string",
+        "name": "string",
+        "description": "string",
+        "state": "string"
+      }
+    ]
+  },
+  "routing": {}
+}
+
+
+
