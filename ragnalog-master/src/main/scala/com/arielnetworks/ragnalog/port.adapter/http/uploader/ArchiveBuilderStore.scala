@@ -4,18 +4,18 @@ import scalax.file.Path
 
 object ArchiveBuilderStore {
 
-  val uploaders = new scala.collection.mutable.HashMap[Path, ArchiveBuilder]
+  val uploaders = new scala.collection.mutable.HashMap[(String, String), ArchiveBuilder]
 
-  def getOrCreate(filePath: Path): ArchiveBuilder = {
+  def getOrCreate(containerId: String, identifier: String): ArchiveBuilder = {
     uploaders.synchronized {
-      uploaders.getOrElseUpdate(filePath, new ArchiveBuilder(filePath))
+      uploaders.getOrElseUpdate((containerId, identifier), new ArchiveBuilder(containerId, identifier))
     }
   }
 
-  def remove(filePath: Path) = {
+  def remove(containerId: String, identifier: String) = {
     uploaders.synchronized {
-      if (uploaders.contains(filePath)) {
-        uploaders.remove(filePath)
+      if (uploaders.contains((containerId, identifier))) {
+        uploaders.remove((containerId, identifier))
       }
     }
   }

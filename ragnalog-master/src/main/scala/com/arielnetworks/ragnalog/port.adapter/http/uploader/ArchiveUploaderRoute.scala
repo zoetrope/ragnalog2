@@ -7,28 +7,23 @@ import akka.http.scaladsl.model.Multipart.BodyPart
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import akka.stream.scaladsl.{FileIO, Sink}
-import akka.util.ByteString
-import com.arielnetworks.ragnalog.application.archive.data.GetContainersResult
+import akka.stream.scaladsl.FileIO
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
-import spray.json.DefaultJsonProtocol._
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
-import scalax.file.Path
 
 class ArchiveUploaderRoute extends RouteService {
 
   def route(implicit m: Materializer, ec: ExecutionContext): Route =
     pathPrefix("containers" / Segment) { containerId =>
-      path("archive" / Segment) { hash =>
+      path("archive" / Segment) { identifier =>
         entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
 
-          val filePath = Path("/", "tmp", containerId, hash)
 
-          val uploader = ArchiveBuilderStore.getOrCreate(filePath)
+          val uploader = ArchiveBuilderStore.getOrCreate(containerId, identifier)
 
-          println(s"uploading: ${filePath.path}")
+          println(s"uploading: $containerId:$identifier")
 
           // collect all parts of the multipart as it arrives into a map
           val allPartsFuture: Future[Map[String, Any]] = formData.parts.mapAsync[(String, Any)](1) {
@@ -50,12 +45,12 @@ class ArchiveUploaderRoute extends RouteService {
 
           // when processing have finished create a response for the user
           onSuccess(allPartsFuture) { allParts =>
-            println(s"complete: ${allParts}")
+            println(s"complete: $allParts")
 
             val allChunkWasUploaded = uploader.append(allParts)
 
             if (allChunkWasUploaded) {
-              ArchiveBuilderStore.remove(uploader.filePath)
+              ArchiveBuilderStore.remove(containerId, identifier)
             }
 
             complete {

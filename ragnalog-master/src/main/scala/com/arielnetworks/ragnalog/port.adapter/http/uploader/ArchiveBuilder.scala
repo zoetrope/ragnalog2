@@ -21,7 +21,7 @@ case class ArchiveChunk
   currentChunkSize: Int
 )
 
-class ArchiveBuilder(val filePath: Path) extends LoanSupport {
+class ArchiveBuilder(val containerId: String, val identifier: String) extends LoanSupport {
 
   val chunks = mutable.ListBuffer[ArchiveChunk]()
 
@@ -60,6 +60,9 @@ class ArchiveBuilder(val filePath: Path) extends LoanSupport {
 
     println(s"concatenate files: $chunks")
 
+    val fileName = chunks.head.filename
+
+    val filePath = Path("/", "tmp", containerId, fileName) //TODO
     filePath.deleteIfExists()
     filePath.createFile()
     val dest = filePath match {

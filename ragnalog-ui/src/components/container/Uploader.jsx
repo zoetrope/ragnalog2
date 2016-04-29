@@ -47,9 +47,11 @@ class Uploader extends Component {
     });
     flow.on('fileSuccess', function (file, message) {
       console.log("fileSuccess", file, message);
+      flow.removeFile(file);
     });
     flow.on('fileError', function (file, message) {
       console.log("fileError", file, message);
+      flow.removeFile(file);
     });
     flow.on('filesSubmitted', function (files, event) {
       console.log("filesSubmitted", files, event);
