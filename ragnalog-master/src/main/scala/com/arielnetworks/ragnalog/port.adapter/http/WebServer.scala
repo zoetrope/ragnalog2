@@ -7,6 +7,8 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.RouteResult._
 import akka.stream.ActorMaterializer
 import com.arielnetworks.ragnalog.application.archive.data.GetContainersResult
+import com.arielnetworks.ragnalog.port.adapter.http.notification.{WSMessage, WebSocketSupport}
+import com.arielnetworks.ragnalog.port.adapter.http.route.RestRoute
 import spray.json.DefaultJsonProtocol._
 
 import scala.io.StdIn

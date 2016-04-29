@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.port.adapter.http
+package com.arielnetworks.ragnalog.port.adapter.http.uploader
 
 import java.io.File
 
@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import akka.stream.scaladsl.FileIO
 import com.arielnetworks.ragnalog.application.archive.data.GetContainersResult
+import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import spray.json.DefaultJsonProtocol._
 
 import scala.concurrent.duration._

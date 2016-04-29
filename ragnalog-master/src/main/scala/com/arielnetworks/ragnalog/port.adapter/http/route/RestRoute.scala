@@ -1,8 +1,9 @@
-package com.arielnetworks.ragnalog.port.adapter.http
+package com.arielnetworks.ragnalog.port.adapter.http.route
 
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
+import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveUploaderRoute
+import com.arielnetworks.ragnalog.port.adapter.http.{ContainerRoute, CorsSupport, FileRoute}
 
 import scala.concurrent.ExecutionContext
 

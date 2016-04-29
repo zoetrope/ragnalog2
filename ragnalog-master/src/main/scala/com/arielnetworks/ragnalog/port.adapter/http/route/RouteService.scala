@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.port.adapter.http
+package com.arielnetworks.ragnalog.port.adapter.http.route
 
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer

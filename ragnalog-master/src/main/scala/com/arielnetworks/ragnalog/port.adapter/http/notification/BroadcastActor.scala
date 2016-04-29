@@ -1,6 +1,7 @@
-package com.arielnetworks.ragnalog.port.adapter.http
+package com.arielnetworks.ragnalog.port.adapter.http.notification
 
 import akka.actor.{Actor, ActorRef}
+import com.arielnetworks.ragnalog.port.adapter.http.Close
 
 import scala.collection.mutable
 

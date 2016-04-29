@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.port.adapter.http
+package com.arielnetworks.ragnalog.port.adapter.http.notification
 
 import akka.actor.ActorRef
 
