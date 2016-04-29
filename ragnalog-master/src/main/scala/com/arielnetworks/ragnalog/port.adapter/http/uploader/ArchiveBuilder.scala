@@ -60,12 +60,12 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
 
     println(s"concatenate files: $chunks")
 
-    val fileName = chunks.head.filename
+    val archiveName = chunks.head.filename
 
-    val filePath = Path("/", "tmp", containerId, fileName) //TODO
-    filePath.deleteIfExists()
-    filePath.createFile()
-    val dest = filePath match {
+    val archivePath = Path("/", "tmp", containerId, archiveName) //TODO: set correct path
+    archivePath.deleteIfExists()
+    archivePath.createFile()
+    val dest = archivePath match {
       case x: DefaultPath => x.jfile
     }
 
@@ -80,4 +80,8 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
     }
 
   }
+
+  def allChunkWasUploaded: Boolean = ???
+
+  def uploadedArchivePath: Option[Path] = ???
 }
