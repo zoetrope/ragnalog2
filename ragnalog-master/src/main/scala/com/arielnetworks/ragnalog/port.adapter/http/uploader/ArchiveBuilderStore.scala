@@ -1,7 +1,5 @@
 package com.arielnetworks.ragnalog.port.adapter.http.uploader
 
-import scalax.file.Path
-
 object ArchiveBuilderStore {
 
   val uploaders = new scala.collection.mutable.HashMap[(String, String), ArchiveBuilder]
@@ -19,4 +17,6 @@ object ArchiveBuilderStore {
       }
     }
   }
+
+  //TODO: clear expired uploaders
 }

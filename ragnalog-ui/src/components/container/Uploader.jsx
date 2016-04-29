@@ -1,10 +1,13 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes} from "react";
 import ReactDOM from "react-dom";
+
 import RaisedButton from "material-ui/RaisedButton";
 import FontIcon from "material-ui/FontIcon";
-import Flow from "@flowjs/flow.js"
-import Paper from 'material-ui/Paper';
+import Paper from "material-ui/Paper";
+import LinearProgress from "material-ui/LinearProgress";
+
 import * as theme from "../../RagnalogTheme";
+import Flow from "@flowjs/flow.js";
 
 const style = {
   margin: 12
@@ -22,6 +25,14 @@ const paperStyle = {
 const serverHost = "http://localhost:8686"; //TODO: set to store?
 
 class Uploader extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      uploading: false,
+      completed: 0.0
+    };
+  }
 
   componentDidMount() {
     const uploadFileButton = ReactDOM.findDOMNode(this.refs.uploadFileButton);
@@ -42,26 +53,41 @@ class Uploader extends Component {
     flow.assignBrowse(uploadFileButton);
     flow.assignBrowse(uploadFolderButton, true);
     flow.assignDrop(dropArea);
-    flow.on('fileAdded', function (file, event) {
+    flow.on('fileAdded', (file, event) => {
       console.log("fileAdded", file, event);
     });
-    flow.on('fileSuccess', function (file, message) {
+    flow.on('fileSuccess', (file, message) => {
       console.log("fileSuccess", file, message);
       flow.removeFile(file);
+      if (flow.files.length === 0) {
+        this.setState({uploading: false});
+      }
     });
-    flow.on('fileError', function (file, message) {
+    flow.on('fileError', (file, message) => {
       console.log("fileError", file, message);
       flow.removeFile(file);
+      if (flow.files.length === 0) {
+        this.setState({uploading: false});
+      }
     });
-    flow.on('filesSubmitted', function (files, event) {
+    flow.on('filesSubmitted', (files, event) => {
       console.log("filesSubmitted", files, event);
       flow.upload();
+      this.setState({uploading: true});
+    });
+    flow.on('progress', () => {
+      console.log("progres", flow.progress());
+      this.setState({completed: flow.progress() * 100});
     });
     // this.props.flow.assignBrowse(uploadFileButton);
     // this.props.flow.assignDrop(uploadFolderButton);
   }
 
   render() {
+
+    const progress = this.state.uploading ?
+      <LinearProgress mode="determinate" value={this.state.completed}/> : null;
+
     return <div>
       <Paper ref="dropArea" style={paperStyle} zDepth={2}>
         <h1><FontIcon className="material-icons">cloud_upload</FontIcon> Upload File</h1>
@@ -83,6 +109,7 @@ class Uploader extends Component {
           icon={<FontIcon className="material-icons">folder</FontIcon>}
         />
       </Paper>
+      {progress}
     </div>
   }
 }
