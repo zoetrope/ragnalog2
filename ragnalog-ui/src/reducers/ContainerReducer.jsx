@@ -10,30 +10,30 @@ export default handleActions({
   {
     ...state,
     isFetching: true,
-    hasError: false,
-    fetchingError: null
+    error: false,
+    errorMessage: null
   }
   ),
   [FETCH_CONTAINERS_SUCCESS]: (state, action) => (
   {
     ...action.payload,
     isFetching: false,
-    hasError: false,
-    fetchingError: null
+    error: false,
+    errorMessage: null
   }
   ),
   [FETCH_CONTAINERS_FAILURE]: (state, action) => (
   {
     ...state,
     isFetching: false,
-    hasError: true,
-    fetchingError: action.payload
+    error: true,
+    errorMessage: action.payload
   }
   )
 }, {
   isFetching: false,
-  hasError: false,
-  fetchingError: null,
+  error: false,
+  errorMessage: null,
   containers: []
 });
 

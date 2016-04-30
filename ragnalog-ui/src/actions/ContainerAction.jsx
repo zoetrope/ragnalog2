@@ -15,7 +15,7 @@ const fetchContainersSuccess = createAction(
 );
 const fetchContainersFailure = createAction(
   FETCH_CONTAINERS_FAILURE,
-  ex=>ex
+  ex=>ex.message
 );
 
 export function fetchContainers() {

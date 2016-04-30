@@ -24,8 +24,8 @@ class Containers extends Component {
 
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
-    hasError: PropTypes.bool.isRequired,
-    fetchingError: PropTypes.string,
+    error: PropTypes.bool.isRequired,
+    errorMessage: PropTypes.string,
     containers: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -123,8 +123,8 @@ function mapStateToProps(state) {
   console.log(state.ContainerReducer);
   return {
     isFetching: state.ContainerReducer.isFetching,
-    hasError: state.ContainerReducer.hasError,
-    fetchingError: state.ContainerReducer.fetchingError,
+    error: state.ContainerReducer.error,
+    errorMessage: state.ContainerReducer.errorMessage,
     containers: state.ContainerReducer.containers
   };
 }
