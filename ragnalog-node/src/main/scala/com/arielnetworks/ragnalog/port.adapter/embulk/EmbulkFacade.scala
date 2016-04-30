@@ -37,13 +37,13 @@ class EmbulkFacade(config: EmbulkConfiguration) extends LoanSupport {
       val stdoutByteArrayStream = new ByteArrayOutputStream()
       val stderrByteArrayStream = new ByteArrayOutputStream()
 
-      using(new ZipOutputStream(stdoutByteArrayStream)) { stdoutZipStream =>
+      val returnCode = using(new ZipOutputStream(stdoutByteArrayStream)) { stdoutZipStream =>
         using(new ZipOutputStream(stderrByteArrayStream)) { stderrZipStream =>
 
           stdoutZipStream.putNextEntry(new ZipEntry("embulk_stdout.log"))
           stderrZipStream.putNextEntry(new ZipEntry("embulk_stderr.log"))
 
-          val ret = Process(command) ! ProcessLogger(
+          Process(command) ! ProcessLogger(
             s => {
               stdoutZipStream.write((s + System.lineSeparator()).getBytes)
               //TODO: logging
@@ -52,9 +52,10 @@ class EmbulkFacade(config: EmbulkConfiguration) extends LoanSupport {
               stderrZipStream.write((s + System.lineSeparator()).getBytes)
               //TODO: logging
             })
-          Success(CommandResult(command, ret, stdoutByteArrayStream.toByteArray, stderrByteArrayStream.toByteArray))
         }
       }
+
+      Success(CommandResult(command, returnCode, stdoutByteArrayStream.toByteArray, stderrByteArrayStream.toByteArray))
     } catch {
       case e: Throwable => Failure(e)
     }

@@ -37,7 +37,6 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
     describe("register apache access log") {
       it("should be registered in Elasticsearc") {
         val ret = embulkFacade.run(yaml)
-
         ret match {
           case Success(bytes) =>
             val log = decodeZip(bytes)
@@ -49,7 +48,10 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
             println("******************:")
             println(log)
             println("******************:")
-          case Failure(ex) => ex.printStackTrace()
+            fail(e)
+          case Failure(ex) =>
+            ex.printStackTrace()
+            fail(ex)
         }
       }
     }
