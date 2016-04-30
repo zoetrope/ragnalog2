@@ -21,11 +21,19 @@ const iconStyles = {
   marginRight: 24
 };
 class Containers extends Component {
-  
+
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
+    hasError: PropTypes.bool.isRequired,
     fetchingError: PropTypes.string,
-    containers: PropTypes.array
+    containers: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        state: PropTypes.string.isRequired
+      })
+    )
   };
 
   constructor(props) {
@@ -115,6 +123,7 @@ function mapStateToProps(state) {
   console.log(state.ContainerReducer);
   return {
     isFetching: state.ContainerReducer.isFetching,
+    hasError: state.ContainerReducer.hasError,
     fetchingError: state.ContainerReducer.fetchingError,
     containers: state.ContainerReducer.containers
   };

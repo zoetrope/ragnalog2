@@ -7,26 +7,32 @@ import {
 
 export default handleActions({
   [FETCH_CONTAINERS_REQUEST]: state => (
-    {
-      isFetching: true,
-      fetchingError: null
-    }
+  {
+    ...state,
+    isFetching: true,
+    hasError: false,
+    fetchingError: null
+  }
   ),
   [FETCH_CONTAINERS_SUCCESS]: (state, action) => (
-    {
-      ...action.payload,
-      isFetching: false,
-      fetchingError: null
-    }
+  {
+    ...action.payload,
+    isFetching: false,
+    hasError: false,
+    fetchingError: null
+  }
   ),
   [FETCH_CONTAINERS_FAILURE]: (state, action) => (
-    {
-      isFetching: false,
-      fetchingError: action.payload
-    }
+  {
+    ...state,
+    isFetching: false,
+    hasError: true,
+    fetchingError: action.payload
+  }
   )
 }, {
   isFetching: false,
+  hasError: false,
   fetchingError: null,
   containers: []
 });
