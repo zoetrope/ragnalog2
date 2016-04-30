@@ -28,7 +28,14 @@ class EmbulkFacade(config: EmbulkConfiguration) extends LoanSupport {
       })
   }
 
-  def guess() = {
+  def guess(partialYaml: Path, outputYaml: Path, guessPluginNames: Option[Seq[String]]): Try[Array[Byte]] = {
+    val guessOption = guessPluginNames.map(p => "-g " + p.mkString(",")).getOrElse("")
+    val command = s"$embulk guess $guessOption ${partialYaml.path} -o ${outputYaml.path} -b $bundleDir"
+    executeProcess(command)
+      .map(res => res.returnCode match {
+        case 0 => res.stdout
+        case _ => throw new CommandFailureException(s"failed to command: $command", res.stdout)
+      })
   }
 
   private def executeProcess(command: String): Try[CommandResult] = {

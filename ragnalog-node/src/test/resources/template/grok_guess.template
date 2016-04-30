@@ -1,0 +1,13 @@
+in:
+  type: file
+  path_prefix: <input_file>
+  parser:
+    type: grok
+    grok_pattern_files:
+<grok/grok_pattern_files:{file|
+      - <file>
+}>    guess_patterns:
+      - "%{COMBINEDAPACHELOG}"
+      - "%{COMMONAPACHELOG}"
+    charset: UTF-8
+    newline: CRLF

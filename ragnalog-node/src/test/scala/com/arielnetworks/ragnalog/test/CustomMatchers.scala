@@ -5,7 +5,9 @@ import java.util
 import org.scalatest.matchers.{MatchResult, Matcher}
 import org.yaml.snakeyaml.Yaml
 
-import scala.collection.JavaConversions._ //TODO: deprecated
+import scala.collection.JavaConversions._
+
+//TODO: deprecated
 import scala.collection.mutable
 
 trait CustomMatchers {
@@ -18,7 +20,7 @@ trait CustomMatchers {
 
   case class RightOnly(key: String, value: Object) extends Difference
 
-  class SameYamlMatcher(expected: String) extends Matcher[String] {
+  class SameYamlMatcher(expected: String, ignoreFields: Set[String] = Set.empty) extends Matcher[String] {
 
     private def checkEqual(left: java.util.Map[String, Object], right: java.util.Map[String, Object])(implicit diffs: mutable.ListBuffer[Difference]): Unit = {
 
@@ -27,7 +29,11 @@ trait CustomMatchers {
       for (entry <- left.entrySet()) {
         val leftKey = entry.getKey
         val leftValue = entry.getValue
-        if (right.contains(leftKey)) {
+        if (ignoreFields.contains(leftKey)) {
+          if (right.contains(leftKey)) {
+            onlyRight.remove(leftKey)
+          }
+        } else if (right.contains(leftKey)) {
           onlyRight.remove(leftKey)
 
           val rightValue = right.get(leftKey)
@@ -59,13 +65,13 @@ trait CustomMatchers {
 
       MatchResult(
         diff.isEmpty,
-        s"wasNotSameYaml\r\n${diff.map(_.toString).mkString("\r\n")}",
+        s"wasNotSameYaml\n${diff.map(_.toString).mkString("\n")}",
         "wasSameYaml"
       )
     }
   }
 
-  def sameYaml(expected: String) = new SameYamlMatcher(expected)
+  def sameYaml(expected: String, ignoreFields: Set[String] = Set.empty) = new SameYamlMatcher(expected, ignoreFields)
 }
 
 object CustomMatchers extends CustomMatchers

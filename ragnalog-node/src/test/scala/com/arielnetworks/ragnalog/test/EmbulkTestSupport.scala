@@ -21,7 +21,8 @@ trait EmbulkTestSupport {
   )
 
   val grokPatternFilePath = embulkPluginsDir / Path("embulk-parser-grok-0.1.7", "pattern", "grok-patterns")
-  val grokTemplate = getClass.getClassLoader.getResource("template/access_without_filter.template")
+  val grokTemplate = Path(getClass.getClassLoader.getResource("template/access_without_filter.template").getPath, '/')
+  val grokParams = Map("grok/grok_pattern_files" -> List(grokPatternFilePath.path))
 
   val apacheAccessConfig = RegistrationConfiguration(
     name = "Apache access log",
@@ -29,10 +30,13 @@ trait EmbulkTestSupport {
     parser = "grok",
     filters = Seq(),
     timeField = "timestamp",
-    template = Path(grokTemplate.getPath, '/'),
+    template = grokTemplate,
     doGuess = false,
-    params = Map("grok/grok_pattern_files" -> List(grokPatternFilePath.path))
+    guessPluginNames = None,
+    params = grokParams
   )
+
+  val grokGuessTemplate = Path(getClass.getClassLoader.getResource("template/grok_guess.template").getPath, '/')
 
   def decodeZip(byteArray: Array[Byte]): String = {
     val zis = new ZipInputStream(new ByteArrayInputStream(byteArray))

@@ -1,0 +1,25 @@
+in:
+  type: file
+  path_prefix: apache_access_100.log
+  parser:
+    type: grok
+    grok_pattern_files: [grok-patterns]
+    guess_patterns: ['%{COMBINEDAPACHELOG}', '%{COMMONAPACHELOG}']
+    charset: UTF-8
+    newline: CRLF
+    grok_pattern: '%{COMBINEDAPACHELOG}'
+    columns:
+    - {name: request, type: string}
+    - {name: agent, type: string}
+    - {name: COMMONAPACHELOG, type: string}
+    - {name: auth, type: string}
+    - {name: ident, type: string}
+    - {name: verb, type: string}
+    - {name: referrer, type: string}
+    - {name: bytes, type: long}
+    - {name: response, type: long}
+    - {name: clientip, type: string}
+    - {name: COMBINEDAPACHELOG, type: string}
+    - {name: httpversion, type: string}
+    - {name: rawrequest, type: string}
+    - {name: timestamp, format: '%d/%b/%Y:%T %z', type: timestamp}

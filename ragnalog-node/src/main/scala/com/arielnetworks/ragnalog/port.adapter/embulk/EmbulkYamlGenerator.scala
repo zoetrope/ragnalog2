@@ -11,7 +11,7 @@ import scala.io.{Codec, Source}
 import scalax.file.defaultfs.DefaultPath
 
 
-class EmbulkYamlGenerator(workDir: Path, baseParams: Map[String, Any]) extends LoanSupport {
+class EmbulkYamlGenerator(workDirPath: Path, baseParams: Map[String, Any]) extends LoanSupport {
 
   def generate(templateYamlPath: Path, specificParams: Map[String, Any]): Path = {
     val template = templateYamlPath.string
@@ -29,14 +29,11 @@ class EmbulkYamlGenerator(workDir: Path, baseParams: Map[String, Any]) extends L
     }
     val yaml = st.render()
 
-    workDir.createDirectory(failIfExists = false)
-    val jfile: File = workDir match {
+    workDirPath.createDirectory(failIfExists = false)
+    val workingDirectory: File = workDirPath match {
       case x: DefaultPath => x.jfile
     }
-    val generatedYaml = File.createTempFile("temp", ".yml", jfile)
-    println("---------------------")
-    println(yaml)
-    println("---------------------")
+    val generatedYaml = File.createTempFile("generated", ".yml", workingDirectory)
     using[Unit, PrintWriter](new PrintWriter(generatedYaml)) { writer =>
       writer.write(yaml)
     }

@@ -11,6 +11,7 @@ case class RegistrationConfiguration
   timeField: String,
   template: Path,
   doGuess: Boolean,
+  guessPluginNames: Option[Seq[String]],
   params: Map[String, Any]
 )
 

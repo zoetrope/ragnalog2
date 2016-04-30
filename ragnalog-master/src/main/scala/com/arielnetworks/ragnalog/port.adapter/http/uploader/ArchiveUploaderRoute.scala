@@ -33,6 +33,7 @@ class ArchiveUploaderRoute extends RouteService {
               // stream into a file as the chunks of it arrives and return a future
               // file to where it got stored
               val chunkFile = File.createTempFile("upload", "tmp")
+              chunkFile.deleteOnExit()
               println(chunkFile.getAbsolutePath)
               body.entity.dataBytes.runWith(FileIO.toFile(chunkFile)).map(_ => body.name -> chunkFile)
 
