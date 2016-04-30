@@ -10,9 +10,8 @@ case class RegistrationConfiguration
   filters: Seq[String],
   timeField: String,
   template: Path,
-  preprocessor: Option[String],
   doGuess: Boolean,
-    params: Map[String, Any]
+  params: Map[String, Any]
 )
 
 case class EmbulkConfiguration
@@ -20,6 +19,7 @@ case class EmbulkConfiguration
   embulkPath: Path,
   bundleDirectory: Path,
   workingDirectory: Path,
-  registrations: Map[String, RegistrationConfiguration]
+  registrations: Map[String, RegistrationConfiguration],
+  params: Map[String, Any]
 )
 

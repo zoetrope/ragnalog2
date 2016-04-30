@@ -1,3 +1,16 @@
 package com.arielnetworks.ragnalog.application
 
-case class RegistrationResult(errorMessage: String, errorCount: Long)
+import scalax.file.Path
+
+sealed trait ResultType
+
+case class CommandSuccess() extends ResultType
+
+case class CommandFailure() extends ResultType
+
+case class RegistrationResult
+(
+  resultType: ResultType,
+  yaml: Path,
+  zippedLog: Array[Byte]
+)

@@ -1,12 +1,11 @@
 package com.arielnetworks.ragnalog.port.adapter.embulk
 
-import scalax.file.Path
-
 import com.arielnetworks.ragnalog.support.ElasticsearchTestSupport
 import com.arielnetworks.ragnalog.test.EmbulkTestSupport
 import org.scalatest.{BeforeAndAfterAll, DiagrammedAssertions, FunSpec}
 
 import scala.util.{Failure, Success}
+import scalax.file.Path
 
 class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndAfterAll
   with EmbulkTestSupport with ElasticsearchTestSupport {
@@ -16,26 +15,22 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
     embulkBinPath,
     embulkBundleDir,
     embulkWorkingDir,
-    Map("apache.access" -> apacheAccessConfig)
-  )
-
-  val baseParams = Map[String, Any](
-    "elasticsearch/host" -> "localhost",
-    "elasticsearch/port" -> "9300",
-    "elasticsearch/cluster_name" -> "ragnalog2.elasticsearch"
+    Map("apache.access" -> apacheAccessConfig),
+    baseParams
   )
   val specificParams = Map[String, Any](
     "input_file" -> getClass.getClassLoader.getResource("log/apache_access_100.log").getPath,
     "extra" -> "ap1",
     "index_name" -> testIndexName
   )
-  val generator = new EmbulkYamlGenerator(config.workingDirectory, baseParams)
+  val generator = new EmbulkYamlGenerator(config.workingDirectory, config.params)
   val accessConfig = config.registrations.get("apache.access").get
   val yaml = generator.generate(accessConfig.template, specificParams ++ accessConfig.params)
   val embulkFacade = new EmbulkFacade(config)
 
+
   override protected def afterAll() = {
-//    clearIndex(testIndexName)
+    //    clearIndex(testIndexName)
   }
 
   describe("run") {
@@ -43,15 +38,22 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
       it("should be registered in Elasticsearc") {
         val ret = embulkFacade.run(yaml)
 
-        if (ret.isFailure) {
-          ret.failed.get.printStackTrace()
+        ret match {
+          case Success(bytes) =>
+            val log = decodeZip(bytes)
+            println("******************:")
+            println(log)
+            println("******************:")
+          case Failure(e: CommandFailureException) =>
+            val log = decodeZip(e.log)
+            println("******************:")
+            println(log)
+            println("******************:")
+          case Failure(ex) => ex.printStackTrace()
         }
-        println("******************:")
-        println(ret)
-        println("******************:")
-
       }
     }
+
     describe("parse error") {
 
     }
@@ -67,18 +69,6 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
 
   }
 
-  ignore("plugins") {
-    it("should be c") {
-      embulkFacade.plugins() match {
-        case Success(r) =>
-          assert(r.exists(p => p.name == "embulk-output-elasticsearch"))
-          assert(r.exists(p => p.name == "embulk-parser-grok"))
-          assert(r.exists(p => p.name == "embulk-filter-insert"))
-        case Failure(e) => fail(e)
-      }
-    }
-  }
-
   ignore("invalid") {
     describe("invalid embulk path") {
 
@@ -86,11 +76,12 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
         Path("invalid path"),
         embulkBundleDir,
         embulkWorkingDir,
-        Map("apache.access" -> apacheAccessConfig)
+        Map("apache.access" -> apacheAccessConfig),
+        baseParams
       )
 
       val embulkFacade = new EmbulkFacade(invalidConfig)
-      embulkFacade.plugins()
+      embulkFacade.run(yaml)
     }
     describe("invalid bundle dir") {
 
