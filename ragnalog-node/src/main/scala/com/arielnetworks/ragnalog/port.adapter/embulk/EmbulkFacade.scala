@@ -3,6 +3,8 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 import java.io.ByteArrayOutputStream
 import java.util.zip.{ZipEntry, ZipOutputStream}
 
+import com.arielnetworks.ragnalog.support.LoanSupport
+
 import scala.language.postfixOps
 import scala.sys.process.{Process, ProcessLogger}
 import scala.util.{Failure, Success, Try}
@@ -12,17 +14,17 @@ case class CommandResult(command: String, returnCode: Int, stdout: Array[Byte], 
 
 case class CommandFailureException(message: String, log: Array[Byte]) extends Exception(message)
 
-class EmbulkFacade(config: EmbulkConfiguration) {
+class EmbulkFacade(config: EmbulkConfiguration) extends LoanSupport {
 
   val embulk = config.embulkPath.path
   val bundleDir = config.bundleDirectory.path
 
-
   def run(yaml: Path): Try[Array[Byte]] = {
-    executeProcess(s"$embulk run ${yaml.path} -b $bundleDir")
+    val command = s"$embulk run ${yaml.path} -b $bundleDir"
+    executeProcess(command)
       .map(res => res.returnCode match {
         case 0 => res.stdout
-        case _ => throw new CommandFailureException("failed to command: embulk run", res.stdout)
+        case _ => throw new CommandFailureException(s"failed to command: $command", res.stdout)
       })
   }
 
@@ -33,28 +35,26 @@ class EmbulkFacade(config: EmbulkConfiguration) {
     try {
 
       val stdoutByteArrayStream = new ByteArrayOutputStream()
-      val stdoutZipStream = new ZipOutputStream(stdoutByteArrayStream)
-
       val stderrByteArrayStream = new ByteArrayOutputStream()
-      val stderrZipStream = new ZipOutputStream(stderrByteArrayStream)
 
-      stdoutZipStream.putNextEntry(new ZipEntry("embulk_stdout.log"))
-      stderrZipStream.putNextEntry(new ZipEntry("embulk_stderr.log"))
+      using(new ZipOutputStream(stdoutByteArrayStream)) { stdoutZipStream =>
+        using(new ZipOutputStream(stderrByteArrayStream)) { stderrZipStream =>
 
-      val ret = Process(command) ! ProcessLogger(
-        s => {
-          stdoutZipStream.write((s + "\n").getBytes)
-          //TODO: logging
-        },
-        s => {
-          stderrZipStream.write((s + "\n").getBytes)
-          //TODO: logging
-        })
+          stdoutZipStream.putNextEntry(new ZipEntry("embulk_stdout.log"))
+          stderrZipStream.putNextEntry(new ZipEntry("embulk_stderr.log"))
 
-      stdoutZipStream.close()
-      stderrZipStream.close()
-
-      Success(CommandResult(command, ret, stdoutByteArrayStream.toByteArray, stderrByteArrayStream.toByteArray))
+          val ret = Process(command) ! ProcessLogger(
+            s => {
+              stdoutZipStream.write((s + System.lineSeparator()).getBytes)
+              //TODO: logging
+            },
+            s => {
+              stderrZipStream.write((s + System.lineSeparator()).getBytes)
+              //TODO: logging
+            })
+          Success(CommandResult(command, ret, stdoutByteArrayStream.toByteArray, stderrByteArrayStream.toByteArray))
+        }
+      }
     } catch {
       case e: Throwable => Failure(e)
     }
@@ -62,6 +62,5 @@ class EmbulkFacade(config: EmbulkConfiguration) {
 }
 
 class EmbulkFacadeFactory(embulkConfiguration: EmbulkConfiguration) {
-
   def create(): EmbulkFacade = new EmbulkFacade(embulkConfiguration)
 }
