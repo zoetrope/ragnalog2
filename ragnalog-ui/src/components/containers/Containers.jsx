@@ -71,7 +71,7 @@ class Containers extends Component {
 
   handleActivateContainer = (container)=> {
   };
-  
+
   handleDeactivateContainer = (container) => {
   };
 
@@ -96,16 +96,24 @@ class Containers extends Component {
       />
       <Tabs>
         <Tab label="Active Containers">
-          <ContainerList 
-            containers={this.props.containers} 
+          <ContainerList
+            containers={this.props.containers}
+            active={true}
             onView={this.handleViewContainer}
-            onActivate={this.handleActivateContainer}
             onDeactivate={this.handleDeactivateContainer}
             onEdit={this.handleEditContainer}
             onDelete={this.handleDeleteContainer}
           />
         </Tab>
         <Tab label="Inactive Containers">
+          <ContainerList
+            containers={this.props.containers}
+            active={false}
+            onView={this.handleViewContainer}
+            onActivate={this.handleActivateContainer}
+            onEdit={this.handleEditContainer}
+            onDelete={this.handleDeleteContainer}
+          />
         </Tab>
       </Tabs>
       <Snackbar

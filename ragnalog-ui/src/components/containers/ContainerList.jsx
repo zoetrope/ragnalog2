@@ -14,6 +14,11 @@ class ContainerList extends Component {
 
   render() {
 
+    const changeStatusMenu =
+      this.props.active ?
+        <MenuItem primaryText="Activate" onTouchTap={() => this.props.onActivate(container)}/> :
+        <MenuItem primaryText="Deactivate" onTouchTap={() => this.props.onDeactivate(container)}/>;
+
     const rightIconMenu = (container) => (
       <IconMenu iconButtonElement={
           <IconButton>
@@ -22,7 +27,7 @@ class ContainerList extends Component {
         }
       >
         <MenuItem primaryText="View" onTouchTap={() => this.props.onView(container)}/>
-        <MenuItem primaryText="Activate" onTouchTap={() => this.props.onActivate(container)}/>
+        {changeStatusMenu}
         <MenuItem primaryText="Edit" onTouchTap={() => this.props.onEdit(container)}/>
         <MenuItem primaryText="Delete" onTouchTap={() => this.props.onDelete(container)}/>
       </IconMenu>
@@ -38,14 +43,16 @@ class ContainerList extends Component {
         </TableRow>
       </TableHeader>
       <TableBody displayRowCheckbox={false} showRowHover={true}>
-        {this.props.containers.map(container => {
-          return <TableRow key={container.id}>
-            <TableRowColumn>{container.id}</TableRowColumn>
-            <TableRowColumn>{container.name}</TableRowColumn>
-            <TableRowColumn>{container.description}</TableRowColumn>
-            <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
-          </TableRow>
-        })}
+        {this.props.containers
+          .filter(c => this.props.active ? c.status === "Active" : c.status === "Inactive")
+          .map(container => {
+            return <TableRow key={container.id}>
+              <TableRowColumn>{container.id}</TableRowColumn>
+              <TableRowColumn>{container.name}</TableRowColumn>
+              <TableRowColumn>{container.description}</TableRowColumn>
+              <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
+            </TableRow>
+          })}
       </TableBody>
     </Table>
   }
