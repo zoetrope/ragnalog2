@@ -37,7 +37,7 @@ const addContainerRequest = createAction(
 );
 const addContainerSuccess = createAction(
   ADD_CONTAINER_SUCCESS,
-  containers => containers
+  container => container
 );
 const addContainerFailure = createAction(
   ADD_CONTAINER_FAILURE,
@@ -62,6 +62,9 @@ export function addContainer(id, name, description) {
     })
       .then(res => res.json())
       .then(json => dispatch(addContainerSuccess(json)))
-      .catch(ex => dispatch(addContainerFailure(ex)))
+      .catch(ex => {
+        console.log("failed to add container", ex);
+        dispatch(addContainerFailure(ex))
+      })
   }
 }
