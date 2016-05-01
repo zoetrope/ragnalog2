@@ -49,12 +49,16 @@ export function addContainer(id, name, description) {
   return dispatch => {
     dispatch(addContainerRequest());
     return fetch(Config.apiHost + "/api/containers", {
-      method: "POST"
-      // body: JSON.stringify({
-      //   id: id,
-      //   name: name,
-      //   description: description
-      // })
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id,
+        name: name,
+        description: description || undefined
+      })
     })
       .then(res => res.json())
       .then(json => dispatch(addContainerSuccess(json)))
