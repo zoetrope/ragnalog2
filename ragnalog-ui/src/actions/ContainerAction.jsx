@@ -1,6 +1,13 @@
-import {FETCH_CONTAINERS_REQUEST, FETCH_CONTAINERS_SUCCESS, FETCH_CONTAINERS_FAILURE} from "./ActionTypes";
 import {createAction} from "redux-actions";
 import * as Config from "../store/Configuration";
+import {
+  FETCH_CONTAINERS_REQUEST,
+  FETCH_CONTAINERS_SUCCESS,
+  FETCH_CONTAINERS_FAILURE,
+  ADD_CONTAINER_REQUEST,
+  ADD_CONTAINER_SUCCESS,
+  ADD_CONTAINER_FAILURE
+} from '../actions/ActionTypes';
 
 const fetchContainersRequest = createAction(
   FETCH_CONTAINERS_REQUEST
@@ -25,3 +32,32 @@ export function fetchContainers() {
   }
 }
 
+const addContainerRequest = createAction(
+  ADD_CONTAINER_REQUEST
+);
+const addContainerSuccess = createAction(
+  ADD_CONTAINER_SUCCESS,
+  containers => containers
+);
+const addContainerFailure = createAction(
+  ADD_CONTAINER_FAILURE,
+  ex=>ex.message
+);
+
+export function addContainer(id, name, description) {
+  console.log("addContainer!!", id, name, description);
+  return dispatch => {
+    dispatch(addContainerRequest());
+    return fetch(Config.apiHost + "/api/containers", {
+      method: "POST"
+      // body: JSON.stringify({
+      //   id: id,
+      //   name: name,
+      //   description: description
+      // })
+    })
+      .then(res => res.json())
+      .then(json => dispatch(addContainerSuccess(json)))
+      .catch(ex => dispatch(addContainerFailure(ex)))
+  }
+}

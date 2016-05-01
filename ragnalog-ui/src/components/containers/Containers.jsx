@@ -31,7 +31,10 @@ class Containers extends Component {
         description: PropTypes.string,
         state: PropTypes.string.isRequired
       })
-    )
+    ),
+    
+    fetchContainers: PropTypes.func.isRequired,
+    addContainer: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -92,6 +95,7 @@ class Containers extends Component {
       />
       <ContainerModalDialog
         open={this.state.openDialog}
+        onSubmit={this.props.addContainer}
       />
       <div>
         containers: {this.props.containers}

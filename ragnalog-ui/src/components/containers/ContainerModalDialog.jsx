@@ -69,6 +69,7 @@ class ContainerModalDialog extends Component {
 
   handleSubmit = () => {
     if (this.validate(["id", "name"])) {
+      this.props.onSubmit(this.state.idFieldValue, this.state.nameFieldValue, this.state.descriptionFieldValue);
       this.setState({open: false});
     }
   };

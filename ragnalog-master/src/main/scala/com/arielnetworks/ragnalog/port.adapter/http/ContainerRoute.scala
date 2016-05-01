@@ -22,8 +22,9 @@ class ContainerRoute extends RouteService {
           complete(new GetContainersResult("test", "hogehoge").toJson)
         } ~
           post {
+            println("add container")
             // create new container
-            complete("ok")
+            complete(new GetContainersResult("test", "hogehoge").toJson)
           }
       } ~
         path(Segment) { containerId =>
