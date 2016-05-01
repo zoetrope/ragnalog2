@@ -69,19 +69,46 @@ class Containers extends Component {
     });
   };
 
+  handleViewContainer = (container)=> {
+    return () => {
+      console.log("view container:", container);
+    }
+  };
+
+  handleActivateContainer = (container)=> {
+    return () => {
+
+    }
+  };
+  handleDeactivateContainer = (container) => {
+    return () => {
+    }
+  };
+
+  handleEditContainer = (container)=> {
+    return () => {
+
+    }
+  };
+  handleDeleteContainer = (container)=> {
+    return () => {
+
+    }
+  };
+
   render() {
 
-    const rightIconMenu = (
+    const rightIconMenu = (container) => (
       <IconMenu iconButtonElement={
           <IconButton>
             <MoreVertIcon color={theme.palette.accent1Color} />
           </IconButton>
         }
       >
-        <MenuItem primaryText="View"/>
-        <MenuItem primaryText="Activate"/>
-        <MenuItem primaryText="Edit"/>
-        <MenuItem primaryText="Delete"/>
+        <MenuItem primaryText="View" onTouchTap={this.handleViewContainer(container)}/>
+        <MenuItem primaryText="Activate" onTouchTap={this.handleActivateContainer(container)}/>
+        <MenuItem primaryText="Edit" onTouchTap={this.handleEditContainer(container)}/>
+        <MenuItem primaryText="Delete" onTouchTap={this.handleDeleteContainer(container)}/>
       </IconMenu>
     );
 
@@ -112,7 +139,7 @@ class Containers extends Component {
               <TableRowColumn>{container.id}</TableRowColumn>
               <TableRowColumn>{container.name}</TableRowColumn>
               <TableRowColumn>{container.description}</TableRowColumn>
-              <TableRowColumn>{rightIconMenu}</TableRowColumn>
+              <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
             </TableRow>
           })}
         </TableBody>
