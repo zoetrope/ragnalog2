@@ -4,8 +4,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.AdministrationService
-import com.arielnetworks.ragnalog.application.archive.data.GetContainersResult
-import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, AddContainerResponse}
+import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse, GetContainersResult}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerService
 import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
@@ -21,10 +20,11 @@ import scala.util.{Failure, Success}
 
 
 trait AddContainerSupport extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val containersFormat = jsonFormat2(GetContainersResult)
 
   implicit val addContainerRequestFormat = jsonFormat3(AddContainerRequest)
-  implicit val addContainerResponseFormat = jsonFormat4(AddContainerResponse)
+  implicit val addContainerResponseFormat = jsonFormat4(ContainerResponse)
+
+  implicit val containersFormat = jsonFormat1(GetContainersResult)
 }
 
 class ContainerRoute extends RouteService with AddContainerSupport {
@@ -45,7 +45,10 @@ class ContainerRoute extends RouteService with AddContainerSupport {
       pathEndOrSingleSlash {
         get {
           // get containers
-          complete(new GetContainersResult("test", "hogehoge").toJson)
+          complete {
+            administrationService.activeContainers()
+              .map(list => list.map(c => new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson))
+          }
         } ~
           (post & entity(as[AddContainerRequest])) { req =>
             println(s"add container: $req")
@@ -53,7 +56,7 @@ class ContainerRoute extends RouteService with AddContainerSupport {
 
             // create new container
             onComplete(container) {
-              case Success(c) => complete(new AddContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson)
+              case Success(c) => complete(new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson)
               case Failure(e) =>
                 println("failed to add container")
                 complete(500 -> "failed to add container")

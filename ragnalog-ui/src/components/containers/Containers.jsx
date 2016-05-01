@@ -23,16 +23,16 @@ class Containers extends Component {
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
     error: PropTypes.bool.isRequired,
-    errorMessage: PropTypes.string,
+    errorMessage: PropTypes.node.isRequired,
     containers: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
-        state: PropTypes.string.isRequired
+        status: PropTypes.string.isRequired
       })
     ),
-    
+
     fetchContainers: PropTypes.func.isRequired,
     addContainer: PropTypes.func.isRequired
   };
@@ -97,43 +97,24 @@ class Containers extends Component {
         open={this.state.openDialog}
         onSubmit={this.props.addContainer}
       />
-      <div>
-        containers: {this.props.containers}
-      </div>
       <Table selectable={false}>
         <TableHeader displaySelectAll={false}>
           <TableRow>
             <TableHeaderColumn>ID</TableHeaderColumn>
             <TableHeaderColumn>Name</TableHeaderColumn>
-            <TableHeaderColumn>Status</TableHeaderColumn>
+            <TableHeaderColumn>Description</TableHeaderColumn>
             <TableHeaderColumn></TableHeaderColumn>
           </TableRow>
         </TableHeader>
         <TableBody displayRowCheckbox={false} showRowHover={true}>
-          <TableRow>
-            <TableRowColumn>1</TableRowColumn>
-            <TableRowColumn>John Smith</TableRowColumn>
-            <TableRowColumn>Employed</TableRowColumn>
-            <TableRowColumn>{rightIconMenu}</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>2</TableRowColumn>
-            <TableRowColumn>Randal White</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-            <TableRowColumn>{rightIconMenu}</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>3</TableRowColumn>
-            <TableRowColumn>Stephanie Sanders</TableRowColumn>
-            <TableRowColumn>Employed</TableRowColumn>
-            <TableRowColumn>{rightIconMenu}</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>4</TableRowColumn>
-            <TableRowColumn>Steve Brown</TableRowColumn>
-            <TableRowColumn>Employed</TableRowColumn>
-            <TableRowColumn>{rightIconMenu}</TableRowColumn>
-          </TableRow>
+          {this.props.containers.map(container => {
+            return <TableRow key={container.id}>
+              <TableRowColumn>{container.id}</TableRowColumn>
+              <TableRowColumn>{container.name}</TableRowColumn>
+              <TableRowColumn>{container.description}</TableRowColumn>
+              <TableRowColumn>{rightIconMenu}</TableRowColumn>
+            </TableRow>
+          })}
         </TableBody>
       </Table>
       <Snackbar

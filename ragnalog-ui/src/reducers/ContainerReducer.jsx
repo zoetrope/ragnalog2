@@ -13,13 +13,13 @@ export default handleActions({
     ...state,
     isFetching: true,
     error: false,
-    errorMessage: null
+    errorMessage: ""
   }),
   [FETCH_CONTAINERS_SUCCESS]: (state, action) => ({
-    ...action.payload,
+    containers: action.payload,
     isFetching: false,
     error: false,
-    errorMessage: null
+    errorMessage: ""
   }),
   [FETCH_CONTAINERS_FAILURE]: (state, action) => ({
     ...state,
@@ -31,13 +31,13 @@ export default handleActions({
     ...state,
     isFetching: true,
     error: false,
-    errorMessage: null
+    errorMessage: ""
   }),
   [ADD_CONTAINER_SUCCESS]: (state, action) => ({
     ...action.payload,
     isFetching: false,
     error: false,
-    errorMessage: null
+    errorMessage: ""
   }),
   [ADD_CONTAINER_FAILURE]: (state, action) => ({
     ...state,
@@ -48,7 +48,7 @@ export default handleActions({
 }, {
   isFetching: false,
   error: false,
-  errorMessage: null,
+  errorMessage: "",
   containers: []
 });
 
