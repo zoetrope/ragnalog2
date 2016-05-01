@@ -8,6 +8,7 @@ import {
   ADD_CONTAINER_SUCCESS,
   ADD_CONTAINER_FAILURE
 } from '../actions/ActionTypes';
+import {push} from 'react-router-redux';
 
 const fetchContainersRequest = createAction(
   FETCH_CONTAINERS_REQUEST
@@ -66,5 +67,11 @@ export function addContainer(id, name, description) {
         console.log("failed to add container", ex);
         dispatch(addContainerFailure(ex))
       })
+  }
+}
+
+export function navigateToViewContainer(id) {
+  return dispatch => {
+    dispatch(push("/containers/" + id));
   }
 }

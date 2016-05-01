@@ -72,7 +72,7 @@ class Containers extends Component {
 
   handleViewContainer = (container)=> {
     return () => {
-      console.log("view container:", container);
+      this.props.navigateToViewContainer(container.id)
     }
   };
 
@@ -88,7 +88,6 @@ class Containers extends Component {
 
   handleEditContainer = (container)=> {
     return () => {
-
     }
   };
   handleDeleteContainer = (container)=> {
