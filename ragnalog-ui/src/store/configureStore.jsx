@@ -1,5 +1,5 @@
 import {compose, applyMiddleware, createStore, combineReducers} from "redux";
-import {routerReducer, routerMiddleware, push} from "react-router-redux";
+import {routerReducer, routerMiddleware} from "react-router-redux";
 import thunkMiddlware from "redux-thunk";
 import rootReducer from "../reducers";
 

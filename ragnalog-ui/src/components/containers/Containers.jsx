@@ -71,29 +71,18 @@ class Containers extends Component {
   };
 
   handleViewContainer = (container)=> {
-    return () => {
-      this.props.navigateToViewContainer(container.id)
-    }
+    this.props.navigateToViewContainer(container.id)
   };
 
   handleActivateContainer = (container)=> {
-    return () => {
-
-    }
   };
   handleDeactivateContainer = (container) => {
-    return () => {
-    }
   };
 
   handleEditContainer = (container)=> {
-    return () => {
-    }
   };
-  handleDeleteContainer = (container)=> {
-    return () => {
 
-    }
+  handleDeleteContainer = (container)=> {
   };
 
   render() {
@@ -105,10 +94,10 @@ class Containers extends Component {
           </IconButton>
         }
       >
-        <MenuItem primaryText="View" onTouchTap={this.handleViewContainer(container)}/>
-        <MenuItem primaryText="Activate" onTouchTap={this.handleActivateContainer(container)}/>
-        <MenuItem primaryText="Edit" onTouchTap={this.handleEditContainer(container)}/>
-        <MenuItem primaryText="Delete" onTouchTap={this.handleDeleteContainer(container)}/>
+        <MenuItem primaryText="View" onTouchTap={() => this.handleViewContainer(container)}/>
+        <MenuItem primaryText="Activate" onTouchTap={() => this.handleActivateContainer(container)}/>
+        <MenuItem primaryText="Edit" onTouchTap={() => this.handleEditContainer(container)}/>
+        <MenuItem primaryText="Delete" onTouchTap={() => this.handleDeleteContainer(container)}/>
       </IconMenu>
     );
 
