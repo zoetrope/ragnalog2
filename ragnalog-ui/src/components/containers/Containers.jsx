@@ -6,7 +6,6 @@ import FontIcon from "material-ui/FontIcon";
 import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
-import * as Styles from "material-ui/styles";
 import IconButton from "material-ui/IconButton";
 import ContainerModalDialog from "./ContainerModalDialog";
 import * as Actions from "../../actions/ContainerAction";
@@ -17,9 +16,7 @@ import * as theme from "../../RagnalogTheme";
 const style = {
   margin: 12
 };
-const iconStyles = {
-  marginRight: 24
-};
+
 class Containers extends Component {
 
   static propTypes = {

@@ -1,10 +1,6 @@
-import {
-  FETCH_CONTAINERS_REQUEST,
-  FETCH_CONTAINERS_SUCCESS,
-  FETCH_CONTAINERS_FAILURE
-} from './ActionTypes';
-
-import {createAction} from 'redux-actions';
+import {FETCH_CONTAINERS_REQUEST, FETCH_CONTAINERS_SUCCESS, FETCH_CONTAINERS_FAILURE} from "./ActionTypes";
+import {createAction} from "redux-actions";
+import * as Config from "../store/Configuration";
 
 const fetchContainersRequest = createAction(
   FETCH_CONTAINERS_REQUEST
@@ -22,7 +18,7 @@ export function fetchContainers() {
   console.log("fetchContainers!!");
   return dispatch => {
     dispatch(fetchContainersRequest());
-    return fetch("http://localhost:8686/api/containers")
+    return fetch(Config.apiHost + "/api/containers")
       .then(res => res.json())
       .then(json => dispatch(fetchContainersSuccess(json)))
       .catch(ex => dispatch(fetchContainersFailure(ex)))

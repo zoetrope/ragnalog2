@@ -8,6 +8,7 @@ import LinearProgress from "material-ui/LinearProgress";
 
 import * as theme from "../../RagnalogTheme";
 import Flow from "@flowjs/flow.js";
+import * as Config from "../store/Configuration";
 
 const style = {
   margin: 12
@@ -21,8 +22,6 @@ const paperStyle = {
   display: 'inline-block',
   background: theme.palette.primary2Color
 };
-
-const serverHost = "http://localhost:8686"; //TODO: set to store?
 
 class Uploader extends Component {
 
@@ -43,7 +42,7 @@ class Uploader extends Component {
 
     const flow = new Flow({
         'target': (file, chunk) => {
-          const target = serverHost + '/api/containers/' + this.containerId + '/archive/' + file.uniqueIdentifier;
+          const target = Config.apiHost + '/api/containers/' + this.containerId + '/archive/' + file.uniqueIdentifier;
           console.log(target);
           return target;
         },

@@ -9,6 +9,7 @@ import Container from "./components/container/Container";
 import Containers from "./components/containers/Containers";
 import configureStore from "./store/configureStore";
 import ReconnectingWebSocket from "reconnectingwebsocket"
+import * as Config from "./store/Configuration";
 
 //Needed for React Developer Tools
 window.React = React;
@@ -35,7 +36,7 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-// const ws = new ReconnectingWebSocket('ws://localhost:8686/socket');
+// const ws = new ReconnectingWebSocket(Config.socketHost + '/socket');
 //
 // ws.onopen = function () {
 //   console.log("onopen")
