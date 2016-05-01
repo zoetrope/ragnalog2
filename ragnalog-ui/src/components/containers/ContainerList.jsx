@@ -14,10 +14,10 @@ class ContainerList extends Component {
 
   render() {
 
-    const viewMenu = this.props.active ?
+    const viewMenu = (container) => this.props.active ?
       <MenuItem primaryText="View" onTouchTap={() => this.props.onView(container)}/> : null;
 
-    const changeStatusMenu = this.props.active ?
+    const changeStatusMenu = (container) => this.props.active ?
       <MenuItem primaryText="Deactivate" onTouchTap={() => this.props.onDeactivate(container)}/> :
       <MenuItem primaryText="Activate" onTouchTap={() => this.props.onActivate(container)}/>;
 
@@ -28,8 +28,8 @@ class ContainerList extends Component {
           </IconButton>
         }
       >
-        {viewMenu}
-        {changeStatusMenu}
+        {viewMenu(container)}
+        {changeStatusMenu(container)}
         <MenuItem primaryText="Edit" onTouchTap={() => this.props.onEdit(container)}/>
         <MenuItem primaryText="Delete" onTouchTap={() => this.props.onDelete(container)}/>
       </IconMenu>
@@ -41,7 +41,7 @@ class ContainerList extends Component {
           <TableHeaderColumn>ID</TableHeaderColumn>
           <TableHeaderColumn>Name</TableHeaderColumn>
           <TableHeaderColumn>Description</TableHeaderColumn>
-          <TableHeaderColumn></TableHeaderColumn>
+          <TableHeaderColumn style={{width:40}}>Menu</TableHeaderColumn>
         </TableRow>
       </TableHeader>
       <TableBody displayRowCheckbox={false} showRowHover={true}>
@@ -52,7 +52,7 @@ class ContainerList extends Component {
               <TableRowColumn>{container.id}</TableRowColumn>
               <TableRowColumn>{container.name}</TableRowColumn>
               <TableRowColumn>{container.description}</TableRowColumn>
-              <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
+              <TableRowColumn style={{width:40}}>{rightIconMenu(container)}</TableRowColumn>
             </TableRow>
           })}
       </TableBody>
