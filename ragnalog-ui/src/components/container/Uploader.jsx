@@ -1,26 +1,25 @@
 import React, {Component, PropTypes} from "react";
 import ReactDOM from "react-dom";
-
 import RaisedButton from "material-ui/RaisedButton";
 import FontIcon from "material-ui/FontIcon";
 import Paper from "material-ui/Paper";
 import LinearProgress from "material-ui/LinearProgress";
-
 import * as theme from "../../RagnalogTheme";
 import Flow from "@flowjs/flow.js";
-import * as Config from "../store/Configuration";
+import * as Config from "../../store/Configuration";
 
-const style = {
-  margin: 12
-};
-
-const paperStyle = {
-  height: 200,
-  width: 800,
-  margin: 20,
-  textAlign: 'center',
-  display: 'inline-block',
-  background: theme.palette.primary2Color
+const styles = {
+  button: {
+    margin: 12
+  },
+  paper: {
+    height: 200,
+    width: 800,
+    margin: 20,
+    textAlign: 'center',
+    display: 'inline-block',
+    background: theme.palette.primary2Color
+  }
 };
 
 class Uploader extends Component {
@@ -88,7 +87,7 @@ class Uploader extends Component {
       <LinearProgress mode="determinate" value={this.state.completed}/> : null;
 
     return <div>
-      <Paper ref="dropArea" style={paperStyle} zDepth={2}>
+      <Paper ref="dropArea" style={styles.paper} zDepth={2}>
         <h1><FontIcon className="material-icons">cloud_upload</FontIcon> Upload File</h1>
 
         <p>
@@ -97,13 +96,13 @@ class Uploader extends Component {
 
         <RaisedButton
           ref="uploadFileButton"
-          label="File" style={style}
+          label="File" style={styles.button}
           primary={true}
           icon={<FontIcon className="material-icons">insert_drive_file</FontIcon>}
         />
         <RaisedButton
           ref="uploadFolderButton"
-          label="Folder" style={style}
+          label="Folder" style={styles.button}
           primary={true}
           icon={<FontIcon className="material-icons">folder</FontIcon>}
         />
