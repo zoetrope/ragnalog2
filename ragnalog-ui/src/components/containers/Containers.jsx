@@ -95,7 +95,9 @@ class Containers extends Component {
         onSubmit={this.props.addContainer}
       />
       <Tabs>
-        <Tab label="Active Containers">
+        <Tab label="Active Containers"
+             icon={<FontIcon className="material-icons">favorite</FontIcon>}
+        >
           <ContainerList
             containers={this.props.containers}
             active={true}
@@ -105,11 +107,12 @@ class Containers extends Component {
             onDelete={this.handleDeleteContainer}
           />
         </Tab>
-        <Tab label="Inactive Containers">
+        <Tab label="Inactive Containers"
+             icon={<FontIcon className="material-icons">do_not_disturb_alt</FontIcon>}
+        >
           <ContainerList
             containers={this.props.containers}
             active={false}
-            onView={this.handleViewContainer}
             onActivate={this.handleActivateContainer}
             onEdit={this.handleEditContainer}
             onDelete={this.handleDeleteContainer}

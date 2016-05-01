@@ -14,10 +14,12 @@ class ContainerList extends Component {
 
   render() {
 
-    const changeStatusMenu =
-      this.props.active ?
-        <MenuItem primaryText="Activate" onTouchTap={() => this.props.onActivate(container)}/> :
-        <MenuItem primaryText="Deactivate" onTouchTap={() => this.props.onDeactivate(container)}/>;
+    const viewMenu = this.props.active ?
+      <MenuItem primaryText="View" onTouchTap={() => this.props.onView(container)}/> : null;
+
+    const changeStatusMenu = this.props.active ?
+      <MenuItem primaryText="Deactivate" onTouchTap={() => this.props.onDeactivate(container)}/> :
+      <MenuItem primaryText="Activate" onTouchTap={() => this.props.onActivate(container)}/>;
 
     const rightIconMenu = (container) => (
       <IconMenu iconButtonElement={
@@ -26,7 +28,7 @@ class ContainerList extends Component {
           </IconButton>
         }
       >
-        <MenuItem primaryText="View" onTouchTap={() => this.props.onView(container)}/>
+        {viewMenu}
         {changeStatusMenu}
         <MenuItem primaryText="Edit" onTouchTap={() => this.props.onEdit(container)}/>
         <MenuItem primaryText="Delete" onTouchTap={() => this.props.onDelete(container)}/>
