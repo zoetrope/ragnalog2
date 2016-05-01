@@ -46,10 +46,9 @@ class Containers extends Component {
     this.props.fetchContainers();
   }
 
-  componentWillReceiveProps(props) {
-    console.log("nextProps", props)
+  componentWillReceiveProps(nextProps) {
     this.setState({
-      openMessage: props.error
+      openMessage: nextProps.error
     });
   }
 
@@ -77,6 +76,7 @@ class Containers extends Component {
         }
       >
         <MenuItem primaryText="View"/>
+        <MenuItem primaryText="Activate"/>
         <MenuItem primaryText="Edit"/>
         <MenuItem primaryText="Delete"/>
       </IconMenu>
