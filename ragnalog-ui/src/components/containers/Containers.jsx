@@ -12,6 +12,7 @@ import * as Actions from "../../actions/ContainerAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import * as theme from "../../RagnalogTheme";
+import Snackbar from 'material-ui/Snackbar';
 
 const style = {
   margin: 12
@@ -35,20 +36,36 @@ class Containers extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {openDialog: false};
+    this.state = {
+      openMessage: false,
+      openDialog: false
+    };
   }
-
-  handleOpen = () => {
-    this.setState({openDialog: true});
-  };
-
-  handleClose = () => {
-    this.setState({openDialog: false});
-  };
 
   componentWillMount() {
     this.props.fetchContainers();
   }
+
+  componentWillReceiveProps(props) {
+    console.log("nextProps", props)
+    this.setState({
+      openMessage: props.error
+    });
+  }
+
+  handleOpenDialog = () => {
+    this.setState({openDialog: true});
+  };
+
+  handleCloseDialog = () => {
+    this.setState({openDialog: false});
+  };
+
+  handleCloseMessage = () => {
+    this.setState({
+      openMessage: false
+    });
+  };
 
   render() {
 
@@ -71,7 +88,7 @@ class Containers extends Component {
       <RaisedButton
         label="Add Container" style={style}
         icon={<FontIcon className="material-icons">add_circle</FontIcon>}
-        onTouchTap={this.handleOpen}
+        onTouchTap={this.handleOpenDialog}
       />
       <ContainerModalDialog
         open={this.state.openDialog}
@@ -99,19 +116,28 @@ class Containers extends Component {
             <TableRowColumn>2</TableRowColumn>
             <TableRowColumn>Randal White</TableRowColumn>
             <TableRowColumn>Unemployed</TableRowColumn>
+            <TableRowColumn>{rightIconMenu}</TableRowColumn>
           </TableRow>
           <TableRow>
             <TableRowColumn>3</TableRowColumn>
             <TableRowColumn>Stephanie Sanders</TableRowColumn>
             <TableRowColumn>Employed</TableRowColumn>
+            <TableRowColumn>{rightIconMenu}</TableRowColumn>
           </TableRow>
           <TableRow>
             <TableRowColumn>4</TableRowColumn>
             <TableRowColumn>Steve Brown</TableRowColumn>
             <TableRowColumn>Employed</TableRowColumn>
+            <TableRowColumn>{rightIconMenu}</TableRowColumn>
           </TableRow>
         </TableBody>
       </Table>
+      <Snackbar
+        open={this.state.openMessage}
+        message={this.props.errorMessage}
+        autoHideDuration={6000}
+        onRequestClose={this.handleCloseMessage}
+      />
     </div>
   }
 }
