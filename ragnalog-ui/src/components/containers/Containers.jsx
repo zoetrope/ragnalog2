@@ -1,19 +1,14 @@
 import React, {Component, PropTypes} from "react";
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from "material-ui/Table";
 import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import FontIcon from "material-ui/FontIcon";
-import IconMenu from "material-ui/IconMenu";
-import MenuItem from "material-ui/MenuItem";
-import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
-import IconButton from "material-ui/IconButton";
 import ContainerModalDialog from "./ContainerModalDialog";
 import * as Actions from "../../actions/ContainerAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import * as theme from "../../RagnalogTheme";
-import Snackbar from 'material-ui/Snackbar';
-import {Tabs, Tab} from 'material-ui/Tabs';
+import Snackbar from "material-ui/Snackbar";
+import {Tabs, Tab} from "material-ui/Tabs";
+import ContainerList from "./ContainerList";
 
 const style = {
   margin: 12
@@ -76,6 +71,7 @@ class Containers extends Component {
 
   handleActivateContainer = (container)=> {
   };
+  
   handleDeactivateContainer = (container) => {
   };
 
@@ -86,20 +82,6 @@ class Containers extends Component {
   };
 
   render() {
-
-    const rightIconMenu = (container) => (
-      <IconMenu iconButtonElement={
-          <IconButton>
-            <MoreVertIcon color={theme.palette.accent1Color} />
-          </IconButton>
-        }
-      >
-        <MenuItem primaryText="View" onTouchTap={() => this.handleViewContainer(container)}/>
-        <MenuItem primaryText="Activate" onTouchTap={() => this.handleActivateContainer(container)}/>
-        <MenuItem primaryText="Edit" onTouchTap={() => this.handleEditContainer(container)}/>
-        <MenuItem primaryText="Delete" onTouchTap={() => this.handleDeleteContainer(container)}/>
-      </IconMenu>
-    );
 
     return <div>
       <TextField hintText="Filter"/>
@@ -114,26 +96,14 @@ class Containers extends Component {
       />
       <Tabs>
         <Tab label="Active Containers">
-          <Table selectable={false}>
-            <TableHeader displaySelectAll={false}>
-              <TableRow>
-                <TableHeaderColumn>ID</TableHeaderColumn>
-                <TableHeaderColumn>Name</TableHeaderColumn>
-                <TableHeaderColumn>Description</TableHeaderColumn>
-                <TableHeaderColumn></TableHeaderColumn>
-              </TableRow>
-            </TableHeader>
-            <TableBody displayRowCheckbox={false} showRowHover={true}>
-              {this.props.containers.map(container => {
-                return <TableRow key={container.id}>
-                  <TableRowColumn>{container.id}</TableRowColumn>
-                  <TableRowColumn>{container.name}</TableRowColumn>
-                  <TableRowColumn>{container.description}</TableRowColumn>
-                  <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
-                </TableRow>
-              })}
-            </TableBody>
-          </Table>
+          <ContainerList 
+            containers={this.props.containers} 
+            onView={this.handleViewContainer}
+            onActivate={this.handleActivateContainer}
+            onDeactivate={this.handleDeactivateContainer}
+            onEdit={this.handleEditContainer}
+            onDelete={this.handleDeleteContainer}
+          />
         </Tab>
         <Tab label="Inactive Containers">
         </Tab>
