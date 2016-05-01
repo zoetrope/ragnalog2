@@ -13,6 +13,7 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import * as theme from "../../RagnalogTheme";
 import Snackbar from 'material-ui/Snackbar';
+import {Tabs, Tab} from 'material-ui/Tabs';
 
 const style = {
   margin: 12
@@ -113,8 +114,7 @@ class Containers extends Component {
     );
 
     return <div>
-      <h2>Containers</h2>
-      <TextField hintText="Search"/>
+      <TextField hintText="Filter"/>
       <RaisedButton
         label="Add Container" style={style}
         icon={<FontIcon className="material-icons">add_circle</FontIcon>}
@@ -124,26 +124,32 @@ class Containers extends Component {
         open={this.state.openDialog}
         onSubmit={this.props.addContainer}
       />
-      <Table selectable={false}>
-        <TableHeader displaySelectAll={false}>
-          <TableRow>
-            <TableHeaderColumn>ID</TableHeaderColumn>
-            <TableHeaderColumn>Name</TableHeaderColumn>
-            <TableHeaderColumn>Description</TableHeaderColumn>
-            <TableHeaderColumn></TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false} showRowHover={true}>
-          {this.props.containers.map(container => {
-            return <TableRow key={container.id}>
-              <TableRowColumn>{container.id}</TableRowColumn>
-              <TableRowColumn>{container.name}</TableRowColumn>
-              <TableRowColumn>{container.description}</TableRowColumn>
-              <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
-            </TableRow>
-          })}
-        </TableBody>
-      </Table>
+      <Tabs>
+        <Tab label="Active Containers">
+          <Table selectable={false}>
+            <TableHeader displaySelectAll={false}>
+              <TableRow>
+                <TableHeaderColumn>ID</TableHeaderColumn>
+                <TableHeaderColumn>Name</TableHeaderColumn>
+                <TableHeaderColumn>Description</TableHeaderColumn>
+                <TableHeaderColumn></TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody displayRowCheckbox={false} showRowHover={true}>
+              {this.props.containers.map(container => {
+                return <TableRow key={container.id}>
+                  <TableRowColumn>{container.id}</TableRowColumn>
+                  <TableRowColumn>{container.name}</TableRowColumn>
+                  <TableRowColumn>{container.description}</TableRowColumn>
+                  <TableRowColumn>{rightIconMenu(container)}</TableRowColumn>
+                </TableRow>
+              })}
+            </TableBody>
+          </Table>
+        </Tab>
+        <Tab label="Inactive Containers">
+        </Tab>
+      </Tabs>
       <Snackbar
         open={this.state.openMessage}
         message={this.props.errorMessage}
