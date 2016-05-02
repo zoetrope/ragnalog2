@@ -39,9 +39,10 @@ class Uploader extends Component {
 
     this.containerId = "default";
 
+    //TODO: move to reducer?
     const flow = new Flow({
         'target': (file, chunk) => {
-          const target = Config.apiHost + '/api/containers/' + this.containerId + '/archive/' + file.uniqueIdentifier;
+          const target = Config.apiHost + '/api/containers/' + this.containerId + '/archives/' + file.uniqueIdentifier;
           console.log(target);
           return target;
         },

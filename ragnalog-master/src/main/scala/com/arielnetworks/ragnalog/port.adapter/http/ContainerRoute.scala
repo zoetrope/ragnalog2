@@ -3,16 +3,9 @@ package com.arielnetworks.ragnalog.port.adapter.http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
-import com.arielnetworks.ragnalog.application.AdministrationService
+import com.arielnetworks.ragnalog.application.ServiceRegistry
 import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse, GetContainersResult}
-import com.arielnetworks.ragnalog.domain.model.container.ContainerService
-import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
-import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
-import com.arielnetworks.ragnalog.port.adapter.service.{EmbulkAdapter, KibanaAdapter}
-import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
-import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
-import org.elasticsearch.common.settings.Settings
 import spray.json._
 
 import scala.concurrent.ExecutionContext
@@ -29,16 +22,7 @@ trait AddContainerSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
 class ContainerRoute extends RouteService with AddContainerSupport {
 
-  //TODO: move to application layer
-  val elasticsearchSettings = Settings.settingsBuilder().put("cluster.name", "ragnalog2.elasticsearch")
-  implicit val elasticClient = ElasticClient.transport(elasticsearchSettings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))
-  val idSpec = new ElasticsearchIdPatternSpecification
-  val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient)
-  val containerService = new ContainerService(containerRepository)
-  val visualizationAdapter = new KibanaAdapter
-  val registrationAdapter = new EmbulkAdapter
-  val logFileService = new RawFileService
-  val administrationService = new AdministrationService(containerService, visualizationAdapter, registrationAdapter, logFileService, idSpec)
+  val administrationService = ServiceRegistry.administrationService
 
   def route(implicit m: Materializer, ec: ExecutionContext) =
     pathPrefix("containers") {

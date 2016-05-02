@@ -7,7 +7,7 @@ import {
   ADD_CONTAINER_REQUEST,
   ADD_CONTAINER_SUCCESS,
   ADD_CONTAINER_FAILURE
-} from '../actions/ActionTypes';
+} from './ActionTypes';
 import {push} from 'react-router-redux';
 
 const fetchContainersRequest = createAction(

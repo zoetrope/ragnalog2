@@ -5,7 +5,7 @@ import {Provider} from "react-redux";
 import {Router, Route, IndexRoute, browserHistory} from "react-router";
 import {syncHistoryWithStore} from "react-router-redux";
 import App from "./components/app/App";
-import Container from "./components/container/Container";
+import Archives from "./components/archives/Archives";
 import Containers from "./components/containers/Containers";
 import configureStore from "./store/configureStore";
 import ReconnectingWebSocket from "reconnectingwebsocket"
@@ -29,7 +29,7 @@ ReactDOM.render(
       <Route path="/" component={App}>
         <IndexRoute component={Containers}/>
         <Route path="/containers" component={Containers}/>
-        <Route path="/containers/:id" component={Container}/>
+        <Route path="/containers/:id" component={Archives}/>
       </Route>
     </Router>
   </Provider>,
