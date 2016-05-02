@@ -22,7 +22,7 @@ trait ContainerJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
 class ContainerRoute extends RouteService with ContainerJsonSupport {
 
-  val administrationService = ServiceRegistry.administrationService
+  val administrationService = ServiceRegistry.containerService
 
   def route(implicit m: Materializer, ec: ExecutionContext) =
     pathPrefix("containers") {

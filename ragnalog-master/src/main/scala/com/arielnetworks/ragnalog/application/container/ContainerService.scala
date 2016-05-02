@@ -1,8 +1,8 @@
-package com.arielnetworks.ragnalog.application
+package com.arielnetworks.ragnalog.application.container
 
 import java.util.UUID
 
-import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerService}
+import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
 import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationAdapter
 import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
@@ -14,9 +14,9 @@ trait IdPatternSpecification {
   def isSatisfied(id: String): Boolean
 }
 
-class AdministrationService
+class ContainerService
 (
-  containerService: ContainerService,
+  containerRepository: ContainerRepository,
   visualizationAdapter: VisualizationAdapter,
   registrationAdapter: RegistrationAdapter,
   logFileService: RawFileService,
@@ -44,36 +44,46 @@ class AdministrationService
           case Some(x) => x
           case _ => r
         }
-        containerService.createContainer(ContainerId(r), name, containerDescription)
+        val container = new Container(ContainerId(r), name, containerDescription, ContainerStatus.Active)
+        containerRepository.add(container).map(_ => container)
       case Left(x) => Future.failed(x)
     }
   }
 
   def removeContainer(containerId: ContainerId): Future[Unit] = {
     for {
-      container <- containerService.resolvedById(containerId)
+      container <- containerRepository.resolveById(containerId)
       _ <- visualizationAdapter.removeContainer(container)
       _ <- registrationAdapter.remove(container)
       _ <- logFileService.removeAll(container)
-      _ <- containerService.removeContainer(containerId)
+      _ <- containerRepository.deleteById(containerId)
     } yield Unit
   }
 
   def activeContainers(): Future[Seq[Container]] = {
-    containerService.activeContainers()
+    for {
+      count <- containerRepository.countByStatus(ContainerStatus.Active)
+      containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Active)
+    } yield containers
   }
 
   def inactiveContainers(): Future[Seq[Container]] = {
-    containerService.inactiveContainers()
+    for {
+      count <- containerRepository.countByStatus(ContainerStatus.Inactive)
+      containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Inactive)
+    } yield containers
   }
 
   def updateContainer(containerId: ContainerId, name: Option[String], description: Option[String]): Future[Unit] = {
-      containerService.updateContainer(containerId, name, description)
+    for {
+      container <- containerRepository.resolveById(containerId)
+      _ <- containerRepository.save(new Container(containerId, name.getOrElse(container.name), description, container.status))
+    } yield Unit
   }
 
   def activateContainer(containerId: ContainerId): Future[Unit] = {
     for {
-      container <- containerService.resolvedById(containerId)
+      container <- containerRepository.resolveById(containerId)
       _ <- container.activate()
       _ <- visualizationAdapter.addContainer(container)
       _ <- registrationAdapter.open(container)
@@ -83,11 +93,14 @@ class AdministrationService
 
   def deactivateContainer(containerId: ContainerId): Future[Unit] = {
     for {
-      container <- containerService.resolvedById(containerId)
+      container <- containerRepository.resolveById(containerId)
       _ <- container.deactivate()
       _ <- visualizationAdapter.removeContainer(container)
       _ <- registrationAdapter.close(container)
       _ <- container.save()
     } yield Unit
   }
+
+
 }
+

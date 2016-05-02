@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.specification
 
-import com.arielnetworks.ragnalog.application.IdPatternSpecification
+import com.arielnetworks.ragnalog.application.container.IdPatternSpecification
 
 class ElasticsearchIdPatternSpecification  extends IdPatternSpecification{
   override def isSatisfied(id: String): Boolean = {

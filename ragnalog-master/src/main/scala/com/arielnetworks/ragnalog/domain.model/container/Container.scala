@@ -21,6 +21,7 @@ case class Container
   extends Entity[ContainerId] {
 
   def activate(): Future[Unit] = ???
+  // containerRepository, indexPattern, index.close
 
   def deactivate(): Future[Unit] = ???
 

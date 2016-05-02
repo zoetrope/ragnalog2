@@ -21,7 +21,7 @@ trait ArchiveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
 class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSupport {
 
-  val userService = ServiceRegistry.userService
+  val userService = ServiceRegistry.archiveService
 
 
   def route(implicit m: Materializer, ec: ExecutionContext): Route =

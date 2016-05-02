@@ -1,7 +1,7 @@
-package com.arielnetworks.ragnalog.application
+package com.arielnetworks.ragnalog.application.archive
 
 import com.arielnetworks.ragnalog.application.archive.data.{ArchiveResponse, GetArchivesResponse}
-import com.arielnetworks.ragnalog.domain.model.archive.{ArchiveId, ArchiveService, ArchiveType}
+import com.arielnetworks.ragnalog.domain.model.archive.{ArchiveId, ArchiveType, _}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveInfo
 import org.joda.time.DateTime
@@ -11,25 +11,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class UserService
-(
-  archiveService: ArchiveService
-) {
-
+class ArchiveService(archiveRepository: ArchiveRepository) {
   def uploadArchiveFile(info: ArchiveInfo) = {
 
     val lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parseDateTime(info.lastModified)
 
-    archiveService.createArchive(
-      ContainerId(info.containerId),
+    val archive = new Archive(
       ArchiveId(info.identifier),
       info.filename,
       info.uploadedFilePath,
       ArchiveType.fromExtension(info.filename),
       info.totalSize,
       new DateTime(),
-      lastModified
-    ) onComplete {
+      lastModified,
+      List.empty[LogFile]
+    )
+    println(s"createArchive: $archive")
+
+    archiveRepository.add(archive, Some(ContainerId(info.containerId))).map(_ => archive) onComplete {
       case Success(_) => println("archive added")
       case Failure(ex) => println("failed to add archive"); ex.printStackTrace()
     }
@@ -44,19 +43,24 @@ class UserService
   def archives(containerId: String): Future[GetArchivesResponse] = {
     //TODO: add converter
 
-    archiveService.archives(ContainerId(containerId))
-      .map(list => new GetArchivesResponse(
-        list.map(a => new ArchiveResponse(
-          a.id.value,
-          a.fileName,
-          a.filePath.path,
-          a.archiveType.toString,
-          a.size,
-          a.uploadedDate.toString,
-          a.modifiedDate.toString()
-        ))
+    val list = for {
+      count <- archiveRepository.count(ContainerId(containerId))
+      archives <- archiveRepository.allArchives(0, count.asInstanceOf[Int], ContainerId(containerId))
+    } yield archives
+
+    list.map(list => new GetArchivesResponse(
+      list.map(a => new ArchiveResponse(
+        a.id.value,
+        a.fileName,
+        a.filePath.path,
+        a.archiveType.toString,
+        a.size,
+        a.uploadedDate.toString,
+        a.modifiedDate.toString()
       ))
+    ))
   }
 
   def logFiles(archiveId: ArchiveId) = ???
+
 }
