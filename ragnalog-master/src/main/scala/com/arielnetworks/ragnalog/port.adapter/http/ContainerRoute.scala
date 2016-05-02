@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 
-trait AddContainerSupport extends DefaultJsonProtocol with SprayJsonSupport {
+trait ContainerJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val addContainerRequestFormat = jsonFormat3(AddContainerRequest)
   implicit val addContainerResponseFormat = jsonFormat4(ContainerResponse)
@@ -20,7 +20,7 @@ trait AddContainerSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val containersFormat = jsonFormat1(GetContainersResult)
 }
 
-class ContainerRoute extends RouteService with AddContainerSupport {
+class ContainerRoute extends RouteService with ContainerJsonSupport {
 
   val administrationService = ServiceRegistry.administrationService
 
@@ -28,8 +28,8 @@ class ContainerRoute extends RouteService with AddContainerSupport {
     pathPrefix("containers") {
       pathEndOrSingleSlash {
         get {
-          // get containers
           complete {
+            //TODO: add converter (and move to application layer)
             administrationService.activeContainers()
               .map(list => list.map(c => new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson))
           }
@@ -38,7 +38,6 @@ class ContainerRoute extends RouteService with AddContainerSupport {
             println(s"add container: $req")
             val container = administrationService.createContainer(Some(req.id), Some(req.name), req.description)
 
-            // create new container
             onComplete(container) {
               case Success(c) => complete(new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson)
               case Failure(e) =>

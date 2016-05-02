@@ -1,5 +1,6 @@
 package com.arielnetworks.ragnalog.application
 
+import com.arielnetworks.ragnalog.application.archive.data.GetArchivesResponse
 import com.arielnetworks.ragnalog.domain.model.archive.{ArchiveId, ArchiveService, ArchiveType}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveInfo
@@ -7,6 +8,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class UserService
@@ -39,7 +41,10 @@ class UserService
 
   def unregisterLogFile() = ???
 
-  def archives(containerId: ContainerId) = ???
+  def archives(containerId: String): Future[GetArchivesResponse] = {
+    //TODO: add converter
+    Future.successful(null)
+  }
 
   def logFiles(archiveId: ArchiveId) = ???
 }

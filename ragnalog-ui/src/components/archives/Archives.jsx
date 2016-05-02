@@ -4,6 +4,7 @@ import * as Actions from "../../actions/ArchiveAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
+import ArchiveList from "./ArchiveList";
 
 class Archives extends Component {
 
@@ -13,7 +14,7 @@ class Archives extends Component {
 
   componentWillMount() {
     console.log("Archives will mount", this.props.params);
-    
+
     this.props.fetchArchives(this.props.params.id);
   }
 
@@ -24,12 +25,14 @@ class Archives extends Component {
   render() {
     return <div>
       <Uploader />
+      <ArchiveList archives={this.props.archies}/>
     </div>
   }
 }
 
 function mapStateToProps(state) {
   return {
+    archives: state.ArchiveReducer.archives
   };
 }
 
