@@ -28,4 +28,11 @@ class ArchiveService(archiveRepository: ArchiveRepository) {
     //    val logFiles =
 
   }
+
+  def archives(parent: ContainerId): Future[Seq[Archive]] = {
+    for {
+      count <- archiveRepository.count(parent)
+      archives <- archiveRepository.allArchives(0, count.asInstanceOf[Int], parent)
+    } yield archives
+  }
 }

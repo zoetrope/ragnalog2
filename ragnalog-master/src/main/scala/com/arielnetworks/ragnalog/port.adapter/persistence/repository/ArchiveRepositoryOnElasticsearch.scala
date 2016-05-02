@@ -4,15 +4,52 @@ import com.arielnetworks.ragnalog.domain.model.archive.{Archive, ArchiveId, Arch
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.persistence.translator.ArchiveTranslator
 import com.sksamuel.elastic4s.ElasticClient
+import com.sksamuel.elastic4s.ElasticDsl._
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Promise}
+import scala.util.{Failure, Success}
 
 class ArchiveRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: String = ".ragnalog2")
   extends RepositoryOnElasticsearch[ArchiveId, Archive, ContainerId](elasticClient, indexName, "archive")
     with ArchiveRepository
     with ArchiveTranslator {
 
-  override def count(): Future[Long] = ???
+  def count(parent: ContainerId): Future[Long] = {
+    val p = Promise[Long]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          termQuery("_parent", parent.value)
+        }
+          size 0
+      ) onComplete {
+        case Success(r) => p.success(r.totalHits)
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 
-  override def allArchives(): Future[Seq[Archive]] = ???
+  def allArchives(start: Int, limit: Int, parent: ContainerId): Future[Seq[Archive]] = {
+    println(s"allArchives: $start, $limit, ${parent.value}")
+    val p = Promise[Seq[Archive]]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          termQuery("_parent", parent.value)
+        }
+          from start
+          size limit
+      ) onComplete {
+        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.getSource)))
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 }

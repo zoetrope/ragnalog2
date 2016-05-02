@@ -38,12 +38,10 @@ class Uploader extends Component {
     const uploadFolderButton = ReactDOM.findDOMNode(this.refs.uploadFolderButton);
     const dropArea = ReactDOM.findDOMNode(this.refs.dropArea);
 
-    this.containerId = "default";
-
     //TODO: move to reducer?
     const flow = new Flow({
         'target': (file, chunk) => {
-          const target = Config.apiHost + '/api/containers/' + this.containerId + '/archives/' + file.uniqueIdentifier;
+          const target = Config.apiHost + '/api/containers/' + this.props.containerId + '/archives/' + file.uniqueIdentifier;
           console.log(target);
           return target;
         },

@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.application
 
-import com.arielnetworks.ragnalog.application.archive.data.GetArchivesResponse
+import com.arielnetworks.ragnalog.application.archive.data.{ArchiveResponse, GetArchivesResponse}
 import com.arielnetworks.ragnalog.domain.model.archive.{ArchiveId, ArchiveService, ArchiveType}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveInfo
@@ -43,7 +43,19 @@ class UserService
 
   def archives(containerId: String): Future[GetArchivesResponse] = {
     //TODO: add converter
-    Future.successful(null)
+
+    archiveService.archives(ContainerId(containerId))
+      .map(list => new GetArchivesResponse(
+        list.map(a => new ArchiveResponse(
+          a.id.value,
+          a.fileName,
+          a.filePath.path,
+          a.archiveType.toString,
+          a.size,
+          a.uploadedDate.toString,
+          a.modifiedDate.toString()
+        ))
+      ))
   }
 
   def logFiles(archiveId: ArchiveId) = ???

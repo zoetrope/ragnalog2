@@ -16,7 +16,7 @@ export default handleActions({
     errorMessage: ""
   }),
   [FETCH_ARCHIVES_SUCCESS]: (state, action) => ({
-    archives: action.payload,
+    ...action.payload,
     isFetching: false,
     error: false,
     errorMessage: ""

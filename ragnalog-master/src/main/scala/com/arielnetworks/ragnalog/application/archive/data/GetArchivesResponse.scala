@@ -13,5 +13,5 @@ case class ArchiveResponse
 
 case class GetArchivesResponse
 (
-  archives: List[ArchiveResponse]
+  archives: Seq[ArchiveResponse]
 )

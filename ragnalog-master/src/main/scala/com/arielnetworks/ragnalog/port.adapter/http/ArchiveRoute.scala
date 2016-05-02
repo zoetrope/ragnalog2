@@ -30,20 +30,28 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
         pathEndOrSingleSlash {
           get {
             complete {
-              userService.archives(containerId).map(r => r.toJson)
+              userService.archives(containerId).map(_.toJson)
             }
           }
         } ~
           path(Segment) { identifier =>
-            post {
-              entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
-                upload(containerId, identifier, formData) { info =>
-                  userService.uploadArchiveFile(info)
+            get {
+              //TODO: download archive
+              complete("not implemented")
+            } ~
+              post {
+                entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
+                  upload(containerId, identifier, formData) { info =>
+                    userService.uploadArchiveFile(info)
 
-                  //TODO: send ArchiveRegisteredEvent via WebSocket
+                    //TODO: send ArchiveRegisteredEvent via WebSocket
+                  }
                 }
+              } ~
+              delete {
+                //TODO: delete archive
+                complete("not implemented")
               }
-            }
           }
       }
     }

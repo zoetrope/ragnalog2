@@ -23,7 +23,7 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
       fields.get("fileName").asInstanceOf[String],
       Path(fields.get("filePath").asInstanceOf[String], '/'),
       ArchiveType.of(fields.get("archiveType").asInstanceOf[String]),
-      fields.get("size").asInstanceOf[Long],
+      fields.get("size").asInstanceOf[Int],
       toTimeStamp(fields.get("uploadedDate").asInstanceOf[String]),
       toTimeStamp(fields.get("modifiedDate").asInstanceOf[String]),
       List.empty[LogFile]

@@ -24,8 +24,8 @@ class Archives extends Component {
 
   render() {
     return <div>
-      <Uploader />
-      <ArchiveList archives={this.props.archies}/>
+      <Uploader containerId={this.props.params.id}/>
+      <ArchiveList archives={this.props.archives}/>
     </div>
   }
 }

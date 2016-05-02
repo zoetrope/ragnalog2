@@ -7,8 +7,8 @@ import scala.concurrent.Future
 
 trait ArchiveRepository extends Repository[ArchiveId, Archive, ContainerId] {
 
-  def count(): Future[Long]
+  def count(parent: ContainerId): Future[Long]
 
-  def allArchives(): Future[Seq[Archive]]
+  def allArchives(start: Int, limit: Int, parent: ContainerId): Future[Seq[Archive]];
 
 }
