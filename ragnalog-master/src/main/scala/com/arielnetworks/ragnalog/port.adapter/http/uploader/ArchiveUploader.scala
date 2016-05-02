@@ -14,7 +14,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait ArchiveUploader {
 
-  def upload(containerId:String, identifier:String, formData: Multipart.FormData)(implicit m: Materializer, ec: ExecutionContext): Route = {
+  def upload(containerId: String, identifier: String, formData: Multipart.FormData)
+            (onUploaded: ArchiveInfo => Unit)
+            (implicit m: Materializer, ec: ExecutionContext): Route = {
     val uploader = ArchiveBuilderStore.getOrCreate(containerId, identifier)
 
     println(s"uploading: $containerId:$identifier")
@@ -42,10 +44,11 @@ trait ArchiveUploader {
     onSuccess(allPartsFuture) { allParts =>
       println(s"complete: $allParts")
 
-      val allChunkWasUploaded = uploader.append(allParts)
-
-      if (allChunkWasUploaded) {
-        ArchiveBuilderStore.remove(containerId, identifier)
+      uploader.append(allParts) match {
+        case Some(info) =>
+          ArchiveBuilderStore.remove(containerId, identifier)
+          onUploaded(info)
+        case None =>
       }
 
       complete {

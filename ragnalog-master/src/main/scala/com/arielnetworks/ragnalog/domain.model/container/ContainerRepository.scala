@@ -1,10 +1,10 @@
 package com.arielnetworks.ragnalog.domain.model.container
 
-import com.arielnetworks.ragnalog.domain.model.common.Repository
+import com.arielnetworks.ragnalog.domain.model.common.{EmptyId, Repository}
 
 import scala.concurrent.Future
 
-trait ContainerRepository extends Repository[ContainerId, Container] {
+trait ContainerRepository extends Repository[ContainerId, Container, EmptyId] {
 
   def countByStatus(isActive: ContainerStatus.Value): Future[Long]
 

@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@flowjs/flow.js": "^2.10.1",
+    "blueimp-md5": "^2.3.0",
     "classnames": "^2.2.3",
     "material-ui": "^0.15.0-beta.2",
     "react": "^15.0.1",

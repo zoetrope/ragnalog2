@@ -10,21 +10,30 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
-abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID]]
+abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID], PARENT <: Identifier[String]]
 (
   protected val elasticClient: ElasticClient,
   protected val indexName: String,
   protected val typeName: String
 )
-  extends Repository[ID, E]
+  extends Repository[ID, E, PARENT]
     with Translator[ID, E] {
 
-  override def add(entity: E): Future[Unit] = {
+  override def add(entity: E, parentId: Option[PARENT]): Future[Unit] = {
     val p = Promise[Unit]()
     try {
-      elasticClient.execute(
-        index into indexName / typeName id entity.id.value opType OpType.CREATE fields toFieldsFromEntity(entity)
-      ) onComplete {
+      val ret = parentId match {
+        case Some(p) =>
+          elasticClient.execute(
+            index into indexName / typeName id entity.id.value parent p.value opType OpType.CREATE fields toFieldsFromEntity(entity)
+          )
+        case None =>
+          elasticClient.execute(
+            index into indexName / typeName id entity.id.value opType OpType.CREATE fields toFieldsFromEntity(entity)
+          )
+      }
+
+      ret onComplete {
         case Success(r) =>
           if (r.created) p.success(Unit)
           else p.failure(new RepositoryIOException("could not create entity."))

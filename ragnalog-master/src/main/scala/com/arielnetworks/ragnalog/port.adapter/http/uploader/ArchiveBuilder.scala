@@ -18,7 +18,18 @@ case class ArchiveChunk
   totalChunks: Int,
   filename: String,
   chunkSize: Int,
-  currentChunkSize: Int
+  currentChunkSize: Int,
+  lastModified: String
+)
+
+case class ArchiveInfo
+(
+  containerId: String,
+  uploadedFilePath: Path,
+  totalSize: Long,
+  identifier: String,
+  filename: String,
+  lastModified: String
 )
 
 class ArchiveBuilder(val containerId: String, val identifier: String) extends LoanSupport {
@@ -26,7 +37,7 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
   val chunks = mutable.ListBuffer[ArchiveChunk]()
 
   //TODO: error handling
-  def append(parts: Map[String, Any]): Boolean = {
+  def append(parts: Map[String, Any]): Option[ArchiveInfo] = {
 
     val chunk = for {
       file <- parts.get("file").map(_.asInstanceOf[File])
@@ -38,8 +49,9 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
       filename <- parts.get("flowFilename").map(_.asInstanceOf[String])
       chunkSize <- parts.get("flowChunkSize").map(_.asInstanceOf[String].toInt)
       currentChunkSize <- parts.get("flowCurrentChunkSize").map(_.asInstanceOf[String].toInt)
+      lastModified <- parts.get("lastModified").map(_.asInstanceOf[String])
     } yield {
-      ArchiveChunk(file, totalSize, relativePath, identifier, chunkNumber, totalChunks, filename, chunkSize, currentChunkSize)
+      ArchiveChunk(file, totalSize, relativePath, identifier, chunkNumber, totalChunks, filename, chunkSize, currentChunkSize, lastModified)
     }
 
     chunk match {
@@ -48,15 +60,17 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
           chunks += c
           val allChunkWasUploaded = chunks.size == c.totalChunks
           if (allChunkWasUploaded) {
-            concatenate()
+            val path = concatenate()
+            Some(ArchiveInfo(containerId, path, c.totalSize, c.identifier, c.filename, c.lastModified))
+          } else {
+            None
           }
-          allChunkWasUploaded
         }
-      case None => false
+      case None => None
     }
   }
 
-  private def concatenate(): Unit = {
+  private def concatenate(): Path = {
 
     println(s"concatenate files: $chunks")
 
@@ -79,6 +93,7 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
       })
     }
 
+    archivePath
   }
 
   def allChunkWasUploaded: Boolean = ???

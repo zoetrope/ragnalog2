@@ -9,10 +9,10 @@ trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
 
   protected def toEntityFromFields(id: String, fields: java.util.Map[String, Object]): E
 
-  private val dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+  private val dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"
 
   protected def fromTimeStamp(dateTime: DateTime): String = {
-    dateTime.formatted(dateTimePattern)
+    DateTimeFormat.forPattern(dateTimePattern).print(dateTime)
   }
 
   protected def fromTimeStampOpt(dateTime: Option[DateTime]): String = {

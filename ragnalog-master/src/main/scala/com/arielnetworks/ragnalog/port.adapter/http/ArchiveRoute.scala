@@ -25,7 +25,11 @@ class ArchiveRoute extends RouteService with ArchiveUploader {
           path(Segment) { identifier =>
             post {
               entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
-                upload(containerId, identifier, formData)
+                upload(containerId, identifier, formData) { info =>
+                  userService.uploadArchiveFile(info)
+
+                  //TODO: send ArchiveRegisteredEvent via WebSocket
+                }
               }
             }
           }

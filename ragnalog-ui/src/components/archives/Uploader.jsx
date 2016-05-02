@@ -7,6 +7,7 @@ import LinearProgress from "material-ui/LinearProgress";
 import * as theme from "../../RagnalogTheme";
 import Flow from "@flowjs/flow.js";
 import * as Config from "../../store/Configuration";
+import md5 from "blueimp-md5"
 
 const styles = {
   button: {
@@ -46,7 +47,14 @@ class Uploader extends Component {
           console.log(target);
           return target;
         },
-        "testChunks": false
+        "testChunks": false,
+        "generateUniqueIdentifier": (file) => {
+          const relativePath = file.relativePath || file.webkitRelativePath || file.fileName || file.name;
+          return md5(relativePath + file.size + file.lastModifiedDate);
+        },
+        "query": (file) => {
+          return {'lastModified': file.file.lastModifiedDate.toISOString()};
+        }
       }
     );
     flow.assignBrowse(uploadFileButton);
