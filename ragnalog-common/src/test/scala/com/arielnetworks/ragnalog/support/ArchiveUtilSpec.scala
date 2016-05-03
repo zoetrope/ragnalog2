@@ -143,6 +143,28 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
         assert(doc == List("bbbb"))
       }
     }
+    describe("japanese name file created by windows") {
+      it("should be extracted") {
+        val path = Path(getClass.getClassLoader.getResource("expander/日本語(windows).zip").getPath, '/')
+        val inputStream = ArchiveUtil.getTargetStream(path, "日本語(windows)/a配下/テストa.txt")
+        val doc = inputStream match {
+          case Some(s) => Source.fromInputStream(s).getLines().toList
+          case _ => fail()
+        }
+        assert(doc == List("aaaa"))
+      }
+    }
+    describe("japanese name file created by linux") {
+      it("should be extracted") {
+        val path = Path(getClass.getClassLoader.getResource("expander/日本語(linux).tar.gz").getPath, '/')
+        val inputStream = ArchiveUtil.getTargetStream(path, "日本語(linux)/a配下/テストa.txt")
+        val doc = inputStream match {
+          case Some(s) => Source.fromInputStream(s).getLines().toList
+          case _ => fail()
+        }
+        assert(doc == List("aaaa"))
+      }
+    }
   }
 
   describe("exception") {

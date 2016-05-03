@@ -89,16 +89,18 @@ object ArchiveUtil {
       }).collectFirst { case Some(i) => i }
   }
 
-  def getTargetStream(archiveFileName: Path, targetFileName: String): Option[InputStream] = {
-    val archiveType = ArchiveType.fromExtension(archiveFileName.path)
+  def getTargetStream(archiveFileName: Path,targetFileName : String): Option[InputStream] = {
+    val normalizedPath = Path(URLDecoder.decode(archiveFileName.path, "UTF-8"), '/')
+
+    val archiveType = ArchiveType.fromExtension(normalizedPath.path)
     val is =
-      if (archiveType.isGZip) new GZIPInputStream(new FileInputStream(archiveFileName.path))
-      else new FileInputStream(archiveFileName.path)
+      if (archiveType.isGZip) new GZIPInputStream(new FileInputStream(normalizedPath.path))
+      else new FileInputStream(normalizedPath.path)
 
     if (archiveType.isArchive) {
       return getTargetStreamRecursive(Path(""), archiveType.getArchiverName(), is, targetFileName)
     } else if (archiveType.isGZip) {
-      if (toUngzippedName(archiveFileName.name) == targetFileName) {
+      if (toUngzippedName(normalizedPath.name) == targetFileName) {
         return Some(is)
       }
     }
