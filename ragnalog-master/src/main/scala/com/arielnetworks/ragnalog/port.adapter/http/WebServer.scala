@@ -37,6 +37,9 @@ object WebServer extends App {
 
   logger.info("logging test")
 
+  val config = ConfigFactory.load()
+  logger.info(s"config = ${config.getConfig("ragnalog-master")}")
+
   val socket = new WebSocketSupport(system)
 
   val route: Route =
