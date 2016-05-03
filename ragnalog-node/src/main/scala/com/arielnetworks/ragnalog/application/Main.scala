@@ -2,17 +2,35 @@ package com.arielnetworks.ragnalog.application
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Sink, Source}
+import com.typesafe.config._
+import akka.actor._
+import com.arielnetworks.ragnalog.port.adapter.actor.RegistrationActor
 
 object Main {
 
   def main(args: Array[String]): Unit = {
-    implicit val system = ActorSystem()
-    implicit val materializer = ActorMaterializer()
+    val conf =
+      """
+        |akka {
+        |  actor {
+        |    provider = "akka.remote.RemoteActorRefProvider"
+        |  }
+        |  remote {
+        |    enabled-transports = ["akka.remote.netty.tcp"]
+        |    netty.tcp {
+        |      hostname = "0.0.0.0"
+        |      port = 2551
+        |    }
+        |  }
+        |}
+      """.stripMargin
 
-    val source = Source[Int](1 to 5)
-    val sink = Sink.foreach[Int](println)
-    source.map(_ * 2).runWith(sink)
+    val config = ConfigFactory.parseString(conf)
+
+    implicit val system: ActorSystem = ActorSystem("ragnalog-node", config)
+//    implicit val materializer = ActorMaterializer()
+
+    system.actorOf(Props[RegistrationActor], "registration")
   }
 
 }

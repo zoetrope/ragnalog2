@@ -15,8 +15,9 @@ case class GuessMessage
 class RegistrationActor extends Actor {
 
   def receive: Receive = {
-    case msg: RegistrationMessage => {
-
-    }
+    case m => println(s"receive: $m")
+    //    case msg: RegistrationMessage => {
+    //
+    //    }
   }
 }

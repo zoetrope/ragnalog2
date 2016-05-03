@@ -14,14 +14,18 @@ lazy val baseSettings = Seq(
   resolvers += "embulk-bintray" at "http://dl.bintray.com/embulk/maven/"
 )
 
+val akkaVersion = "2.4.4"
+
 lazy val libraries = Seq(
   "org.scala-lang" % "scala-reflect" % "2.11.8",
   "org.scala-lang" % "scala-compiler" % "2.11.8",
 
-  "com.typesafe.akka" %% "akka-http-core" % "2.4.4",
-  "com.typesafe.akka" %% "akka-http-experimental" % "2.4.4",
-  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.4",
-  "com.typesafe.akka" %% "akka-stream" % "2.4.4",
+  "com.typesafe.akka" %% "akka-http-core" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaVersion,
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "com.typesafe.akka" %% "akka-remote" % akkaVersion,
+  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "ch.megard" %% "akka-http-cors" % "0.1.1",
 
   "com.sksamuel.elastic4s" %% "elastic4s-core" % "2.3.0",
@@ -37,7 +41,11 @@ lazy val libraries = Seq(
   "io.reactivex" %% "rxscala" % "0.26.0",
 
   "org.scalactic" %% "scalactic" % "2.2.6",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
+  "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion % "test",
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % "test",
+  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % "test"
 )
 
 lazy val root = (project in file("."))

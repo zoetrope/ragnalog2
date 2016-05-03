@@ -1,23 +1,53 @@
 package com.arielnetworks.ragnalog.port.adapter.http
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Props, _}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.RouteResult._
+import akka.pattern.ask
 import akka.stream.ActorMaterializer
-import com.arielnetworks.ragnalog.application.container.data.GetContainersResult
+import akka.util.Timeout
 import com.arielnetworks.ragnalog.port.adapter.http.notification.{WSMessage, WebSocketSupport}
 import com.arielnetworks.ragnalog.port.adapter.http.route.RestRoute
-import spray.json.DefaultJsonProtocol._
+import com.arielnetworks.ragnalog.port.adapter.service.{DispatcherActor, RegistrationJob}
+import com.typesafe.config.ConfigFactory
 
+import scala.concurrent.Future
+import scala.concurrent.duration._
 import scala.io.StdIn
 
-object WebServer extends App  {
+object WebServer extends App {
 
-  implicit val system = ActorSystem("my-system")
+  val conf =
+    """
+      |akka {
+      |  actor {
+      |    provider = "akka.remote.RemoteActorRefProvider"
+      |  }
+      |  remote {
+      |    enabled-transports = ["akka.remote.netty.tcp"]
+      |    netty.tcp {
+      |      hostname = "0.0.0.0"
+      |      port = 2552
+      |    }
+      |  }
+      |}
+    """.stripMargin
+
+  val config = ConfigFactory.parseString(conf)
+
+  implicit val system: ActorSystem = ActorSystem("ragnalog-master", config)
+
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
+
+  implicit val timeout = Timeout(100.millisecond)
+  val dispatcherActor = system.actorOf(Props[DispatcherActor])
+
+  val registrationActorPath = "akka.tcp://ragnalog-node@0.0.0.0:2551/user/registration"
+
+  val registrationRef = system.actorSelection(registrationActorPath)
 
   val socket = new WebSocketSupport(system)
 
@@ -31,6 +61,13 @@ object WebServer extends App  {
       path("socket") {
         get {
           handleWebSocketMessages(socket.webSocketFlow)
+        }
+      } ~
+      path("registration") {
+        get {
+//          val reply: Future[String] = (dispatcherActor ? RegistrationJob).mapTo[String]
+          registrationRef ! "testtest"
+          complete("ok")
         }
       } ~
       path("notify") {
