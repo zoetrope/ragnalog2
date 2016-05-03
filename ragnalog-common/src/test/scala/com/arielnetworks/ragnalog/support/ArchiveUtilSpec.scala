@@ -75,17 +75,14 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
     describe("japanese name file created by windows") {
       it("should be expanded") {
         val path = Path(getClass.getClassLoader.getResource("expander/日本語(windows).zip").getPath, '/')
-        val list = ArchiveUtil.getFileList(Path(URLDecoder.decode(path.path, "UTF-8"), '/'))
+        val list = ArchiveUtil.getFileList(path)
         assert(list == List("日本語(windows)/a配下/テストa.txt", "日本語(windows)/テストb.txt"))
       }
     }
     describe("japanese name file created by linux") {
       it("should be expanded") {
         val path = Path(getClass.getClassLoader.getResource("expander/日本語(linux).tar.gz").getPath, '/')
-        val list = ArchiveUtil.getFileList(Path(URLDecoder.decode(path.path, "UTF-8"), '/'))
-        list.foreach(filename => {
-          assert(EncodingChecker.isSJIS(filename) === true)
-        })
+        val list = ArchiveUtil.getFileList(path)
         assert(list == List("日本語(linux)/テストb.txt", "日本語(linux)/a配下/テストa.txt"))
       }
     }

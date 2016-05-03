@@ -1,6 +1,8 @@
 package com.arielnetworks.ragnalog.support
 
 import java.io.{File, FileInputStream, InputStream}
+import java.net.URLDecoder
+
 import scalax.file.Path
 import java.util.zip.GZIPInputStream
 
@@ -37,20 +39,22 @@ object ArchiveUtil {
 
   def getFileList(fileName: Path): Seq[String] = {
 
-    val archiveType = ArchiveType.fromExtension(fileName.path)
+    val normalizedPath = Path(URLDecoder.decode(fileName.path, "UTF-8"), '/')
+
+    val archiveType = ArchiveType.fromExtension(normalizedPath.path)
 
     using(if (archiveType.isGZip) {
-      new GZIPInputStream(new FileInputStream(fileName.path))
+      new GZIPInputStream(new FileInputStream(normalizedPath.path))
     } else {
-      new FileInputStream(fileName.path)
+      new FileInputStream(normalizedPath.path)
     }) {
       is =>
         if (archiveType.isArchive) {
           getFileListRecursive(Path(""), archiveType.getArchiverName(), is)
         } else if (archiveType.isGZip) {
-          List(Path(fileName.name, Path(toUngzippedName(fileName.path), '/').path).path)
+          List(Path(normalizedPath.name, Path(toUngzippedName(normalizedPath.path), '/').path).path)
         } else {
-          List(fileName.name)
+          List(normalizedPath.name)
         }
     }
   }
