@@ -5,6 +5,7 @@ target/
 esdata/
 tmp
 node_modules/
+log/
 
 etc/embulk/bin/
 etc/embulk/jruby/

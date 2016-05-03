@@ -9,26 +9,11 @@ import com.arielnetworks.ragnalog.port.adapter.actor.RegistrationActor
 object Main {
 
   def main(args: Array[String]): Unit = {
-    val conf =
-      """
-        |akka {
-        |  actor {
-        |    provider = "akka.remote.RemoteActorRefProvider"
-        |  }
-        |  remote {
-        |    enabled-transports = ["akka.remote.netty.tcp"]
-        |    netty.tcp {
-        |      hostname = "0.0.0.0"
-        |      port = 2551
-        |    }
-        |  }
-        |}
-      """.stripMargin
 
-    val config = ConfigFactory.parseString(conf)
+    implicit val system: ActorSystem = ActorSystem("ragnalog-node")
+    //    implicit val materializer = ActorMaterializer()
 
-    implicit val system: ActorSystem = ActorSystem("ragnalog-node", config)
-//    implicit val materializer = ActorMaterializer()
+    println(system.settings)
 
     system.actorOf(Props[RegistrationActor], "registration")
   }

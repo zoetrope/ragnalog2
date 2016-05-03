@@ -40,6 +40,8 @@ lazy val libraries = Seq(
 
   "io.reactivex" %% "rxscala" % "0.26.0",
 
+  "ch.qos.logback" % "logback-classic" % "1.1.7",
+
   "org.scalactic" %% "scalactic" % "2.2.6",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
