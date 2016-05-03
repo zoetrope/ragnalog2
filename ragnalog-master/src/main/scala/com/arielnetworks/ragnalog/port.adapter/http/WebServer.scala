@@ -11,13 +11,15 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.arielnetworks.ragnalog.port.adapter.http.notification.{WSMessage, WebSocketSupport}
 import com.arielnetworks.ragnalog.port.adapter.http.route.RestRoute
-import com.arielnetworks.ragnalog.port.adapter.service.{DispatcherActor, RegistrationJob}
+import com.arielnetworks.ragnalog.port.adapter.service.DispatcherActor
+import com.arielnetworks.ragnalog.port.adapter.service.DispatcherActor.RegistrationJob
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.io.StdIn
+import scala.collection.JavaConverters._
 
 object WebServer extends App {
 
@@ -27,19 +29,14 @@ object WebServer extends App {
   implicit val executionContext = system.dispatcher
 
   implicit val timeout = Timeout(100.millisecond)
-  val dispatcherActor = system.actorOf(Props[DispatcherActor])
-
-  val registrationActorPath = "akka.tcp://ragnalog-node@0.0.0.0:2552/user/registration"
-
-  val registrationRef = system.actorSelection(registrationActorPath)
-
   val logger = LoggerFactory.getLogger("WebServer")
 
-  logger.info("logging test")
+  val config = ConfigFactory.load().getConfig("ragnalog-master")
+  logger.info(s"config = ${config}")
 
-  val config = ConfigFactory.load()
-  logger.info(s"config = ${config.getConfig("ragnalog-master")}")
-
+  val registrationActorPath = config.getStringList("registration.path")
+  val registrationRef = registrationActorPath.asScala.map(p => system.actorSelection(p))
+  val dispatcherActor = system.actorOf(DispatcherActor.props(registrationRef))
   val socket = new WebSocketSupport(system)
 
   val route: Route =
@@ -56,9 +53,8 @@ object WebServer extends App {
       } ~
       path("registration") {
         get {
-          //          val reply: Future[String] = (dispatcherActor ? RegistrationJob).mapTo[String]
-          registrationRef ! "testtest"
-          complete("ok")
+          val reply: Future[String] = (dispatcherActor ? RegistrationJob).mapTo[String]
+          complete(reply)
         }
       } ~
       path("notify") {
@@ -81,10 +77,11 @@ object WebServer extends App {
       } ~
       getFromResourceDirectory("web")
 
-  val port = 8686
-  val bindingFuture = Http().bindAndHandle(route2HandlerFlow(route), "localhost", port)
+  val host = config.getString("http.hostname")
+  val port = config.getInt("http.port")
+  val bindingFuture = Http().bindAndHandle(route2HandlerFlow(route), host, port)
 
-  println(s"Server online at http://localhost:$port/\nPress RETURN to stop...")
+  println(s"Server online at http://$host:$port/\nPress RETURN to stop...")
   StdIn.readLine()
   bindingFuture
     .flatMap(_.unbind())

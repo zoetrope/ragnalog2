@@ -22,7 +22,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends Registrati
   def register(command: RegistrationCommand): Future[RegistrationResult] = {
     try {
       val registrationConfig = registrationsConfig.get(command.logType).get //TODO:
-      val archiveFilePath = command.archiveFileName
+      val archiveFilePath = Path(command.archiveFileName, '/')
 
       //TODO: move to application layer
       val jfile: File = embulkSetting.workingDirectory match {

@@ -1,15 +1,33 @@
 package com.arielnetworks.ragnalog.port.adapter.service
 
-import akka.actor.Actor
-import akka.actor.Actor.Receive
+import akka.actor.{Actor, ActorRef, ActorSelection, Props}
 
-case class RegistrationJob()
-case class StatusJob()
 
-class DispatcherActor extends Actor{
+object DispatcherActor {
+
+  def props(registrationActors: Seq[ActorSelection]) =
+    Props(new DispatcherActor(registrationActors))
+
+  case class RegistrationJob()
+
+  case class StatusJob()
+
+}
+
+class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
+
+  import DispatcherActor._
 
   override def receive: Receive = {
-    case RegistrationJob => sender ! "reply"
+    case RegistrationJob => sender ! dispatch()
     case StatusJob =>
+  }
+
+  def dispatch(): String = {
+
+    registrationActors.foreach(actor => {
+    })
+
+    "reply"
   }
 }
