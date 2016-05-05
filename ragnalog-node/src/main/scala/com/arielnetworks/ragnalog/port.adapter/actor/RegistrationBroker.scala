@@ -33,6 +33,9 @@ class RegistrationBroker extends Actor {
       println(s"BrokerActor.receive: ${context.children.size < workerLimit}")
       sender ! (context.children.size < workerLimit)
     }
+    case x => {
+      println(s"Broker: unknown message: $x")
+    }
 
     //    case Terminated(x) => { }
   }

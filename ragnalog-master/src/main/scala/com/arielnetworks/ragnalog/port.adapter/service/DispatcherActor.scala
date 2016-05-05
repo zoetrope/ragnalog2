@@ -22,6 +22,7 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
     }
     case res: RegistrationResult => {
       println(s"DispatcherActor.receive: $res")
+      dispatch()
     }
     case x => {
       println(s"DispatcherActor.receive unknown: $x")
@@ -32,31 +33,45 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
     msgQueue += msg
   }
 
-  def dequeue(): InvokeRegistrationMessage = {
-    val msg = msgQueue.sortBy(_.priority).head
-    msg.sender = this.self
-    msg
+  def dequeue(): Option[InvokeRegistrationMessage] = {
+    val msg = msgQueue.sortBy(_.priority).headOption
+    msg.map(m => {
+      msgQueue -= m
+      m.sender = this.self
+      m
+    })
   }
 
-  def dispatch(): Future[Unit] = {
-    val firstMsg = dequeue()
+  def dispatch() = {
 
-    import scala.concurrent.duration._
-    implicit val timeout = Timeout(20.seconds)
-    val acceptableActors = registrationActors.map(actor => {
-      (actor ? "ok").mapTo[Boolean].map(b => (b, actor))
+    println("** dispatch")
+
+    dequeue().foreach(firstMsg => {
+      println(s"** dispatch firstMsg: $firstMsg")
+      import scala.concurrent.duration._
+      implicit val timeout = Timeout(2.seconds)
+      val acceptableActors = registrationActors.map(actor => {
+        (actor ? "ok").mapTo[Boolean].map(b => (b, actor))
+      })
+
+      for {
+        actors <- Future.sequence(acceptableActors)
+        _ = println(actors)
+        actorOpt = actors.collect { case (true, a: ActorSelection) => a }.headOption
+        _ <- actorOpt match {
+          case Some(actor) => {
+            println(s"** dispatch sent")
+            actor ? firstMsg
+            //TODO: not accepted -> enqueue
+          }
+          case None =>
+            println(s"** dispatch enqueue")
+            enqueue(firstMsg)
+            Future.successful(())
+        }
+
+      } yield ()
     })
-
-    for {
-      actors <- Future.sequence(acceptableActors)
-      _ = println(s"actors: $actors")
-      actorOpt = actors.collect { case (true, a: ActorSelection) => a }.headOption
-      actor = actorOpt.get //TODO:
-      res <- actor ? firstMsg
-      _ = println(s"sent: $res")
-    //      res = actorOpt.map(actor => actor ? firstMsg).foreach(res => println("sent: $res"))
-    } yield ()
-
   }
 }
 
