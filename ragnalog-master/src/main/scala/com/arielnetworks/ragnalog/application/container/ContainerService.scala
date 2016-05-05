@@ -1,7 +1,6 @@
 package com.arielnetworks.ragnalog.application.container
 
-import java.util.UUID
-
+import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
 import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationAdapter
@@ -23,31 +22,18 @@ class ContainerService
   idSpec: IdPatternSpecification
 ) {
 
-  def createContainer(containerId: Option[String], containerName: Option[String], containerDescription: Option[String])
-  : Future[Container] = {
+  def createContainer(req: AddContainerRequest): Future[ContainerResponse] = {
 
-    val idOrError = containerId match {
-      case Some(x) =>
-        if (idSpec.isSatisfied(x)) Right(x)
-        else Left(new IllegalArgumentException(s"Invalid ID: $x"))
-      case None => containerName match {
-        case Some(x) =>
-          if (idSpec.isSatisfied(x)) Right(x)
-          else Right(UUID.randomUUID().toString.replace("-", ""))
-        case _ => Left(new IllegalArgumentException("either id or name is required"))
-      }
+    if (!idSpec.isSatisfied(req.id)) {
+      println("is not satisfied")
+      return Future.failed(new IllegalArgumentException(s"Invalid ID: ${req.id}"))
     }
+    val name = req.name.getOrElse(req.id)
 
-    idOrError match {
-      case Right(r) =>
-        val name = containerName match {
-          case Some(x) => x
-          case _ => r
-        }
-        val container = new Container(ContainerId(r), name, containerDescription, ContainerStatus.Active)
-        containerRepository.add(container).map(_ => container)
-      case Left(x) => Future.failed(x)
-    }
+    val container = new Container(ContainerId(req.id), name, req.description, ContainerStatus.Active)
+    containerRepository
+      .add(container)
+      .map(_ => new ContainerResponse(container.id.value, container.name, container.description, container.status.toString))
   }
 
   def removeContainer(containerId: ContainerId): Future[Unit] = {

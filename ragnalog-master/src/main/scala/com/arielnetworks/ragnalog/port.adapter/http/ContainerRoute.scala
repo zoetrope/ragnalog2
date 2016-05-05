@@ -22,7 +22,7 @@ trait ContainerJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
 class ContainerRoute extends RouteService with ContainerJsonSupport {
 
-  val administrationService = ServiceRegistry.containerService
+  val containerService = ServiceRegistry.containerService
 
   def route(implicit m: Materializer, ec: ExecutionContext) =
     pathPrefix("containers") {
@@ -30,16 +30,16 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
         get {
           complete {
             //TODO: add converter (and move to application layer)
-            administrationService.activeContainers()
+            containerService.activeContainers()
               .map(list => list.map(c => new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson))
           }
         } ~
           (post & entity(as[AddContainerRequest])) { req =>
             println(s"add container: $req")
-            val container = administrationService.createContainer(Some(req.id), Some(req.name), req.description)
+            val container = containerService.createContainer(req)
 
             onComplete(container) {
-              case Success(c) => complete(new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson)
+              case Success(c) => complete(c.toJson)
               case Failure(e) =>
                 println("failed to add container")
                 complete(500 -> "failed to add container")

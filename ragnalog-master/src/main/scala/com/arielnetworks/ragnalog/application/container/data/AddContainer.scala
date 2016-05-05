@@ -3,7 +3,7 @@ package com.arielnetworks.ragnalog.application.container.data
 case class AddContainerRequest
 (
   id: String,
-  name: String,
+  name: Option[String],
   description: Option[String]
 )
 

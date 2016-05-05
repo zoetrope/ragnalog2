@@ -1,6 +1,5 @@
 package com.arielnetworks.ragnalog.port.adapter.service
 
-import com.arielnetworks.ragnalog.domain.model.common._
 import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
 import org.elasticsearch.action.ActionListener
@@ -8,7 +7,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRespon
 import org.elasticsearch.action.admin.indices.template.get.GetIndexTemplatesResponse
 import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateResponse
 import org.elasticsearch.action.delete.DeleteResponse
-import org.elasticsearch.action.index.IndexRequest.OpType
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
@@ -20,6 +18,7 @@ class AdministratorOnElasticsearch
   protected val elasticClient: ElasticClient
 ) {
 
+  //TODO: move to application layer
   def initialize(indexName: String, templateName: String) = {
 
     for {
@@ -121,7 +120,6 @@ class AdministratorOnElasticsearch
     val future = elasticClient.execute {
       delete index indexName
     }
-    //    Await.result(future, 5.seconds)
     future.map(_ => ())
   }
 
@@ -145,7 +143,6 @@ class AdministratorOnElasticsearch
       _ <- Future.sequence(deleteFutures)
     } yield ()
 
-    //    Await.result(future, 5.seconds)
     future
   }
 }

@@ -1,102 +1,101 @@
 package com.arielnetworks.ragnalog.application
 
 import com.arielnetworks.ragnalog.application.container.ContainerService
-import com.arielnetworks.ragnalog.domain.model.container.{ContainerId, ContainerStatus}
+import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
 import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
-import com.arielnetworks.ragnalog.port.adapter.service.{EmbulkAdapter, KibanaAdapter}
+import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, EmbulkAdapter, KibanaAdapter}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.arielnetworks.ragnalog.test.ElasticsearchTestSupport
+import org.elasticsearch.index.engine.DocumentAlreadyExistsException
+import org.elasticsearch.transport.RemoteTransportException
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, DiagrammedAssertions, FunSpec}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
+import scala.io.Source
 
 class ContainerServiceSpec
   extends FunSpec with DiagrammedAssertions with ScalaFutures with BeforeAndAfterAll
     with ElasticsearchTestSupport {
 
-  val indexName = "ragnalog2_test"
+  val indexName = ".ragnalog2_test"
   val idSpec = new ElasticsearchIdPatternSpecification
-  val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient, ".ragnalog2_test")
+  val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient, indexName)
   val visualizationAdapter = new KibanaAdapter
   val registrationAdapter = new EmbulkAdapter
   val logFileService = new RawFileService
+  val administrator = new AdministratorOnElasticsearch(elasticClient)
   val containerService = new ContainerService(containerRepository, visualizationAdapter, registrationAdapter, logFileService, idSpec)
 
+  val mapping = Source.fromURL(administrator.getClass.getClassLoader.getResource("elasticsearch/mappings.json"))
+    .getLines()
+    .mkString(System.lineSeparator())
+
   override def beforeAll(): Unit = {
-//    clearAllDocuments(indexName, "container")
+    val f = for {
+      existIndex <- administrator.existsIndex(indexName)
+      _ <- if (existIndex) {
+        administrator.deleteIndex(indexName)
+      } else {
+        Future.successful(())
+      }
+      _ <- administrator.createMapping(indexName, mapping)
+    } yield ()
+
+    Await.result(f, Span(5, Seconds))
   }
 
   override def afterAll(): Unit = {
-//    clearAllDocuments(indexName, "container")
+    val f = for {
+      existIndex <- administrator.existsIndex(indexName)
+      _ <- if (existIndex) {
+        administrator.deleteIndex(indexName)
+      } else {
+        Future.successful(())
+      }
+    } yield ()
+
+    Await.result(f, Span(5, Seconds))
   }
 
   describe("create a container") {
     describe("with all valid parameters") {
       it("should be created a container") {
-        val future = containerService.createContainer(Some("test_id_1"), Some("test-name"), Some("test-description"))
+        val future = containerService.createContainer(new AddContainerRequest("test_id_1", Some("test-name"), Some("test-description")))
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
-            assert(container.id == ContainerId("test_id_1"))
-            assert(container.name == "test-name")
-            assert(container.description.contains("test-description"))
-            assert(container.status == ContainerStatus.Active)
-        }
-      }
-    }
-
-    describe("without id") {
-      it("should be created a container that id is UUID") {
-        val future = containerService.createContainer(None, Some("test-name"), Some("test-description"))
-        whenReady(future, timeout(Span(1, Seconds))) {
-          container =>
-            assert(container.id.value.matches("^[a-z0-9]{32}$"))
-            assert(container.name == "test-name")
-            assert(container.description.contains("test-description"))
-            assert(container.status == ContainerStatus.Active)
+            assert(container === ContainerResponse("test_id_1", "test-name", Some("test-description"), "Active"))
         }
       }
     }
 
     describe("without name") {
-      it("should be created a container that name is the same as id") {
-        val future = containerService.createContainer(Some("test_id_2"), None, Some("test-description"))
+      it("should be created a container that has the same name as id") {
+        val future = containerService.createContainer(new AddContainerRequest("test_id_2", None, Some("test-description")))
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
-            assert(container.id == ContainerId("test_id_2"))
-            assert(container.name == "test_id_2")
-            assert(container.description.contains("test-description"))
-            assert(container.status == ContainerStatus.Active)
+            assert(container === ContainerResponse("test_id_2", "test_id_2", Some("test-description"), "Active"))
         }
       }
     }
 
     describe("without description") {
       it("should be created a container") {
-        val future = containerService.createContainer(Some("test_id_3"), Some("test-name"), None)
+        val future = containerService.createContainer(new AddContainerRequest("test_id_3", Some("test-name"), None))
         whenReady(future, timeout(Span(1, Seconds))) {
           container =>
-            assert(container.id == ContainerId("test_id_3"))
-            assert(container.name == "test-name")
-            assert(container.description.isEmpty)
-            assert(container.status == ContainerStatus.Active)
-        }
-      }
-    }
-
-    describe("without id and name") {
-      it("should fail to create a container") {
-        val future = containerService.createContainer(None, None, Some("test-description"))
-        whenReady(future.failed, timeout(Span(1, Seconds))) {
-          case x: IllegalArgumentException => //OK
+            assert(container === ContainerResponse("test_id_3", "test-name", None, "Active"))
         }
       }
     }
 
     describe("with invalid id") {
       it("should fail to create a container") {
-        val future = containerService.createContainer(Some("テスト"), Some("test-name"), Some("test-description"))
-        whenReady(future.failed, timeout(Span(1, Seconds))) {
+        val future = containerService.createContainer(new AddContainerRequest("テスト", Some("test-name"), None))
+        whenReady(future.failed, timeout(Span(3, Seconds))) {
           case x: IllegalArgumentException => //OK
         }
       }
@@ -104,7 +103,16 @@ class ContainerServiceSpec
 
     describe("already exists container") {
       it("should fail to create a container") {
-
+        val future = for {
+          _ <- containerService.createContainer(new AddContainerRequest("test_id_4", Some("test-name"), Some("test-description")))
+          _ <- containerService.createContainer(new AddContainerRequest("test_id_4", Some("test-name"), Some("test-description")))
+        } yield ()
+        whenReady(future.failed, timeout(Span(3, Seconds))) {
+          case x: RemoteTransportException =>
+            x.getCause.getCause match {
+              case e: DocumentAlreadyExistsException => // OK
+            }
+        }
       }
     }
   }
