@@ -24,10 +24,10 @@ class ArchiveService
       ArchiveId(info.identifier),
       info.filename,
       info.uploadedFilePath,
-      ArchiveType.fromExtension(info.filename),
       info.totalSize,
       new DateTime(),
-      lastModified
+      lastModified,
+      "UTF-8"
     )
     println(s"createArchive: $archive")
 
@@ -60,10 +60,10 @@ class ArchiveService
         a.id.value,
         a.fileName,
         a.filePath.path,
-        a.archiveType.toString,
         a.size,
         a.uploadedDate.toString,
-        a.modifiedDate.toString()
+        a.modifiedDate.toString(),
+        a.fileNameEncoding
       ))
     ))
   }

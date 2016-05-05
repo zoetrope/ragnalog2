@@ -5,10 +5,10 @@ case class ArchiveResponse
   id: String,
   fileName: String,
   filePath: String,
-  archiveType: String,
   size: Long,
   uploadedDate: String,
-  modifiedDate: String
+  modifiedDate: String,
+  fileNameEncoding: String
 )
 
 case class GetArchivesResponse

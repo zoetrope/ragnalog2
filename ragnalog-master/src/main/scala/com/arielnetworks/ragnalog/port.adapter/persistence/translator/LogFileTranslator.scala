@@ -2,36 +2,38 @@ package com.arielnetworks.ragnalog.port.adapter.persistence.translator
 
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus}
 
-trait LogFileTranslator  extends Translator[LogFileId, LogFile] {
+import scalax.file.Path
+
+trait LogFileTranslator extends Translator[LogFileId, LogFile] {
 
   protected def toFieldsFromEntity(logFile: LogFile): Map[String, Any] = {
     Map(
-      "filePath" -> logFile.filePath,
-      "fileType" -> logFile.fileType.getOrElse(""),
+      "logName" -> logFile.logName,
+      "logType" -> logFile.logType.getOrElse(""),
       "status" -> logFile.status.toString,
-      "index" -> logFile.index.getOrElse(""),
+      "indexName" -> logFile.indexName.getOrElse(""),
       "from" -> fromTimeStampOpt(logFile.from),
       "to" -> fromTimeStampOpt(logFile.to),
       "extra" -> logFile.extra.getOrElse(""),
       "count" -> logFile.count.getOrElse(""),
-      "errorCount" -> logFile.errorCount.getOrElse(""),
-      "errorMessage" -> logFile.errorMessage.getOrElse("")
+      "registrationLog" -> fromPathOpt(logFile.registrationLog),
+      "registrationSetting" -> fromPathOpt(logFile.registrationSetting)
     )
   }
 
   protected def toEntityFromFields(id: String, fields: java.util.Map[String, Object]): LogFile = {
     new LogFile(
       LogFileId(id),
-      fields.get("filePath").asInstanceOf[String],
-      Option(fields.get("fileType").asInstanceOf[String]),
+      fields.get("logName").asInstanceOf[String],
+      Option(fields.get("logType").asInstanceOf[String]),
       LogStatus.of(fields.get("archiveType").asInstanceOf[String]),
-      Option(fields.get("index").asInstanceOf[String]),
+      Option(fields.get("indexName").asInstanceOf[String]),
       toTimeStampOpt(fields.get("from").asInstanceOf[String]),
       toTimeStampOpt(fields.get("to").asInstanceOf[String]),
       Option(fields.get("extra").asInstanceOf[String]),
       Option(fields.get("count").asInstanceOf[Long]),
-      Option(fields.get("errorCount").asInstanceOf[Long]),
-      Option(fields.get("errorMessage").asInstanceOf[String])
+      toPathOpt(fields.get("registrationLog").asInstanceOf[String]),
+      toPathOpt(fields.get("registrationSetting").asInstanceOf[String])
     )
   }
 }

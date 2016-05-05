@@ -27,7 +27,7 @@ class LogFileService
     for {
       logFile <- logFileRepository.resolveById(LogFileId(req.id))
 
-      _ = logFile.update(req.fileType, req.extra, Registering)
+      _ = logFile.startRegistering(req.fileType, req.extra, Registering)
 
       _ <- logFileRepository.save(logFile)
 

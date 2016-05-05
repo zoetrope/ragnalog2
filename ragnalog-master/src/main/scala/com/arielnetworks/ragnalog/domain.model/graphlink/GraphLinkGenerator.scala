@@ -10,7 +10,7 @@ class GraphLinkGenerator(hostName: String) {
 
 
   def generate(templates: Seq[GraphLinkTemplate], logFiles: Seq[LogFile]): Seq[GraphLink] = {
-    val filesGroupedByLogType = logFiles.filter(f => f.fileType.isDefined).groupBy(_.fileType.get) //TODO
+    val filesGroupedByLogType = logFiles.filter(f => f.logType.isDefined).groupBy(_.logType.get) //TODO
 
     templates.collect({
       case template if filesGroupedByLogType.contains(template.logType) => {

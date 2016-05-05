@@ -14,10 +14,10 @@ case class Archive
   id: ArchiveId,
   fileName: String,
   filePath: Path,
-  archiveType: ArchiveType,
   size: Long,
   uploadedDate: DateTime,
-  modifiedDate: DateTime
+  modifiedDate: DateTime,
+  fileNameEncoding: String
 ) extends Entity[ArchiveId] {
 
   def extractLogFiles(): Future[Seq[LogFile]] = ???

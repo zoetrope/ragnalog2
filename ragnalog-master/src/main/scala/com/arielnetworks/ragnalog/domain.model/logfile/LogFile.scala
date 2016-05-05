@@ -3,6 +3,8 @@ package com.arielnetworks.ragnalog.domain.model.logfile
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import org.joda.time.DateTime
 
+import scalax.file.Path
+
 sealed trait LogStatus {
   def of(value: String): LogStatus = value match {
     case "Uploading" => Uploading
@@ -33,18 +35,22 @@ case class LogFileId(value: String) extends Identifier[String]
 case class LogFile
 (
   id: LogFileId,
-  filePath: String,
-  fileType: Option[String],
+  logName: String,
+  logType: Option[String],
   status: LogStatus,
-  index: Option[String],
+  indexName: Option[String],
   from: Option[DateTime],
   to: Option[DateTime],
   extra: Option[String],
   count: Option[Long],
-  errorCount: Option[Long],
-  errorMessage: Option[String]
+  registrationLog: Option[Path],
+  registrationSetting: Option[Path]
 ) extends Entity[LogFileId] {
 
-  def update(fileType: String, extra: Option[String], status: LogStatus) = ???
+  def startRegistering(fileType: String, extra: Option[String], status: LogStatus) = ???
+
+  def completeRegistering(log: Path, setting: Path) = ???
+
+  def failToRegistering() = ???
 
 }

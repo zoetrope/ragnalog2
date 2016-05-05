@@ -4,6 +4,8 @@ import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
+import scalax.file.Path
+
 trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
   protected def toFieldsFromEntity(entity: E): Map[String, Any]
 
@@ -26,6 +28,14 @@ trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
 
   protected def toTimeStampOpt(value: String): Option[DateTime] = {
     if (value != null) Some(DateTimeFormat.forPattern(dateTimePattern).parseDateTime(value)) else None
+  }
+
+  protected def fromPathOpt(value: Option[Path]): String = {
+    value.map(_.path).getOrElse("")
+  }
+
+  protected def toPathOpt(value: String): Option[Path] = {
+    if (value != null) Some(Path(value, '/')) else None
   }
 }
 

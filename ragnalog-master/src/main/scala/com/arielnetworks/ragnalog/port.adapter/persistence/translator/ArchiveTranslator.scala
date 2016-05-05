@@ -10,10 +10,10 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
     Map(
       "fileName" -> archive.fileName,
       "filePath" -> archive.filePath.path,
-      "archiveType" -> archive.archiveType.toString,
       "size" -> archive.size,
       "uploadedDate" -> fromTimeStamp(archive.uploadedDate),
-      "modifiedDate" -> fromTimeStamp(archive.modifiedDate)
+      "modifiedDate" -> fromTimeStamp(archive.modifiedDate),
+      "fileNameEncoding" -> archive.fileNameEncoding
     )
   }
 
@@ -22,10 +22,10 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
       ArchiveId(id),
       fields.get("fileName").asInstanceOf[String],
       Path(fields.get("filePath").asInstanceOf[String], '/'),
-      ArchiveType.of(fields.get("archiveType").asInstanceOf[String]),
       fields.get("size").asInstanceOf[Int],
       toTimeStamp(fields.get("uploadedDate").asInstanceOf[String]),
-      toTimeStamp(fields.get("modifiedDate").asInstanceOf[String])
+      toTimeStamp(fields.get("modifiedDate").asInstanceOf[String]),
+      fields.get("fileNameEncoding").asInstanceOf[String]
     )
   }
 }
