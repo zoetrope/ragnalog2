@@ -1,6 +1,8 @@
 package com.arielnetworks.ragnalog.application
 
-case class RegistrationCommand
+import org.joda.time.DateTime
+
+case class InvokeRegistrationMessage
 (
   containerId: String,
   archiveId: String,
@@ -9,5 +11,10 @@ case class RegistrationCommand
   logType: String,
   extra: String,
   indexName: String,
-  priority: Int
+  priority: Int,
+  invokedTime: DateTime
 )
+
+case class AcceptedMessage()
+
+case class NotAcceptedMessage()

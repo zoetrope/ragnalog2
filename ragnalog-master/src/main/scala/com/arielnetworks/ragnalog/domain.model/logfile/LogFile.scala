@@ -47,7 +47,7 @@ case class LogFile
   registrationSetting: Option[Path]
 ) extends Entity[LogFileId] {
 
-  def startRegistering(fileType: String, extra: Option[String], status: LogStatus) = ???
+  def startRegistering(logType: String, extra: Option[String]) = ???
 
   def completeRegistering(log: Path, setting: Path) = ???
 

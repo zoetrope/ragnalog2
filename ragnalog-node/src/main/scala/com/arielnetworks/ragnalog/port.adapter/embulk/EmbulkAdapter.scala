@@ -4,7 +4,7 @@ import java.io.File
 import java.nio.file.{Files, StandardCopyOption}
 
 import com.arielnetworks.ragnalog.application._
-import com.arielnetworks.ragnalog.domain.model.RegistrationService
+import com.arielnetworks.ragnalog.domain.model.LogFileRegisterer
 import com.arielnetworks.ragnalog.support.ArchiveUtil
 
 import scala.concurrent.Future
@@ -12,14 +12,14 @@ import scala.util.{Failure, Success}
 import scalax.file.Path
 import scalax.file.defaultfs.DefaultPath
 
-class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends RegistrationService {
+class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends LogFileRegisterer {
 
   val embulkSetting = embulkConfiguration
   val registrationsConfig = embulkSetting.registrations
   val embulkFacadeFactory = new EmbulkFacadeFactory(embulkConfiguration)
   val generator = new EmbulkYamlGenerator(embulkSetting.workingDirectory, embulkConfiguration.params)
 
-  def register(command: RegistrationCommand): Future[RegistrationResult] = {
+  def register(command: InvokeRegistrationMessage): Future[RegistrationResult] = {
     try {
       val registrationConfig = registrationsConfig.get(command.logType).get //TODO:
       val archiveFilePath = Path(command.archiveFileName, '/')

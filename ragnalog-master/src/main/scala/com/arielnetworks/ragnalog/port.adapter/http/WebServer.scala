@@ -1,43 +1,35 @@
 package com.arielnetworks.ragnalog.port.adapter.http
 
-import akka.actor.{ActorSystem, Props, _}
-import akka.event.Logging
+import akka.actor._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.RouteResult._
-import akka.pattern.ask
-import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import com.arielnetworks.ragnalog.application.{InvokeRegistrationMessage, ServiceRegistry}
 import com.arielnetworks.ragnalog.port.adapter.http.notification.{WSMessage, WebSocketSupport}
 import com.arielnetworks.ragnalog.port.adapter.http.route.RestRoute
-import com.arielnetworks.ragnalog.port.adapter.service.DispatcherActor
-import com.arielnetworks.ragnalog.port.adapter.service.DispatcherActor.RegistrationJob
 import com.typesafe.config.ConfigFactory
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.Future
-import scala.concurrent.duration._
 import scala.io.StdIn
-import scala.collection.JavaConverters._
 
 object WebServer extends App {
 
-  implicit val system: ActorSystem = ActorSystem("ragnalog-master")
-
-  implicit val materializer = ActorMaterializer()
+  implicit val system = ServiceRegistry.actorSystem
+  implicit val materializer = ServiceRegistry.materializer
   implicit val executionContext = system.dispatcher
 
-  implicit val timeout = Timeout(100.millisecond)
+
   val logger = LoggerFactory.getLogger("WebServer")
 
   val config = ConfigFactory.load().getConfig("ragnalog-master")
   logger.info(s"config = ${config}")
 
-  val registrationActorPath = config.getStringList("registration.path")
-  val registrationRef = registrationActorPath.asScala.map(p => system.actorSelection(p))
-  val dispatcherActor = system.actorOf(DispatcherActor.props(registrationRef))
   val socket = new WebSocketSupport(system)
+
+  val registrationService = ServiceRegistry.registrationAdapter
 
   val route: Route =
     pathSingleSlash {
@@ -53,8 +45,9 @@ object WebServer extends App {
       } ~
       path("registration") {
         get {
-          val reply: Future[String] = (dispatcherActor ? RegistrationJob).mapTo[String]
-          complete(reply)
+          registrationService.invoke(
+            new InvokeRegistrationMessage("containerId", "archiveId", "archiveFileName", "filePath", "logType", "extra", "index", 1, new DateTime()))
+          complete("ok")
         }
       } ~
       path("notify") {

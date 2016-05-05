@@ -1,16 +1,16 @@
 package com.arielnetworks.ragnalog.application
 
+import com.arielnetworks.ragnalog.application.archive.ArchiveService
 import com.arielnetworks.ragnalog.application.container.ContainerService
 import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
-import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
-import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
-import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, EmbulkAdapter, KibanaAdapter}
+import com.arielnetworks.ragnalog.application.logfile.LogFileService
+import com.arielnetworks.ragnalog.port.adapter.persistence.repository.{ArchiveRepositoryOnElasticsearch, ContainerRepositoryOnElasticsearch, LogFileRepositoryOnElasticsearch}
+import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, KibanaAdapter, RegistrationDispatcher}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.arielnetworks.ragnalog.test.ElasticsearchTestSupport
 import org.elasticsearch.index.engine.DocumentAlreadyExistsException
 import org.elasticsearch.transport.RemoteTransportException
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, DiagrammedAssertions, FunSpec}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,10 +25,13 @@ class ContainerServiceSpec
   val idSpec = new ElasticsearchIdPatternSpecification
   val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient, indexName)
   val visualizationAdapter = new KibanaAdapter
-  val registrationAdapter = new EmbulkAdapter
-  val logFileService = new RawFileService
+  val registrationAdapter = new RegistrationDispatcher
+  val logFileRepository = new LogFileRepositoryOnElasticsearch(elasticClient, indexName)
+  val logFileService = new LogFileService(logFileRepository, registrationAdapter, visualizationAdapter)
   val administrator = new AdministratorOnElasticsearch(elasticClient)
-  val containerService = new ContainerService(containerRepository, visualizationAdapter, registrationAdapter, logFileService, idSpec)
+  val archiveRepository = new ArchiveRepositoryOnElasticsearch(elasticClient, indexName)
+  val archiveService = new ArchiveService(archiveRepository, logFileService)
+  val containerService = new ContainerService(containerRepository, archiveService, idSpec)
 
   val mapping = Source.fromURL(administrator.getClass.getClassLoader.getResource("elasticsearch/mappings.json"))
     .getLines()
