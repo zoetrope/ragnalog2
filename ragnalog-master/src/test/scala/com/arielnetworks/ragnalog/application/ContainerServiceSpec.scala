@@ -45,7 +45,7 @@ class ContainerServiceSpec
       _ <- administrator.createMapping(indexName, mapping)
     } yield ()
 
-    Await.result(f, Span(5, Seconds))
+    Await.result(f, testTimeout)
   }
 
   override def afterAll(): Unit = {
@@ -58,14 +58,14 @@ class ContainerServiceSpec
       }
     } yield ()
 
-    Await.result(f, Span(5, Seconds))
+    Await.result(f, testTimeout)
   }
 
   describe("create a container") {
     describe("with all valid parameters") {
       it("should be created a container") {
         val future = containerService.createContainer(new AddContainerRequest("test_id_1", Some("test-name"), Some("test-description")))
-        whenReady(future, timeout(Span(1, Seconds))) {
+        whenReady(future, timeout(testTimeout)) {
           container =>
             assert(container === ContainerResponse("test_id_1", "test-name", Some("test-description"), "Active"))
         }
@@ -75,7 +75,7 @@ class ContainerServiceSpec
     describe("without name") {
       it("should be created a container that has the same name as id") {
         val future = containerService.createContainer(new AddContainerRequest("test_id_2", None, Some("test-description")))
-        whenReady(future, timeout(Span(1, Seconds))) {
+        whenReady(future, timeout(testTimeout)) {
           container =>
             assert(container === ContainerResponse("test_id_2", "test_id_2", Some("test-description"), "Active"))
         }
@@ -85,7 +85,7 @@ class ContainerServiceSpec
     describe("without description") {
       it("should be created a container") {
         val future = containerService.createContainer(new AddContainerRequest("test_id_3", Some("test-name"), None))
-        whenReady(future, timeout(Span(1, Seconds))) {
+        whenReady(future, timeout(testTimeout)) {
           container =>
             assert(container === ContainerResponse("test_id_3", "test-name", None, "Active"))
         }
@@ -95,7 +95,7 @@ class ContainerServiceSpec
     describe("with invalid id") {
       it("should fail to create a container") {
         val future = containerService.createContainer(new AddContainerRequest("テスト", Some("test-name"), None))
-        whenReady(future.failed, timeout(Span(3, Seconds))) {
+        whenReady(future.failed, timeout(testTimeout)) {
           case x: IllegalArgumentException => //OK
         }
       }
@@ -107,11 +107,26 @@ class ContainerServiceSpec
           _ <- containerService.createContainer(new AddContainerRequest("test_id_4", Some("test-name"), Some("test-description")))
           _ <- containerService.createContainer(new AddContainerRequest("test_id_4", Some("test-name"), Some("test-description")))
         } yield ()
-        whenReady(future.failed, timeout(Span(3, Seconds))) {
+        whenReady(future.failed, timeout(testTimeout)) {
           case x: RemoteTransportException =>
             x.getCause.getCause match {
               case e: DocumentAlreadyExistsException => // OK
             }
+        }
+      }
+    }
+  }
+
+  describe("remove container") {
+    describe("create and remove") {
+      it("should fail to create a container") {
+        val future = for {
+          _ <- containerService.createContainer(new AddContainerRequest("test_id_5", Some("test-name"), Some("test-description")))
+          _ <- containerService.removeContainer("test_id_5")
+        } yield ()
+
+        whenReady(future, timeout(testTimeout)) {
+          _ => assert(true)
         }
       }
     }

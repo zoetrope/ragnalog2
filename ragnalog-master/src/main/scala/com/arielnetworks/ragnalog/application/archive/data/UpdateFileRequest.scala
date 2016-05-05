@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.application.archive.data
 
-import com.arielnetworks.ragnalog.domain.model.archive.LogFile
+import com.arielnetworks.ragnalog.domain.model.logfile.LogFile
 
 case class UpdateFileRequest
 (

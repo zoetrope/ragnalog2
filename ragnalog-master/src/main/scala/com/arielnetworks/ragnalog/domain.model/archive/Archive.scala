@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.domain.model.archive
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
+import com.arielnetworks.ragnalog.domain.model.logfile.LogFile
 import org.joda.time.DateTime
 
 import scala.concurrent.Future
@@ -19,6 +20,8 @@ case class Archive
   modifiedDate: DateTime
 ) extends Entity[ArchiveId] {
 
-  def extractLogFiles() : Future[Seq[LogFile]] = ???
+  def extractLogFiles(): Future[Seq[LogFile]] = ???
+
+  def remove() = ???
 }
 

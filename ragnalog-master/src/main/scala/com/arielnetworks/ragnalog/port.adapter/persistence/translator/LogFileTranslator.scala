@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.translator
 
-import com.arielnetworks.ragnalog.domain.model.archive.{LogFile, LogFileId, LogStatus}
+import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus}
 
 trait LogFileTranslator  extends Translator[LogFileId, LogFile] {
 

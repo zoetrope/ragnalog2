@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.application.archive
 
 import com.arielnetworks.ragnalog.application.archive.data.{ArchiveResponse, GetArchivesResponse}
+import com.arielnetworks.ragnalog.application.logfile.LogFileService
 import com.arielnetworks.ragnalog.domain.model.archive.{ArchiveId, ArchiveType, _}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveInfo
@@ -9,14 +10,13 @@ import org.joda.time.format.DateTimeFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 class ArchiveService
 (
   archiveRepository: ArchiveRepository,
-  logFileRepository: LogFileRepository
+  logFileService: LogFileService
 ) {
-  def uploadArchiveFile(info: ArchiveInfo) = {
+  def registerArchive(info: ArchiveInfo) = {
 
     val lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parseDateTime(info.lastModified)
 
@@ -31,30 +31,24 @@ class ArchiveService
     )
     println(s"createArchive: $archive")
 
-    archiveRepository.add(archive, Some(ContainerId(info.containerId))).map(_ => archive) onComplete {
-      case Success(_) => println("archive added")
-      case Failure(ex) => println("failed to add archive"); ex.printStackTrace()
-    }
-
-    val logFilesFuture = archive.extractLogFiles()
-
-    logFilesFuture onComplete {
-      case Success(logFiles) =>
-        logFiles.foreach(logFile => {
-          logFileRepository.add(logFile)
-        })
-      case Failure(ex) => println("failed to add logFiles"); ex.printStackTrace()
-    }
+    for {
+      _ <- archiveRepository.add(archive, Some(ContainerId(info.containerId)))
+      logFiles <- archive.extractLogFiles()
+      _ <- logFileService.addLogFiles(logFiles)
+    } yield ()
   }
 
-  def removeArchiveFile() = ???
-
-  def registerLogFile() = ???
-
-  def unregisterLogFile() = ???
+  def removeArchive(id: String) = {
+    val archiveId = ArchiveId(id)
+    for {
+      _ <- logFileService.removeAll(id)
+      archive <- archiveRepository.resolveById(archiveId)
+      _ = archive.remove()
+      _ <- archiveRepository.deleteById(archiveId)
+    } yield ()
+  }
 
   def archives(containerId: String): Future[GetArchivesResponse] = {
-    //TODO: add converter
 
     val list = for {
       count <- archiveRepository.count(ContainerId(containerId))
@@ -74,6 +68,10 @@ class ArchiveService
     ))
   }
 
-  def logFiles(archiveId: ArchiveId) = ???
+  def removeAll(containerId: String): Future[Unit] = ???
+
+  def activateAll(containerId: ContainerId): Future[Unit] = ???
+
+  def deactivateAll(containerId: ContainerId): Future[Unit] = ???
 
 }

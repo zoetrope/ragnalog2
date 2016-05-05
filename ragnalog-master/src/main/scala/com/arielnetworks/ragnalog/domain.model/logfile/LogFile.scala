@@ -1,4 +1,4 @@
-package com.arielnetworks.ragnalog.domain.model.archive
+package com.arielnetworks.ragnalog.domain.model.logfile
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import org.joda.time.DateTime
@@ -43,4 +43,8 @@ case class LogFile
   count: Option[Long],
   errorCount: Option[Long],
   errorMessage: Option[String]
-) extends Entity[LogFileId]
+) extends Entity[LogFileId] {
+
+  def update(fileType: String, extra: Option[String], status: LogStatus) = ???
+
+}

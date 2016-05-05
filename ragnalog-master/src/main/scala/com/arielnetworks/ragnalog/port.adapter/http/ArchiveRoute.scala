@@ -42,7 +42,7 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
               post {
                 entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
                   upload(containerId, identifier, formData) { info =>
-                    archiveService.uploadArchiveFile(info)
+                    archiveService.registerArchive(info)
 
                     //TODO: send ArchiveRegisteredEvent via WebSocket
                   }

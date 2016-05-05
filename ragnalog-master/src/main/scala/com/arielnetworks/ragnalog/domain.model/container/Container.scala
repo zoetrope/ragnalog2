@@ -25,5 +25,4 @@ case class Container
 
   def deactivate(): Future[Unit] = ???
 
-  def save(): Future[Unit] = ???
 }

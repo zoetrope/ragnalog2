@@ -1,10 +1,8 @@
 package com.arielnetworks.ragnalog.application.container
 
+import com.arielnetworks.ragnalog.application.archive.ArchiveService
 import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
-import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
-import com.arielnetworks.ragnalog.domain.model.registration.RegistrationAdapter
-import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,9 +14,7 @@ trait IdPatternSpecification {
 class ContainerService
 (
   containerRepository: ContainerRepository,
-  visualizationAdapter: VisualizationAdapter,
-  registrationAdapter: RegistrationAdapter,
-  logFileService: RawFileService,
+  archiveService: ArchiveService,
   idSpec: IdPatternSpecification
 ) {
 
@@ -36,12 +32,11 @@ class ContainerService
       .map(_ => new ContainerResponse(container.id.value, container.name, container.description, container.status.toString))
   }
 
-  def removeContainer(containerId: ContainerId): Future[Unit] = {
+  def removeContainer(id: String): Future[Unit] = {
+    val containerId = ContainerId(id)
     for {
       container <- containerRepository.resolveById(containerId)
-      _ <- visualizationAdapter.removeContainer(container)
-      _ <- registrationAdapter.remove(container)
-      _ <- logFileService.removeAll(container)
+      _ <- archiveService.removeAll(id)
       _ <- containerRepository.deleteById(containerId)
     } yield Unit
   }
@@ -71,9 +66,8 @@ class ContainerService
     for {
       container <- containerRepository.resolveById(containerId)
       _ <- container.activate()
-      _ <- visualizationAdapter.addContainer(container)
-      _ <- registrationAdapter.open(container)
-      _ <- container.save()
+      _ <- archiveService.activateAll(containerId)
+      _ <- containerRepository.save(container)
     } yield Unit
   }
 
@@ -81,9 +75,8 @@ class ContainerService
     for {
       container <- containerRepository.resolveById(containerId)
       _ <- container.deactivate()
-      _ <- visualizationAdapter.removeContainer(container)
-      _ <- registrationAdapter.close(container)
-      _ <- container.save()
+      _ <- archiveService.deactivateAll(containerId)
+      _ <- containerRepository.save(container)
     } yield Unit
   }
 

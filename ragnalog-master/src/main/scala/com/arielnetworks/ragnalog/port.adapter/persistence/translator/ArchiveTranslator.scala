@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.translator
 
-import com.arielnetworks.ragnalog.domain.model.archive.{Archive, ArchiveId, ArchiveType, LogFile}
+import com.arielnetworks.ragnalog.domain.model.archive.{Archive, ArchiveId, ArchiveType}
 
 import scalax.file.Path
 

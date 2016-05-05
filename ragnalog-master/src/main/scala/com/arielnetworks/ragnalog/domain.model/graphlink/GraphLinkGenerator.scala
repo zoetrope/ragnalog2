@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.domain.model.graphlink
 
-import com.arielnetworks.ragnalog.domain.model.archive.LogFile
+import com.arielnetworks.ragnalog.domain.model.logfile.LogFile
 import com.arielnetworks.ragnalog.support.JodaTimeSupport._
 import org.joda.time.DateTime
 import org.stringtemplate.v4.ST
