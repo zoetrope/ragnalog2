@@ -39,6 +39,25 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
     p.future
   }
 
+  override def exists(id: ID): Future[Boolean] = {
+    val p = Promise[Boolean]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          termQuery("_id", id.value)
+        }
+          size 0
+          terminateAfter 1
+      ) onComplete {
+        case Success(r) => p.success(r.totalHits != 0)
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
+
   override def save(entity: E): Future[Unit] = {
     val p = Promise[Unit]()
     try {

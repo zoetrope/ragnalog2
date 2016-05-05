@@ -15,13 +15,6 @@ cd docker
 docker-compose up -d
 ~~~
 
-* initialize mappings of Elasticsearch
-
-~~~
-cd etc/elasticsearch
-./initialize.sh
-~~~
-
 * install Embulk
 
 ~~~

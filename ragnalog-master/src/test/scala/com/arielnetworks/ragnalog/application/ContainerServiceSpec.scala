@@ -6,7 +6,7 @@ import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
 import com.arielnetworks.ragnalog.port.adapter.service.{EmbulkAdapter, KibanaAdapter}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
-import com.arielnetworks.ragnalog.support.ElasticsearchTestSupport
+import com.arielnetworks.ragnalog.test.ElasticsearchTestSupport
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, DiagrammedAssertions, FunSpec}
@@ -24,11 +24,11 @@ class ContainerServiceSpec
   val containerService = new ContainerService(containerRepository, visualizationAdapter, registrationAdapter, logFileService, idSpec)
 
   override def beforeAll(): Unit = {
-    clearAllDocuments(indexName, "container")
+//    clearAllDocuments(indexName, "container")
   }
 
   override def afterAll(): Unit = {
-    clearAllDocuments(indexName, "container")
+//    clearAllDocuments(indexName, "container")
   }
 
   describe("create a container") {

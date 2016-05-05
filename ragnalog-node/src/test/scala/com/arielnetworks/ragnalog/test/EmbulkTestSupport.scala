@@ -3,8 +3,14 @@ package com.arielnetworks.ragnalog.test
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.util.zip.ZipInputStream
 
-import scalax.file.Path
 import com.arielnetworks.ragnalog.port.adapter.embulk.RegistrationConfiguration
+import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
+import org.elasticsearch.common.settings.Settings
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scalax.file.Path
 
 trait EmbulkTestSupport {
 
@@ -54,4 +60,8 @@ trait EmbulkTestSupport {
 
     output.toString()
   }
+
+
+  val elasticsearchSettings = Settings.settingsBuilder().put("cluster.name", "ragnalog2.elasticsearch")
+  implicit val elasticClient = ElasticClient.transport(elasticsearchSettings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))
 }

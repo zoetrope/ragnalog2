@@ -2,6 +2,7 @@ package com.arielnetworks.ragnalog.port.adapter
 
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerStatus}
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.ContainerRepositoryOnElasticsearch
+import com.arielnetworks.ragnalog.test.ElasticsearchTestSupport
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
 import org.elasticsearch.common.settings.Settings
 import org.scalatest.concurrent.ScalaFutures
@@ -9,11 +10,9 @@ import org.scalatest.{DiagrammedAssertions, FunSpec}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures {
+class RepositorySpec extends FunSpec with DiagrammedAssertions with ScalaFutures with ElasticsearchTestSupport {
 
-  val settings = Settings.settingsBuilder().put("cluster.name", "ragnalog2.elasticsearch")
-  val client = ElasticClient.transport(settings.build, ElasticsearchClientUri("elasticsearch://localhost:9300"))
-  val containerRepository = new ContainerRepositoryOnElasticsearch(client)
+  val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient)
 
   describe("create") {
     val container = new Container(ContainerId("test_id"), "test-name", Some("test-description"), ContainerStatus.Active)

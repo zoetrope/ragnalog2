@@ -1,5 +1,5 @@
 {
-  "template": "*",
+  "template": "ragnalog*",
   "mappings": {
     "_default_": {
       "_source": { "enabled": true },

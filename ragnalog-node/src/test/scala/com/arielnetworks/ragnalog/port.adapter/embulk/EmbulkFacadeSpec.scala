@@ -2,7 +2,6 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 
 import java.io.File
 
-import com.arielnetworks.ragnalog.support.ElasticsearchTestSupport
 import com.arielnetworks.ragnalog.test.{CustomMatchers, EmbulkTestSupport}
 import org.scalatest.Matchers._
 import org.scalatest.{BeforeAndAfterAll, DiagrammedAssertions, FunSpec}
@@ -12,7 +11,7 @@ import scala.util.{Failure, Success}
 import scalax.file.Path
 
 class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndAfterAll
-  with EmbulkTestSupport with ElasticsearchTestSupport with CustomMatchers {
+  with EmbulkTestSupport with CustomMatchers {
 
   val testIndexName = "ragnalog-test-embulkfacade"
   val config = EmbulkConfiguration(
