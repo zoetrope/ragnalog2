@@ -6,7 +6,7 @@ import scala.concurrent.Future
 
 trait RegistrationService {
 
-  def register(logFile: LogFile)(f: Any => Future[Unit]) = ???
+  def register(logFile: LogFile): Future[Unit] = ???
 
   def unregister(logFile: LogFile): Future[Unit] = ???
 

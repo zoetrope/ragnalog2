@@ -3,7 +3,6 @@ package com.arielnetworks.ragnalog.port.adapter.embulk
 import java.io.File
 import java.nio.file.{Files, StandardCopyOption}
 
-import com.arielnetworks.ragnalog.application._
 import com.arielnetworks.ragnalog.domain.model.LogFileRegisterer
 import com.arielnetworks.ragnalog.support.ArchiveUtil
 
@@ -12,6 +11,31 @@ import scala.util.{Failure, Success}
 import scalax.file.Path
 import scalax.file.defaultfs.DefaultPath
 
+//TODO:
+case class EmbulkInvokeRegistrationMessage
+(
+  containerId: String,
+  archiveId: String,
+  archiveFileName: String,
+  filePath: String,
+  logType: String,
+  extra: String,
+  indexName: String
+)
+
+sealed trait EmbulkResultType
+
+case class CommandSuccess() extends EmbulkResultType
+
+case class CommandFailure() extends EmbulkResultType
+
+case class EmbulkRegistrationResult
+(
+  resultType: EmbulkResultType,
+  yaml: Path,
+  zippedLog: Array[Byte]
+)
+
 class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends LogFileRegisterer {
 
   val embulkSetting = embulkConfiguration
@@ -19,7 +43,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends LogFileReg
   val embulkFacadeFactory = new EmbulkFacadeFactory(embulkConfiguration)
   val generator = new EmbulkYamlGenerator(embulkSetting.workingDirectory, embulkConfiguration.params)
 
-  def register(command: InvokeRegistrationMessage): Future[RegistrationResult] = {
+  def register(command: EmbulkInvokeRegistrationMessage): Future[EmbulkRegistrationResult] = {
     try {
       val registrationConfig = registrationsConfig.get(command.logType).get //TODO:
       val archiveFilePath = Path(command.archiveFileName, '/')
@@ -63,8 +87,8 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends LogFileReg
       targetFile.delete()
 
       result match {
-        case Success(log) => Future.successful(new RegistrationResult(CommandSuccess(), generatedYamlPath, log))
-        case Failure(e: CommandFailureException) => Future.successful(new RegistrationResult(CommandFailure(), generatedYamlPath, e.log))
+        case Success(log) => Future.successful(new EmbulkRegistrationResult(CommandSuccess(), generatedYamlPath, log))
+        case Failure(e: CommandFailureException) => Future.successful(new EmbulkRegistrationResult(CommandFailure(), generatedYamlPath, e.log))
         case Failure(e) => Future.failed(e)
       }
 

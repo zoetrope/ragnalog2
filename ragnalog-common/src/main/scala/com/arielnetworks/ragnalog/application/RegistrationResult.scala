@@ -4,13 +4,9 @@ import scalax.file.Path
 
 sealed trait ResultType
 
-case class CommandSuccess() extends ResultType
-
-case class CommandFailure() extends ResultType
-
 case class RegistrationResult
 (
-  resultType: ResultType,
-  yaml: Path,
+  resultType: String,
+  yaml: String,
   zippedLog: Array[Byte]
 )

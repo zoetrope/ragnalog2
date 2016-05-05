@@ -21,7 +21,10 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       dispatch()
     }
     case res: RegistrationResult => {
-
+      println(s"DispatcherActor.receive: $res")
+    }
+    case x => {
+      println(s"DispatcherActor.receive unknown: $x")
     }
   }
 
@@ -30,14 +33,16 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
   }
 
   def dequeue(): InvokeRegistrationMessage = {
-    msgQueue.sortBy(_.priority).head
+    val msg = msgQueue.sortBy(_.priority).head
+    msg.sender = this.self
+    msg
   }
 
   def dispatch(): Future[Unit] = {
     val firstMsg = dequeue()
 
     import scala.concurrent.duration._
-    implicit val timeout = Timeout(100.millisecond)
+    implicit val timeout = Timeout(20.seconds)
     val acceptableActors = registrationActors.map(actor => {
       (actor ? "ok").mapTo[Boolean].map(b => (b, actor))
     })
@@ -46,7 +51,10 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       actors <- Future.sequence(acceptableActors)
       _ = println(s"actors: $actors")
       actorOpt = actors.collect { case (true, a: ActorSelection) => a }.headOption
-      _ = actorOpt.map(actor => actor ! firstMsg)
+      actor = actorOpt.get //TODO:
+      res <- actor ? firstMsg
+      _ = println(s"sent: $res")
+    //      res = actorOpt.map(actor => actor ? firstMsg).foreach(res => println("sent: $res"))
     } yield ()
 
   }

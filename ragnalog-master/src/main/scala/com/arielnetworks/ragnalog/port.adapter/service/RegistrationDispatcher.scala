@@ -23,7 +23,7 @@ class RegistrationDispatcher
   val registrationRef = registrationActorPath.asScala.map(p => system.actorSelection(p))
   val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], registrationRef))
 
-  override def register(logFile: LogFile)(f: Any => Future[Unit]) = ???
+  override def register(logFile: LogFile):Future[Unit] = ???
 
   override def unregister(logFile: LogFile): Future[Unit] = ???
 

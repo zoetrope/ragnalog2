@@ -41,18 +41,24 @@ class LogFileService
 
       _ <- logFileRepository.save(logFile)
 
-      _ = registrationService.register(logFile) { res =>
-        //TODO:
-        //      _ = if (ret) {
-        //        _ <- visualizationService.activate(logFile)
-        //        logFile.completeRegistering()
-        //      } else {
-        //        logFile.failToRegistering()
-        //      }
+      _ = registrationService.register(logFile)
 
-        logFileRepository.save(logFile)
-      }
+    } yield ()
+  }
 
+  def postRegistrationLogFile(id: LogFileId): Future[Unit] = {
+
+    for {
+      logFile <- logFileRepository.resolveById(id)
+      //TODO:
+      //      _ = if (ret) {
+      //        _ <- visualizationService.activate(logFile)
+      //        logFile.completeRegistering()
+      //      } else {
+      //        logFile.failToRegistering()
+      //      }
+
+      _ <- logFileRepository.save(logFile)
     } yield ()
   }
 

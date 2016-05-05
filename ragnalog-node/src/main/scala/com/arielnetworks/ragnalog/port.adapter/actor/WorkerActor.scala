@@ -2,7 +2,7 @@ package com.arielnetworks.ragnalog.port.adapter.actor
 
 import akka.actor.Actor
 import akka.actor.Actor.Receive
-import com.arielnetworks.ragnalog.application.{CommandSuccess, InvokeRegistrationMessage, RegistrationResult}
+import com.arielnetworks.ragnalog.application.{InvokeRegistrationMessage, RegistrationResult}
 
 import scalax.file.Path
 
@@ -11,7 +11,8 @@ class WorkerActor extends Actor {
     case msg: InvokeRegistrationMessage =>
       println(s"WorkerActor.receive: $msg")
       Thread.sleep(10000)
-      sender ! new RegistrationResult(CommandSuccess(), Path(""), Array.empty[Byte])
+      msg.sender ! new RegistrationResult("SUCCESS", "YAML PATH", Array.empty[Byte])
+      println(s"WorkerActor.finished: $msg")
       context.stop(self)
   }
 }

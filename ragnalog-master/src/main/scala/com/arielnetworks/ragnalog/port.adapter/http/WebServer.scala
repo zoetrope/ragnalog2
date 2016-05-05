@@ -46,7 +46,7 @@ object WebServer extends App {
       path("registration") {
         get {
           registrationService.invoke(
-            new InvokeRegistrationMessage("containerId", "archiveId", "archiveFileName", "filePath", "logType", "extra", "index", 1, new DateTime()))
+            new InvokeRegistrationMessage("containerId", "archiveId", "archiveFileName", "filePath", "logType", "extra", "index", 1, new DateTime().toString, null))
           complete("ok")
         }
       } ~

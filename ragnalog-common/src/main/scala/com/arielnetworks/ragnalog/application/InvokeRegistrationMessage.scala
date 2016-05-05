@@ -1,5 +1,6 @@
 package com.arielnetworks.ragnalog.application
 
+import akka.actor.ActorRef
 import org.joda.time.DateTime
 
 case class InvokeRegistrationMessage
@@ -12,7 +13,8 @@ case class InvokeRegistrationMessage
   extra: String,
   indexName: String,
   priority: Int,
-  invokedTime: DateTime
+  invokedTime: String,
+  var sender: ActorRef
 )
 
 case class AcceptedMessage()

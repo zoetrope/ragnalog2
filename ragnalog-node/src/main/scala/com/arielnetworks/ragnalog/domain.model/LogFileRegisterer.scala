@@ -1,10 +1,10 @@
 package com.arielnetworks.ragnalog.domain.model
 
-import com.arielnetworks.ragnalog.application.{InvokeRegistrationMessage, RegistrationResult}
+import com.arielnetworks.ragnalog.port.adapter.embulk.{EmbulkInvokeRegistrationMessage, EmbulkRegistrationResult}
 
 import scala.concurrent.Future
 
 trait LogFileRegisterer {
 
-  def register(command: InvokeRegistrationMessage): Future[RegistrationResult]
+  def register(command: EmbulkInvokeRegistrationMessage): Future[EmbulkRegistrationResult]
 }
