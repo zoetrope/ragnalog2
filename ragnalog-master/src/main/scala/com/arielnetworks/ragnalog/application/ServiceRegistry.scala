@@ -3,7 +3,7 @@ package com.arielnetworks.ragnalog.application
 import com.arielnetworks.ragnalog.application.archive.ArchiveService
 import com.arielnetworks.ragnalog.application.container.ContainerService
 import com.arielnetworks.ragnalog.domain.model.rawfile.RawFileService
-import com.arielnetworks.ragnalog.port.adapter.persistence.repository.{ArchiveRepositoryOnElasticsearch, ContainerRepositoryOnElasticsearch}
+import com.arielnetworks.ragnalog.port.adapter.persistence.repository.{ArchiveRepositoryOnElasticsearch, ContainerRepositoryOnElasticsearch, LogFileRepositoryOnElasticsearch}
 import com.arielnetworks.ragnalog.port.adapter.service.{EmbulkAdapter, KibanaAdapter}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
@@ -19,9 +19,10 @@ object ServiceRegistry {
   val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient)
   val visualizationAdapter = new KibanaAdapter
   val registrationAdapter = new EmbulkAdapter
+  val logFileRepository = new LogFileRepositoryOnElasticsearch(elasticClient)
   val logFileService = new RawFileService
   val containerService = new ContainerService(containerRepository, visualizationAdapter, registrationAdapter, logFileService, idSpec)
 
   val archiveRepository = new ArchiveRepositoryOnElasticsearch(elasticClient)
-  val archiveService = new ArchiveService(archiveRepository)
+  val archiveService = new ArchiveService(archiveRepository, logFileRepository)
 }

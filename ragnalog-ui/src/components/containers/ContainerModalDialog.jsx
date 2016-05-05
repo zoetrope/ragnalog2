@@ -132,7 +132,7 @@ class ContainerModalDialog extends Component {
       >
         <TextField
           ref="idField"
-          hintText="ID"
+          hintText="ID (used as a part of URL)"
           value={this.state.idFieldValue}
           onKeyDown={this.handleKeyDownIdField}
           onChange={this.handleChangeIdField}
@@ -140,7 +140,7 @@ class ContainerModalDialog extends Component {
         /><br />
         <TextField
           ref="nameField"
-          hintText="Name"
+          hintText="Name (used as a display name)"
           value={this.state.nameFieldValue}
           onKeyDown={this.handleKeyDownNameField}
           onChange={this.handleChangeNameField}

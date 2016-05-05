@@ -22,16 +22,10 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   override def add(entity: E, parentId: Option[PARENT]): Future[Unit] = {
     val p = Promise[Unit]()
     try {
-      val ret = parentId match {
-        case Some(p) =>
-          elasticClient.execute(
-            index into indexName / typeName id entity.id.value parent p.value opType OpType.CREATE fields toFieldsFromEntity(entity)
-          )
-        case None =>
-          elasticClient.execute(
-            index into indexName / typeName id entity.id.value opType OpType.CREATE fields toFieldsFromEntity(entity)
-          )
-      }
+      val ret =
+        elasticClient.execute(
+          index into indexName / typeName id entity.id.value parent parentId.map(_.value).orNull opType OpType.CREATE fields toFieldsFromEntity(entity)
+        )
 
       ret onComplete {
         case Success(r) =>

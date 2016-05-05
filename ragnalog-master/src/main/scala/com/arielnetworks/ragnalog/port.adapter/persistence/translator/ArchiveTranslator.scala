@@ -25,8 +25,7 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
       ArchiveType.of(fields.get("archiveType").asInstanceOf[String]),
       fields.get("size").asInstanceOf[Int],
       toTimeStamp(fields.get("uploadedDate").asInstanceOf[String]),
-      toTimeStamp(fields.get("modifiedDate").asInstanceOf[String]),
-      List.empty[LogFile]
+      toTimeStamp(fields.get("modifiedDate").asInstanceOf[String])
     )
   }
 }

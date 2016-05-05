@@ -21,7 +21,7 @@ trait ArchiveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
 class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSupport {
 
-  val userService = ServiceRegistry.archiveService
+  val archiveService = ServiceRegistry.archiveService
 
 
   def route(implicit m: Materializer, ec: ExecutionContext): Route =
@@ -30,7 +30,7 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
         pathEndOrSingleSlash {
           get {
             complete {
-              userService.archives(containerId).map(_.toJson)
+              archiveService.archives(containerId).map(_.toJson)
             }
           }
         } ~
@@ -42,7 +42,7 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
               post {
                 entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
                   upload(containerId, identifier, formData) { info =>
-                    userService.uploadArchiveFile(info)
+                    archiveService.uploadArchiveFile(info)
 
                     //TODO: send ArchiveRegisteredEvent via WebSocket
                   }

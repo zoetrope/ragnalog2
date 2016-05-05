@@ -48,7 +48,7 @@ class Uploader extends Component {
         "testChunks": false,
         "generateUniqueIdentifier": (file) => {
           const relativePath = file.relativePath || file.webkitRelativePath || file.fileName || file.name;
-          return md5(relativePath + file.size + file.lastModifiedDate);
+          return md5(this.props.containerId + relativePath + file.size + file.lastModifiedDate);
         },
         "query": (file) => {
           return {'lastModified': file.file.lastModifiedDate.toISOString()};

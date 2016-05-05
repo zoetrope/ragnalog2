@@ -11,7 +11,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class ArchiveService(archiveRepository: ArchiveRepository) {
+class ArchiveService
+(
+  archiveRepository: ArchiveRepository,
+  logFileRepository: LogFileRepository
+) {
   def uploadArchiveFile(info: ArchiveInfo) = {
 
     val lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parseDateTime(info.lastModified)
@@ -23,14 +27,23 @@ class ArchiveService(archiveRepository: ArchiveRepository) {
       ArchiveType.fromExtension(info.filename),
       info.totalSize,
       new DateTime(),
-      lastModified,
-      List.empty[LogFile]
+      lastModified
     )
     println(s"createArchive: $archive")
 
     archiveRepository.add(archive, Some(ContainerId(info.containerId))).map(_ => archive) onComplete {
       case Success(_) => println("archive added")
       case Failure(ex) => println("failed to add archive"); ex.printStackTrace()
+    }
+
+    val logFilesFuture = archive.extractLogFiles()
+
+    logFilesFuture onComplete {
+      case Success(logFiles) =>
+        logFiles.foreach(logFile => {
+          logFileRepository.add(logFile)
+        })
+      case Failure(ex) => println("failed to add logFiles"); ex.printStackTrace()
     }
   }
 
