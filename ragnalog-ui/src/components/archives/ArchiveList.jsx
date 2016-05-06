@@ -27,7 +27,7 @@ class ArchiveList extends Component {
     );
 
     return <Table selectable={false}>
-      <TableHeader displaySelectAll={false}>
+      <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
         <TableRow>
           <TableHeaderColumn>File Name</TableHeaderColumn>
           <TableHeaderColumn>Size</TableHeaderColumn>

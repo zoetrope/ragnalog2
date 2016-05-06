@@ -15,6 +15,7 @@ import {
 } from "material-ui/Table";
 import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import TextField from 'material-ui/TextField';
 
 const styles = {
   footerContent: {
@@ -65,7 +66,7 @@ class LogFileList extends Component {
 
 
     return <Table selectable={true}>
-      <TableHeader displaySelectAll={false}>
+      <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
         <TableRow>
           <TableHeaderColumn>Archive Name</TableHeaderColumn>
           <TableHeaderColumn>Log Name</TableHeaderColumn>
@@ -81,7 +82,7 @@ class LogFileList extends Component {
               <TableRowColumn>{logFile.archiveName}</TableRowColumn>
               <TableRowColumn>{logFile.logName}</TableRowColumn>
               <TableRowColumn>{logFile.logType}</TableRowColumn>
-              <TableRowColumn>{logFile.extra}</TableRowColumn>
+              <TableRowColumn><TextField value={logFile.extra} /></TableRowColumn>
               <TableRowColumn style={{width:40}}>{rightIconMenu(logFile)}</TableRowColumn>
             </TableRow>
           })}
