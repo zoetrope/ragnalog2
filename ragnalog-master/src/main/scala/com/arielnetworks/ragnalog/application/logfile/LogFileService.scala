@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.application.logfile
 
-import com.arielnetworks.ragnalog.application.logfile.data.RegisterLogFileRequest
+import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest}
 import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.logfile._
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
@@ -25,8 +25,8 @@ class LogFileService
   def removeAll(id: String): Future[Unit] = {
     val archiveId = ArchiveId(id)
     for {
-      count <- logFileRepository.countAll(archiveId)
-      logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], archiveId)
+      count <- logFileRepository.countAll(None, Some(archiveId.value), None, None)
+      logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], None, Some(archiveId.value), None, None)
       _ <- Future.sequence(logFiles.map(logFile => unregisterLogFile(logFile.id.value)))
       _ <- Future.sequence(logFiles.map(logFile => logFileRepository.deleteById(logFile.id)))
     } yield ()
@@ -73,6 +73,32 @@ class LogFileService
       _ <- logFileRepository.save(logFile)
     } yield ()
 
+  }
+
+  def search(containerId: String, archiveId: Option[String], status: Option[String], name: Option[String], page: Int): Future[GetLogFilesResponse] = {
+    println(s"search: $containerId, $archiveId, $status, $name, $page")
+    //TODO: pagination
+    for {
+      count <- logFileRepository.countAll(Some(containerId), archiveId, status, name)
+      logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], Some(containerId), archiveId, status, name)
+    } yield {
+      new GetLogFilesResponse(
+        logFiles.map(logFile=>new LogFileResponse(
+          logFile.id.value,
+          logFile.containerId.value,
+          logFile.logName,
+          logFile.logType,
+          logFile.status.toString,
+          logFile.indexName,
+          logFile.from.map(_.toString), //TODO: format
+          logFile.to.map(_.toString), //TODO: format
+          logFile.extra,
+          logFile.count
+        )),
+        count,
+        page
+      )
+    }
   }
 
 }

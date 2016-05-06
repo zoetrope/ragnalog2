@@ -4,10 +4,11 @@ import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.common.RepositoryIOException
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogFileRepository}
 import com.arielnetworks.ragnalog.port.adapter.persistence.translator.LogFileTranslator
-import com.sksamuel.elastic4s.ElasticClient
+import com.sksamuel.elastic4s.{BoolQueryDefinition, ElasticClient, QueryDefinition}
 import com.sksamuel.elastic4s.ElasticDsl._
 import org.elasticsearch.action.index.IndexRequest.OpType
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
@@ -18,9 +19,56 @@ class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
     with LogFileTranslator {
   override def countRegisteredLogFilesByType(fileType: String, parent: ArchiveId): Future[Long] = ???
 
-  override def searchAll(start: Int, limit: Int, parent: ArchiveId): Future[Seq[LogFile]] = ???
+  override def countAll(containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Long] = {
 
-  override def countAll(parent: ArchiveId): Future[Long] = ???
+    val queries = ListBuffer.empty[QueryDefinition]
+    containerId.foreach(id => queries += termQuery("containerId", id))
+    archiveId.foreach(id => queries += termQuery("_routing", id))
+    status.foreach(s => queries += termQuery("status", s))
+
+    val p = Promise[Long]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          bool(must(queries))
+        }
+          size 0
+      ) onComplete {
+        case Success(r) => p.success(r.totalHits)
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
+
+
+  override def searchAll(start: Int, limit: Int, containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Seq[LogFile]] = {
+
+    val queries = ListBuffer.empty[QueryDefinition]
+    containerId.foreach(id => queries += termQuery("containerId", id))
+    archiveId.foreach(id => queries += termQuery("_routing", id))
+    status.foreach(s => queries += termQuery("status", s))
+
+    println(s"searchAll: $queries, $limit")
+    val p = Promise[Seq[LogFile]]()
+    try {
+      elasticClient.execute(
+        search in indexName / typeName query {
+          bool(must(queries))
+        }
+          from start
+          size limit
+      ) onComplete {
+        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.getSource)))
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
 
   override def searchRegisteredLogFilesByType(start: Int, limit: Int, fileType: String, parent: ArchiveId): Future[Seq[LogFile]] = ???
 

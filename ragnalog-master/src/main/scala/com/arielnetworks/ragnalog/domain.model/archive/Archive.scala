@@ -4,6 +4,7 @@ import java.security.MessageDigest
 import java.util.regex.Pattern
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
+import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.domain.model.detector.{LogTypeDetectorByFilename, LogTypePattern}
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus, Uploaded}
 import com.arielnetworks.ragnalog.support.ArchiveUtil
@@ -25,8 +26,8 @@ case class Archive
   fileNameEncoding: String
 ) extends Entity[ArchiveId] {
 
-  def extractLogFiles(): Seq[LogFile] = {
-    ArchiveUtil.getFileList(filePath).map(logFile)
+  def extractLogFiles(containerId: ContainerId): Seq[LogFile] = {
+    ArchiveUtil.getFileList(filePath).map(file => logFile(file, containerId))
   }
 
   //TODO:
@@ -40,11 +41,11 @@ case class Archive
     MessageDigest.getInstance("MD5").digest(text.getBytes).map("%02x".format(_)).mkString
   }
 
-  private def logFile(fileName: String): LogFile = {
+  private def logFile(fileName: String, containerId: ContainerId): LogFile = {
     val logFileId = md5(id + fileName) //TODO:
     val logType = detector.detect(fileName)
 
-    val log = new LogFile(LogFileId(logFileId), fileName, logType, Uploaded, None, None, None, None, None, None, None)
+    val log = new LogFile(LogFileId(logFileId), containerId, fileName, logType, Uploaded, None, None, None, None, None, None, None)
     println(s"logFile: ${log}")
     log
   }

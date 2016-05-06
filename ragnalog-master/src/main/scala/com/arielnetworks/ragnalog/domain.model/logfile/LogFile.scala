@@ -1,6 +1,7 @@
 package com.arielnetworks.ragnalog.domain.model.logfile
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
+import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import org.joda.time.DateTime
 
 import scalax.file.Path
@@ -35,6 +36,7 @@ case class LogFileId(value: String) extends Identifier[String]
 case class LogFile
 (
   id: LogFileId,
+  containerId: ContainerId,
   logName: String,
   logType: Option[String],
   status: LogStatus,

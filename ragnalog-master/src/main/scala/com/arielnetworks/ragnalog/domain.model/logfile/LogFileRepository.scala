@@ -11,9 +11,9 @@ trait LogFileRepository extends Repository[LogFileId, LogFile, ArchiveId] {
 
   def searchRegisteredLogFilesByType(start: Int, limit: Int, fileType: String, parent: ArchiveId): Future[Seq[LogFile]]
 
-  def countAll(parent: ArchiveId): Future[Long]
+  def countAll(containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Long]
 
-  def searchAll(start: Int, limit: Int, parent: ArchiveId): Future[Seq[LogFile]]
+  def searchAll(start: Int, limit: Int, containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Seq[LogFile]]
 
   def addAll(entities: Seq[LogFile], parentId: ArchiveId): Future[Unit]
 }

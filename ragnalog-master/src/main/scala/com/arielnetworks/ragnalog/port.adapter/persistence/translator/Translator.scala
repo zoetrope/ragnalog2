@@ -31,7 +31,7 @@ trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
   }
 
   protected def fromPathOpt(value: Option[Path]): String = {
-    value.map(_.path).getOrElse("")
+    value.map(_.path).orNull
   }
 
   protected def toPathOpt(value: String): Option[Path] = {

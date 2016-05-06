@@ -12,9 +12,9 @@ class LogFiles extends Component {
   }
 
   componentWillMount() {
-    console.log("Archives will mount", this.props.params);
+    console.log("Archives will mount", this.props.params, this.props.location.search);
 
-    this.props.fetchLogFiles(this.props.params.id);
+    this.props.fetchLogFiles(this.props.params.containerId, this.props.location.search);
   }
 
   componentWillReceiveProps(nextProps) {

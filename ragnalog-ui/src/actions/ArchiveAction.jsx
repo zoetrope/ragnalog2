@@ -39,7 +39,7 @@ export function fetchArchives(containerId) {
 
 export function navigateToViewArchive(containerId, archiveId) {
   return dispatch => {
-    dispatch(push("/containers/" + containerId + "/logfiles?archive=" + archiveId));
+    dispatch(push("/containers/" + containerId + "/logfiles?archiveId=" + archiveId + "&status=Unregistered"));
   }
 }
 

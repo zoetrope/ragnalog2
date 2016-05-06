@@ -51,6 +51,10 @@
         "type": "archive"
       },
       "properties": {
+        "containerId":{
+          "type": "string",
+          "index": "not_analyzed"
+        },
         "logName": {
           "type": "string",
           "index": "not_analyzed"

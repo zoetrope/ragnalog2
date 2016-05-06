@@ -26,11 +26,11 @@ const fetchLogFilesFailure = createAction(
   ex=>ex.message
 );
 
-export function fetchLogFiles(containerId) {
-  console.log("fetchLogFiles!!");
+export function fetchLogFiles(containerId, searchParams) {
+  console.log("fetchLogFiles!!" + searchParams);
   return dispatch => {
     dispatch(fetchLogFilesRequest());
-    return fetch(Config.apiHost + "/api/containers/" + containerId + "/archives")
+    return fetch(Config.apiHost + "/api/containers/" + containerId + "/logfiles" + searchParams)
       .then(res => res.json())
       .then(json => dispatch(fetchLogFilesSuccess(json)))
       .catch(ex => dispatch(fetchLogFilesFailure(ex)))
