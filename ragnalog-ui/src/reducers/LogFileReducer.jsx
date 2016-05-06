@@ -51,7 +51,6 @@ export default handleActions({
     errorMessage: action.payload
   })
 }, {
-  hogehoge: false,
   isFetching: false,
   error: false,
   errorMessage: "",

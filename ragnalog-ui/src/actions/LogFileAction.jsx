@@ -30,16 +30,16 @@ export function fetchLogFiles(containerId, searchParams) {
   console.log("fetchLogFiles!!" + searchParams);
   return dispatch => {
     dispatch(fetchLogFilesRequest());
-    return fetch(Config.apiHost + "/api/containers/" + containerId + "/logfiles" + searchParams)
+    return fetch(Config.apiHost + "/api/containers/" + containerId + "/logfiles?" + searchParams)
       .then(res => res.json())
       .then(json => dispatch(fetchLogFilesSuccess(json)))
       .catch(ex => dispatch(fetchLogFilesFailure(ex)))
   }
 }
 
-export function changeCondition(containerId, archiveId) {
+export function changeCondition(containerId, searchParams) {
   return dispatch => {
-    dispatch(push("/containers/" + containerId + "/logfiles?archive=" + archiveId));
+    dispatch(push("/containers/" + containerId + "/logfiles?" + searchParams));
   }
 }
 
