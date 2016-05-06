@@ -50,6 +50,14 @@ object WebServer extends App {
           complete("ok")
         }
       } ~
+      path("long" / IntNumber) { time =>
+        get {
+          println(s"start $time")
+          Thread.sleep(time)
+          println(s"end $time")
+          complete("ok")
+        }
+      } ~
       path("notify") {
         get {
           //            system.eventStream.publish(MyData("teset"))

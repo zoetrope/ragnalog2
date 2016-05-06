@@ -15,17 +15,28 @@ class Archives extends Component {
   componentWillMount() {
     console.log("Archives will mount", this.props.params);
 
-    this.props.fetchArchives(this.props.params.id);
+    this.props.fetchArchives(this.props.params.containerId);
   }
 
   componentWillReceiveProps(nextProps) {
     console.log("Archives will receive props", nextProps.params)
   }
 
+  handleViewContainer = (archive)=> {
+    this.props.navigateToViewArchive(this.props.params.containerId, archive.id)
+  };
+
+  handleDeleteContainer = (archive)=> {
+  };
+
   render() {
     return <div>
-      <Uploader containerId={this.props.params.id}/>
-      <ArchiveList archives={this.props.archives}/>
+      <Uploader containerId={this.props.params.containerId}/>
+      <ArchiveList
+        archives={this.props.archives}
+        onView={this.handleViewContainer}
+        onDelete={this.handleDeleteContainer}
+      />
     </div>
   }
 }

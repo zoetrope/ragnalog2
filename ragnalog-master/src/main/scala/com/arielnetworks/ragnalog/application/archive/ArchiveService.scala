@@ -33,7 +33,7 @@ class ArchiveService
 
     for {
       _ <- archiveRepository.add(archive, Some(ContainerId(info.containerId)))
-      logFiles <- archive.extractLogFiles()
+      logFiles = archive.extractLogFiles()
       _ <- logFileService.addLogFiles(logFiles)
     } yield ()
   }

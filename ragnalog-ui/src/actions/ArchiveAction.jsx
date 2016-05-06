@@ -6,7 +6,10 @@ import {
   FETCH_ARCHIVES_FAILURE,
   ADD_ARCHIVE_REQUEST,
   ADD_ARCHIVE_SUCCESS,
-  ADD_ARCHIVE_FAILURE
+  ADD_ARCHIVE_FAILURE,
+  DELETE_ARCHIVE_REQUEST,
+  DELETE_ARCHIVE_SUCCESS,
+  DELETE_ARCHIVE_FAILURE
 } from './ActionTypes';
 import {push} from 'react-router-redux';
 
@@ -31,6 +34,12 @@ export function fetchArchives(containerId) {
       .then(res => res.json())
       .then(json => dispatch(fetchArchivesSuccess(json)))
       .catch(ex => dispatch(fetchArchivesFailure(ex)))
+  }
+}
+
+export function navigateToViewArchive(containerId, archiveId) {
+  return dispatch => {
+    dispatch(push("/containers/" + containerId + "/logfiles?archive=" + archiveId));
   }
 }
 

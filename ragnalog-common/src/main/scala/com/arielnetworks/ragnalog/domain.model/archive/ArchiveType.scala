@@ -7,7 +7,7 @@ sealed trait ArchiveType {
     else if (fileName.endsWith(".tar")) Tar
     else if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) Tgz
     else if (fileName.endsWith(".gz")) GZip
-    else None
+    else Unknown
   }
 
   def of(value: String): ArchiveType = value match {
@@ -15,7 +15,7 @@ sealed trait ArchiveType {
     case "Tar" => Tar
     case "Tgz" => Tgz
     case "GZip" => GZip
-    case _ => None
+    case _ => Unknown
   }
 
   def isArchive: Boolean = this match {
@@ -42,7 +42,7 @@ sealed trait ArchiveType {
 
 object ArchiveType extends ArchiveType
 
-case object None extends ArchiveType
+case object Unknown extends ArchiveType
 
 case object Zip extends ArchiveType
 
