@@ -8,20 +8,14 @@ import scalax.file.Path
 
 sealed trait LogStatus {
   def of(value: String): LogStatus = value match {
-    case "Uploading" => Uploading
-    case "Uploaded" => Uploaded
+    case "Unregistered" => Unregistered
     case "Registering" => Registering
     case "Registered" => Registered
-    case "Unregistered" => Unregistered
     case "Error" => Error
   }
 }
 
 object LogStatus extends LogStatus
-
-case object Uploading extends LogStatus
-
-case object Uploaded extends LogStatus
 
 case object Registering extends LogStatus
 
@@ -37,6 +31,7 @@ case class LogFile
 (
   id: LogFileId,
   containerId: ContainerId,
+  archiveName: String,
   logName: String,
   logType: Option[String],
   status: LogStatus,

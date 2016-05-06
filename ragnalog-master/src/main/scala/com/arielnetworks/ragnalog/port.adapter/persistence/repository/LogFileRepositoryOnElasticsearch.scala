@@ -19,18 +19,21 @@ class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
     with LogFileTranslator {
   override def countRegisteredLogFilesByType(fileType: String, parent: ArchiveId): Future[Long] = ???
 
-  override def countAll(containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Long] = {
-
+  private def buildQuery(containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): BoolQueryDefinition = {
     val queries = ListBuffer.empty[QueryDefinition]
     containerId.foreach(id => queries += termQuery("containerId", id))
     archiveId.foreach(id => queries += termQuery("_routing", id))
     status.foreach(s => queries += termQuery("status", s))
+    bool(must(queries))
+  }
+
+  override def countAll(containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Long] = {
 
     val p = Promise[Long]()
     try {
       elasticClient.execute(
         search in indexName / typeName query {
-          bool(must(queries))
+          buildQuery(containerId, archiveId, status, name)
         }
           size 0
       ) onComplete {
@@ -46,17 +49,11 @@ class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
 
   override def searchAll(start: Int, limit: Int, containerId: Option[String], archiveId: Option[String], status: Option[String], name: Option[String]): Future[Seq[LogFile]] = {
 
-    val queries = ListBuffer.empty[QueryDefinition]
-    containerId.foreach(id => queries += termQuery("containerId", id))
-    archiveId.foreach(id => queries += termQuery("_routing", id))
-    status.foreach(s => queries += termQuery("status", s))
-
-    println(s"searchAll: $queries, $limit")
     val p = Promise[Seq[LogFile]]()
     try {
       elasticClient.execute(
         search in indexName / typeName query {
-          bool(must(queries))
+          buildQuery(containerId, archiveId, status, name)
         }
           from start
           size limit

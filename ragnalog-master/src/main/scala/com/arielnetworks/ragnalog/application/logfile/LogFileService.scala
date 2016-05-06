@@ -83,9 +83,9 @@ class LogFileService
       logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], Some(containerId), archiveId, status, name)
     } yield {
       new GetLogFilesResponse(
-        logFiles.map(logFile=>new LogFileResponse(
+        logFiles.map(logFile => new LogFileResponse(
           logFile.id.value,
-          logFile.containerId.value,
+          logFile.archiveName,
           logFile.logName,
           logFile.logType,
           logFile.status.toString,

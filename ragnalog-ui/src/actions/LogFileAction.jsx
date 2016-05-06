@@ -19,7 +19,7 @@ const fetchLogFilesRequest = createAction(
 );
 const fetchLogFilesSuccess = createAction(
   FETCH_LOGFILES_SUCCESS,
-  archives => archives
+  logFiles => logFiles
 );
 const fetchLogFilesFailure = createAction(
   FETCH_LOGFILES_FAILURE,
@@ -37,7 +37,7 @@ export function fetchLogFiles(containerId, searchParams) {
   }
 }
 
-export function navigateToViewLogFile(containerId, archiveId) {
+export function changeCondition(containerId, archiveId) {
   return dispatch => {
     dispatch(push("/containers/" + containerId + "/logfiles?archive=" + archiveId));
   }

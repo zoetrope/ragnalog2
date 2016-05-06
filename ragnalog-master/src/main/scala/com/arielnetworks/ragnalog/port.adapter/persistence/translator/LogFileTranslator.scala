@@ -10,6 +10,7 @@ trait LogFileTranslator extends Translator[LogFileId, LogFile] {
   protected def toFieldsFromEntity(logFile: LogFile): Map[String, Any] = {
     Map(
       "containerId" -> logFile.containerId.value,
+      "archiveName" -> logFile.archiveName,
       "logName" -> logFile.logName,
       "logType" -> logFile.logType.orNull,
       "status" -> logFile.status.toString,
@@ -27,6 +28,7 @@ trait LogFileTranslator extends Translator[LogFileId, LogFile] {
     new LogFile(
       LogFileId(id),
       ContainerId(fields.get("containerId").asInstanceOf[String]),
+      fields.get("archiveName").asInstanceOf[String],
       fields.get("logName").asInstanceOf[String],
       Option(fields.get("logType").asInstanceOf[String]),
       LogStatus.of(fields.get("status").asInstanceOf[String]),

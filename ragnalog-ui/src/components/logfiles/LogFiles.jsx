@@ -9,6 +9,9 @@ class LogFiles extends Component {
 
   constructor(props) {
     super(props);
+    // this.setState({
+    //   tab: "Unregistered"
+    // })
   }
 
   componentWillMount() {
@@ -32,10 +35,12 @@ class LogFiles extends Component {
       <Tabs>
         <Tab label="Unregistered">
           <LogFileList
-            archives={this.props.archives}
+            logFiles={this.props.logFiles}
             onRegister={this.handleRegister}
             onUnregister={this.handleUnregister}
           />
+        </Tab>
+        <Tab label="Registering">
         </Tab>
         <Tab label="Registered">
         </Tab>
@@ -48,7 +53,7 @@ class LogFiles extends Component {
 
 function mapStateToProps(state) {
   return {
-    archives: state.ArchiveReducer.archives
+    logFiles: state.LogFileReducer.logFiles
   };
 }
 

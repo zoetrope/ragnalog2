@@ -6,11 +6,10 @@ import java.util.regex.Pattern
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.domain.model.detector.{LogTypeDetectorByFilename, LogTypePattern}
-import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus, Uploaded}
+import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, Unregistered}
 import com.arielnetworks.ragnalog.support.ArchiveUtil
 import org.joda.time.DateTime
 
-import scala.concurrent.Future
 import scalax.file.Path
 
 case class ArchiveId(value: String) extends Identifier[String]
@@ -41,11 +40,11 @@ case class Archive
     MessageDigest.getInstance("MD5").digest(text.getBytes).map("%02x".format(_)).mkString
   }
 
-  private def logFile(fileName: String, containerId: ContainerId): LogFile = {
-    val logFileId = md5(id + fileName) //TODO:
-    val logType = detector.detect(fileName)
+  private def logFile(logName: String, containerId: ContainerId): LogFile = {
+    val logFileId = md5(id + logName) //TODO:
+    val logType = detector.detect(logName)
 
-    val log = new LogFile(LogFileId(logFileId), containerId, fileName, logType, Uploaded, None, None, None, None, None, None, None)
+    val log = new LogFile(LogFileId(logFileId), containerId, fileName, logName, logType, Unregistered, None, None, None, None, None, None, None)
     println(s"logFile: ${log}")
     log
   }
