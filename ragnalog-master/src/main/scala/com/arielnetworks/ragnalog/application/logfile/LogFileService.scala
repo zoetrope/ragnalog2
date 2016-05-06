@@ -75,12 +75,14 @@ class LogFileService
 
   }
 
+  private val pageSize = 100
+
   def search(containerId: String, archiveId: Option[String], status: Option[String], name: Option[String], page: Int): Future[GetLogFilesResponse] = {
     println(s"search: $containerId, $archiveId, $status, $name, $page")
     //TODO: pagination
     for {
       count <- logFileRepository.countAll(Some(containerId), archiveId, status, name)
-      logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], Some(containerId), archiveId, status, name)
+      logFiles <- logFileRepository.searchAll(page * pageSize, pageSize, Some(containerId), archiveId, status, name)
     } yield {
       new GetLogFilesResponse(
         logFiles.map(logFile => new LogFileResponse(

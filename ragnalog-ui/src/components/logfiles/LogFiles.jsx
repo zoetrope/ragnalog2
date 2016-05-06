@@ -54,6 +54,13 @@ class LogFiles extends Component {
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
   };
 
+  handleChangePage = (page)=> {
+    const searchParams = new URLSearchParams(this.props.location.search.slice(1));
+    searchParams.set("page", page);
+    this.props.changeCondition(this.props.params.containerId, searchParams.toString());
+    this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
+  };
+
   render() {
     return <div>
       <Tabs
@@ -65,6 +72,9 @@ class LogFiles extends Component {
             logFiles={this.props.logFiles}
             onRegister={this.handleRegister}
             onUnregister={this.handleUnregister}
+            onChangePage={this.handleChangePage}
+            page={this.props.currentPage}
+            limit={Math.ceil(this.props.totalCount/100) - 1}
           />
         </Tab>
         <Tab label="Registering" value="Registering">
@@ -80,7 +90,9 @@ class LogFiles extends Component {
 
 function mapStateToProps(state) {
   return {
-    logFiles: state.LogFileReducer.logFiles
+    logFiles: state.LogFileReducer.logFiles,
+    currentPage: state.LogFileReducer.currentPage,
+    totalCount: state.LogFileReducer.totalCount
   };
 }
 
