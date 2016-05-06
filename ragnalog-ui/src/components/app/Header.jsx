@@ -17,7 +17,7 @@ class Header extends Component {
 
   render() {
     
-    const appBar = <AppBar title="Ragnalog" onLeftIconButtonTouchTap={this.handleToggle}/>;
+    const appBar = <AppBar title={this.props.title} onLeftIconButtonTouchTap={this.handleToggle}/>;
 
     return (
       <header className="header">

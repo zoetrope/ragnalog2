@@ -1,4 +1,13 @@
 /**********************************/
+// App Action
+/**********************************/
+export const FETCH_LOGTYPES_REQUEST = 'FETCH_LOGTYPES_REQUEST';
+export const FETCH_LOGTYPES_SUCCESS = 'FETCH_LOGTYPES_SUCCESS';
+export const FETCH_LOGTYPES_FAILURE = 'FETCH_LOGTYPES_FAILURE';
+
+export const CHANGE_TITLE = 'CHANGE_TITLE';
+
+/**********************************/
 // Container Action
 /**********************************/
 export const FETCH_CONTAINERS_REQUEST = 'FETCH_CONTAINERS_REQUEST';
