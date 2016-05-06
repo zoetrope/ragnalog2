@@ -19,7 +19,7 @@ trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
   }
 
   protected def fromTimeStampOpt(dateTime: Option[DateTime]): String = {
-    dateTime.map(f => DateTimeFormat.forPattern(dateTimePattern).print(f)).getOrElse("")
+    dateTime.map(f => DateTimeFormat.forPattern(dateTimePattern).print(f)).orNull
   }
 
   protected def toTimeStamp(value: String): DateTime = {

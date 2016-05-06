@@ -15,4 +15,5 @@ trait LogFileRepository extends Repository[LogFileId, LogFile, ArchiveId] {
 
   def searchAll(start: Int, limit: Int, parent: ArchiveId): Future[Seq[LogFile]]
 
+  def addAll(entities: Seq[LogFile], parentId: ArchiveId): Future[Unit]
 }

@@ -13,6 +13,7 @@ import spray.json.DefaultJsonProtocol
 import spray.json._
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 trait ArchiveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val archiveResponseFormat = jsonFormat7(ArchiveResponse)
@@ -43,6 +44,11 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
                 entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
                   upload(containerId, identifier, formData) { info =>
                     archiveService.registerArchive(info)
+                      .onComplete{
+                        //TODO: error handling
+                        case Success(_)=> println("registerArchive ok")
+                        case Failure(e) => e.printStackTrace()
+                      }
 
                     //TODO: send ArchiveRegisteredEvent via WebSocket
                   }

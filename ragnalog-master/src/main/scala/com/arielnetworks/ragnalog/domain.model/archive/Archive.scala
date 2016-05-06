@@ -44,7 +44,9 @@ case class Archive
     val logFileId = md5(id + fileName) //TODO:
     val logType = detector.detect(fileName)
 
-    new LogFile(LogFileId(logFileId), fileName, logType, Uploaded, None, None, None, None, None, None, None)
+    val log = new LogFile(LogFileId(logFileId), fileName, logType, Uploaded, None, None, None, None, None, None, None)
+    println(s"logFile: ${log}")
+    log
   }
 
   def remove() = ???

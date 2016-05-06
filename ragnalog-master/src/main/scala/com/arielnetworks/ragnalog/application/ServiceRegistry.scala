@@ -6,7 +6,7 @@ import com.arielnetworks.ragnalog.application.archive.ArchiveService
 import com.arielnetworks.ragnalog.application.container.ContainerService
 import com.arielnetworks.ragnalog.application.logfile.LogFileService
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.{ArchiveRepositoryOnElasticsearch, ContainerRepositoryOnElasticsearch, LogFileRepositoryOnElasticsearch}
-import com.arielnetworks.ragnalog.port.adapter.service.{KibanaAdapter, RegistrationDispatcher}
+import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, KibanaAdapter, RegistrationDispatcher}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
 import org.elasticsearch.common.settings.Settings
@@ -22,6 +22,7 @@ object ServiceRegistry {
 
   val idSpec = new ElasticsearchIdPatternSpecification
 
+  val administrationService = new AdministratorOnElasticsearch(elasticClient)
   val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient)
   val archiveRepository = new ArchiveRepositoryOnElasticsearch(elasticClient)
   val logFileRepository = new LogFileRepositoryOnElasticsearch(elasticClient)

@@ -5,9 +5,10 @@ import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.logfile._
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
 import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 
 class LogFileService
@@ -17,10 +18,8 @@ class LogFileService
   visualizationService: VisualizationAdapter
 ) {
 
-  def addLogFiles(logFiles: Seq[LogFile]) = {
-    Future.sequence(
-      logFiles.map(logFile => logFileRepository.add(logFile))
-    )
+  def addLogFiles(logFiles: Seq[LogFile], archiveId: ArchiveId): Future[Unit] = {
+    logFileRepository.addAll(logFiles, archiveId)
   }
 
   def removeAll(id: String): Future[Unit] = {

@@ -31,6 +31,8 @@ object WebServer extends App {
 
   val registrationService = ServiceRegistry.registrationAdapter
 
+  ServiceRegistry.administrationService.initialize(".ragnalog2", "ragnalog_template")
+
   val route: Route =
     pathSingleSlash {
       get {
