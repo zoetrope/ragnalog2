@@ -8,6 +8,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from "material-ui/RaisedButton";
 import FlatButton from "material-ui/FlatButton";
 import FontIcon from "material-ui/FontIcon";
+import Dialog from "material-ui/Dialog";
 
 const styles = {
   button: {
@@ -27,12 +28,18 @@ class LogFileMain extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: "Unregistered"
+      tab: "Unregistered",
+      openBulkSetDialog: false
     }
   }
 
   componentWillMount() {
-    const searchParams = new URLSearchParams(this.props.location.search.slice(1));
+    //TODO: for Development
+    this.props.params.containerId = "test";
+    const testParam = "archiveId=2548922f3dfe82e4e86b2154c91d0a14&status=Unregistered";
+    const searchParams = new URLSearchParams(testParam);
+    
+    // const searchParams = new URLSearchParams(this.props.location.search.slice(1));
     console.log("Archives will mount", this.props.params, searchParams.toString());
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
     const status = searchParams.get("status");
@@ -79,6 +86,13 @@ class LogFileMain extends Component {
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
   };
 
+  handleOpenBulkSetDialog = () => {
+    this.setState({openBulkSetDialog: true})
+  };
+  handleCloseBulkSetDialog = () => {
+    this.setState({openBulkSetDialog: false})
+  };
+
   render() {
     return <div>
       <Tabs
@@ -100,7 +114,20 @@ class LogFileMain extends Component {
               label="Bulk set" style={styles.rightButton}
               secondry={true}
               icon={<FontIcon className="material-icons">edit</FontIcon>}
+              onTouchTap={this.handleOpenBulkSetDialog}
             />
+            <Dialog
+              title="Bulk set to selected rows"
+              modal={false}
+              open={this.state.openBulkSetDialog}
+              onRequestClose={this.handleCloseBulkSetDialog}
+            >
+              <TextField hintText="log type"/>
+              <FlatButton label="set"/>
+              <br/>
+              <TextField hintText="extra"/>
+              <FlatButton label="set"/>
+            </Dialog>
           </div>
 
           <LogFileList

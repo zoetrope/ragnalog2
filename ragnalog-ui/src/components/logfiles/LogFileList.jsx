@@ -26,11 +26,11 @@ class LogFileList extends Component {
   }
 
   handleRowSelection = (selectedRows) => {
-    console.log("handleRowSelection", selectedRows);
 
     this.setState({
       selectedRows: selectedRows
-    })
+    });
+    console.log("handleRowSelection", selectedRows);
   };
 
   render() {
