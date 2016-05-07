@@ -4,6 +4,23 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
 import LogFileList from "./LogFileList";
+import TextField from 'material-ui/TextField';
+import RaisedButton from "material-ui/RaisedButton";
+import FlatButton from "material-ui/FlatButton";
+import FontIcon from "material-ui/FontIcon";
+
+const styles = {
+  button: {
+    margin: 12
+  },
+  rightButton: {
+    margin: 12,
+    float: 'right'
+  },
+  buttonGroup: {
+    margin: "0 20px"
+  }
+};
 
 class LogFileMain extends Component {
 
@@ -69,6 +86,23 @@ class LogFileMain extends Component {
         onChange={this.handleTabChange}
       >
         <Tab label="Unregistered" value="Unregistered">
+          <div style={styles.buttonGroup}>
+            <TextField hintText="filter"/>
+            <FlatButton
+              label="Filter" style={styles.button}
+            />
+            <RaisedButton
+              label="Register" style={styles.rightButton}
+              primary={true}
+              icon={<FontIcon className="material-icons">add_circle</FontIcon>}
+            />
+            <RaisedButton
+              label="Bulk set" style={styles.rightButton}
+              secondry={true}
+              icon={<FontIcon className="material-icons">edit</FontIcon>}
+            />
+          </div>
+
           <LogFileList
             logFiles={this.props.logFiles}
             onRegister={this.handleRegister}
