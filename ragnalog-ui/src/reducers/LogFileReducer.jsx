@@ -56,7 +56,8 @@ export default handleActions({
       logFiles: state.logFiles.map((logFile, index)=> {
         if (selectedRows === "all" || (selectedRows !== "none" && selectedRows.indexOf(index) !== -1)) {
           return Object.assign({}, logFile, {
-            logType: logType
+            logType: logType,
+            selected: true
           });
         }
         return logFile;
@@ -72,7 +73,8 @@ export default handleActions({
       logFiles: state.logFiles.map((logFile, index)=> {
         if (selectedRows === "all" || (selectedRows !== "none" && selectedRows.indexOf(index) !== -1)) {
           return Object.assign({}, logFile, {
-            extra: extra
+            extra: extra,
+            selected: true
           });
         }
         return logFile;

@@ -27,9 +27,8 @@ class LogFileTable extends Component {
 
     //CAUTION: material-ui's bug https://github.com/callemall/material-ui/issues/2189
     // We should call event.stopPropagation on TableRow, if we use Tab Component.
-    return <Table selectable={true} multiSelectable={true} enableSelectAll={true}
-                  onRowSelection={this.props.onRowSelection}>
-      <TableHeader displaySelectAll={true} adjustForCheckbox={true}>
+    return <Table selectable={true} multiSelectable={true} onRowSelection={this.props.onRowSelection}>
+      <TableHeader enableSelectAll={true} displaySelectAll={true} adjustForCheckbox={true}>
         <TableRow onChange={e=>e.stopPropagation()}>
           <TableHeaderColumn>Archive Name</TableHeaderColumn>
           <TableHeaderColumn>Log Name</TableHeaderColumn>
@@ -37,10 +36,15 @@ class LogFileTable extends Component {
           <TableHeaderColumn>Extra</TableHeaderColumn>
         </TableRow>
       </TableHeader>
-      <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false} preScanRows={false}>
+      <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false}>
         {this.props.logFiles
           .map(logFile => {
-            return <TableRow key={logFile.id} selectable={true} onChange={e=>e.stopPropagation()}>
+            return <TableRow
+              key={logFile.id}
+              selectable={true}
+              selected={logFile.selected}
+              onChange={e=>e.stopPropagation()}
+            >
               <TableRowColumn>{logFile.archiveName}</TableRowColumn>
               <TableRowColumn>{logFile.logName}</TableRowColumn>
               <TableRowColumn>{logFile.logType}</TableRowColumn>
