@@ -1,9 +1,4 @@
 import React, {Component, PropTypes} from 'react';
-import IconMenu from "material-ui/IconMenu";
-import MenuItem from "material-ui/MenuItem";
-import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
-import IconButton from "material-ui/IconButton";
-import * as theme from "../../RagnalogTheme";
 import {
   Table,
   TableBody,
@@ -39,19 +34,6 @@ class LogFileList extends Component {
 
   render() {
 
-    const rightIconMenu = (logFile) => (
-      <IconMenu iconButtonElement={
-          <IconButton>
-            <MoreVertIcon color={theme.palette.accent1Color} />
-          </IconButton>
-        }
-      >
-        <MenuItem primaryText="Register" onTouchTap={() => this.props.onRegister(logFile)}/>
-        <MenuItem primaryText="Unregister" onTouchTap={() => this.props.onUnregister(logFile)}/>
-        <MenuItem primaryText="Cancel" onTouchTap={() => this.props.onCancel(logFile)}/>
-      </IconMenu>
-    );
-
     //CAUTION: material-ui's bug https://github.com/callemall/material-ui/issues/2189
     // We should call event.stopPropagation on TableRow, if we use Tab Component.
     return <Table selectable={true} multiSelectable={true} enableSelectAll={true}
@@ -62,7 +44,6 @@ class LogFileList extends Component {
           <TableHeaderColumn>Log Name</TableHeaderColumn>
           <TableHeaderColumn>Log Type</TableHeaderColumn>
           <TableHeaderColumn>Extra</TableHeaderColumn>
-          <TableHeaderColumn style={{width:40}}>Menu</TableHeaderColumn>
         </TableRow>
       </TableHeader>
       <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false} preScanRows={false}>
@@ -77,13 +58,12 @@ class LogFileList extends Component {
                            value={logFile.extra}
                            onClick={e=>e.stopPropagation()}/>
               </TableRowColumn>
-              <TableRowColumn style={{width:40}}>{rightIconMenu(logFile)}</TableRowColumn>
             </TableRow>
           })}
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableRowColumn colSpan="5">
+          <TableRowColumn colSpan="4">
             <Pagination page={this.props.page} limit={this.props.limit} onPageChange={this.props.onPageChange} />
           </TableRowColumn>
         </TableRow>
