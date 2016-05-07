@@ -40,18 +40,19 @@ class LogFileMain extends Component {
     // })
   }
 
-  handleRegister = (logfile)=> {
+  handleRegister = (selectRows)=> {
+    console.log("register: ", selectRows);
   };
 
-  handleApplyFilter = (e, filterValue)=> {
+  handleApplyFilter = (filterValue)=> {
     console.log("apply filter: ", filterValue);
   };
 
-  handleSetLogType = (e, selectedRows, logType)=> {
+  handleSetLogType = (selectedRows, logType)=> {
     console.log("set log type: ", selectedRows, logType);
   };
 
-  handleSetExtra = (e, selectedRows, extra)=> {
+  handleSetExtra = (selectedRows, extra)=> {
     console.log("set extra: ", selectedRows, extra);
   };
 

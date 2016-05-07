@@ -59,10 +59,10 @@ class LogFileList extends Component {
   }
 
   handleOpenBulkSetDialog = () => {
-    this.setState({openBulkSetDialog: true})
+    this.setState({openBulkSetDialog: true});
   };
   handleCloseBulkSetDialog = () => {
-    this.setState({openBulkSetDialog: false})
+    this.setState({openBulkSetDialog: false});
   };
 
   handleFilterValueChange = (e) => {
@@ -91,13 +91,13 @@ class LogFileList extends Component {
         />
         <FlatButton
           label="Filter" style={styles.button}
-          onTouchTap={e => this.props.onApplyFilter(e, this.state.filterValue)}
+          onTouchTap={e => this.props.onApplyFilter(this.state.filterValue)}
         />
         <RaisedButton
           label="Register" style={styles.rightButton}
           primary={true}
           icon={<FontIcon className="material-icons">add_circle</FontIcon>}
-          onTouchTap={this.props.onRegister}
+          onTouchTap={e => this.props.onRegister(this.state.selectedRows)}
         />
         <RaisedButton
           label="Bulk set" style={styles.rightButton}
@@ -118,7 +118,7 @@ class LogFileList extends Component {
           <FlatButton
             label="set"
             onTouchTap={e => this.props.onSetLogType}
-            onTouchTap={e => this.props.onSetLogType(e, this.state.selectedRows, this.state.logType)}
+            onTouchTap={e => this.props.onSetLogType(this.state.selectedRows, this.state.logType)}
           />
           <br/>
           <TextField
@@ -127,7 +127,7 @@ class LogFileList extends Component {
           />
           <FlatButton
             label="set"
-            onTouchTap={e => this.props.onSetExtra(e, this.state.selectedRows, this.state.extra)}
+            onTouchTap={e => this.props.onSetExtra(this.state.selectedRows, this.state.extra)}
           />
         </Dialog>
       </div>
