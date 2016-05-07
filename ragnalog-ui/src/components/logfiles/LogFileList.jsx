@@ -13,20 +13,8 @@ import {
   TableRowColumn,
   TableFooter
 } from "material-ui/Table";
-import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
-import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import TextField from 'material-ui/TextField';
-
-const styles = {
-  footerContent: {
-    float: 'right'
-  },
-  footerText: {
-    float: 'right',
-    paddingTop: '16px',
-    height: '16px'
-  }
-};
+import Pagination from "./Pagination"
 
 class LogFileList extends Component {
 
@@ -36,10 +24,6 @@ class LogFileList extends Component {
       selectedRows: "none"
     }
   }
-
-  handlePageClick = (page) => {
-    console.log("handlePageClick", page)
-  };
 
   handleRowSelection = (selectedRows) => {
     console.log("handleRowSelection", selectedRows);
@@ -63,17 +47,6 @@ class LogFileList extends Component {
         <MenuItem primaryText="Cancel" onTouchTap={() => this.props.onCancel(logFile)}/>
       </IconMenu>
     );
-
-    const {page, limit} = this.props;
-    const pagination = (<div style={styles.footerContent}>
-      <IconButton disabled={page === 0} onClick={() => this.props.onChangePage(page - 1)}>
-        <ChevronLeft/>
-      </IconButton>
-      <IconButton disabled={page >= limit} onClick={() => this.props.onChangePage(page + 1)}>
-        <ChevronRight/>
-      </IconButton>
-      {page + ' of ' + limit}
-    </div>);
 
     return <Table selectable={true} multiSelectable={true} enableSelectAll={true}
                   onRowSelection={this.handleRowSelection}>
@@ -105,7 +78,7 @@ class LogFileList extends Component {
       <TableFooter>
         <TableRow>
           <TableRowColumn colSpan="5">
-            {pagination}
+            <Pagination page={this.props.page} limit={this.props.limit} onPageChange={this.props.onPageChange} />
           </TableRowColumn>
         </TableRow>
       </TableFooter>

@@ -55,7 +55,7 @@ class LogFileMain extends Component {
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
   };
 
-  handleChangePage = (page)=> {
+  handlePageChange = (page)=> {
     const searchParams = new URLSearchParams(this.props.location.search.slice(1));
     searchParams.set("page", page);
     this.props.changeCondition(this.props.params.containerId, searchParams.toString());
@@ -73,7 +73,7 @@ class LogFileMain extends Component {
             logFiles={this.props.logFiles}
             onRegister={this.handleRegister}
             onUnregister={this.handleUnregister}
-            onChangePage={this.handleChangePage}
+            onPageChange={this.handlePageChange}
             page={this.props.currentPage}
             limit={Math.ceil(this.props.totalCount/100) - 1}
           />
