@@ -27,9 +27,13 @@ class LogFileList extends Component {
 
   handleRowSelection = (selectedRows) => {
 
-    this.setState({
-      selectedRows: selectedRows
-    });
+    //CAUTION: material-ui's bug https://github.com/callemall/material-ui/issues/3734
+    // I can not call setState in onRowSelection handler.
+    // this.setState({
+    //   selectedRows: selectedRows,
+    // });
+    this.state.selectedRows = selectedRows;
+
     console.log("handleRowSelection", selectedRows);
   };
 
@@ -48,6 +52,8 @@ class LogFileList extends Component {
       </IconMenu>
     );
 
+    //CAUTION: material-ui's bug https://github.com/callemall/material-ui/issues/2189
+    // We should call event.stopPropagation on TableRow, if we use Tab Component.
     return <Table selectable={true} multiSelectable={true} enableSelectAll={true}
                   onRowSelection={this.handleRowSelection}>
       <TableHeader displaySelectAll={true} adjustForCheckbox={true}>
@@ -59,7 +65,7 @@ class LogFileList extends Component {
           <TableHeaderColumn style={{width:40}}>Menu</TableHeaderColumn>
         </TableRow>
       </TableHeader>
-      <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false}>
+      <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false} preScanRows={false}>
         {this.props.logFiles
           .map(logFile => {
             return <TableRow key={logFile.id} selectable={true} onChange={e=>e.stopPropagation()}>
