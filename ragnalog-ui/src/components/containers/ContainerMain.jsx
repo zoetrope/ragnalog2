@@ -14,7 +14,7 @@ const style = {
   margin: 12
 };
 
-class Containers extends Component {
+class ContainerMain extends Component {
 
   static propTypes = {
     isFetching: PropTypes.bool.isRequired,
@@ -143,4 +143,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Containers);
+export default connect(mapStateToProps, mapDispatchToProps)(ContainerMain);

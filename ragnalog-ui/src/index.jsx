@@ -5,9 +5,9 @@ import {Provider} from "react-redux";
 import {Router, Route, IndexRoute, browserHistory} from "react-router";
 import {syncHistoryWithStore} from "react-router-redux";
 import App from "./components/app/App";
-import Containers from "./components/containers/Containers";
-import Archives from "./components/archives/Archives";
-import LogFiles from "./components/logfiles/LogFiles";
+import ContainerMain from "./components/containers/ContainerMain";
+import ArchiveMain from "./components/archives/ArchiveMain";
+import LogFileMain from "./components/logfiles/LogFileMain";
 import configureStore from "./store/configureStore";
 import ReconnectingWebSocket from "reconnectingwebsocket"
 import * as Config from "./store/Configuration";
@@ -28,10 +28,10 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Containers}/>
-        <Route path="/containers" component={Containers}/>
-        <Route path="/containers/:containerId" component={Archives}/>
-        <Route path="/containers/:containerId/logfiles" component={LogFiles}/>
+        <IndexRoute component={ContainerMain}/>
+        <Route path="/containers" component={ContainerMain}/>
+        <Route path="/containers/:containerId" component={ArchiveMain}/>
+        <Route path="/containers/:containerId/logfiles" component={LogFileMain}/>
       </Route>
     </Router>
   </Provider>,

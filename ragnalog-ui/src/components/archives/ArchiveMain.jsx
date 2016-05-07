@@ -6,7 +6,7 @@ import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
 import ArchiveList from "./ArchiveList";
 
-class Archives extends Component {
+class ArchiveMain extends Component {
 
   constructor(props) {
     super(props);
@@ -51,4 +51,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Archives);
+export default connect(mapStateToProps, mapDispatchToProps)(ArchiveMain);

@@ -5,7 +5,7 @@ import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
 import LogFileList from "./LogFileList";
 
-class LogFiles extends Component {
+class LogFileMain extends Component {
 
   constructor(props) {
     super(props);
@@ -100,4 +100,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LogFiles);
+export default connect(mapStateToProps, mapDispatchToProps)(LogFileMain);
