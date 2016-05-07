@@ -32,10 +32,21 @@ class LogFileList extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      selectedRows: "none"
+    }
   }
 
   handlePageClick = (page) => {
     console.log("handlePageClick", page)
+  };
+
+  handleRowSelection = (selectedRows) => {
+    console.log("handleRowSelection", selectedRows);
+
+    this.setState({
+      selectedRows: selectedRows
+    })
   };
 
   render() {
@@ -64,10 +75,10 @@ class LogFileList extends Component {
       {page + ' of ' + limit}
     </div>);
 
-
-    return <Table selectable={true}>
-      <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-        <TableRow>
+    return <Table selectable={true} multiSelectable={true} enableSelectAll={true}
+                  onRowSelection={this.handleRowSelection}>
+      <TableHeader displaySelectAll={true} adjustForCheckbox={true}>
+        <TableRow onChange={e=>e.stopPropagation()}>
           <TableHeaderColumn>Archive Name</TableHeaderColumn>
           <TableHeaderColumn>Log Name</TableHeaderColumn>
           <TableHeaderColumn>Log Type</TableHeaderColumn>
@@ -75,14 +86,18 @@ class LogFileList extends Component {
           <TableHeaderColumn style={{width:40}}>Menu</TableHeaderColumn>
         </TableRow>
       </TableHeader>
-      <TableBody displayRowCheckbox={false} showRowHover={true}>
+      <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false}>
         {this.props.logFiles
           .map(logFile => {
-            return <TableRow key={logFile.id}>
+            return <TableRow key={logFile.id} selectable={true} onChange={e=>e.stopPropagation()}>
               <TableRowColumn>{logFile.archiveName}</TableRowColumn>
               <TableRowColumn>{logFile.logName}</TableRowColumn>
               <TableRowColumn>{logFile.logType}</TableRowColumn>
-              <TableRowColumn><TextField value={logFile.extra} /></TableRowColumn>
+              <TableRowColumn>
+                <TextField name={logFile.id}
+                           value={logFile.extra}
+                           onClick={e=>e.stopPropagation()}/>
+              </TableRowColumn>
               <TableRowColumn style={{width:40}}>{rightIconMenu(logFile)}</TableRowColumn>
             </TableRow>
           })}

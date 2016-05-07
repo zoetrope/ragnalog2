@@ -41,7 +41,9 @@ class LogFileMain extends Component {
   handleUnregister = (logfile)=> {
   };
 
-  handleChange = (tab)=> {
+  handleTabChange = (tab)=> {
+    console.log("handleChange", tab);
+
     const searchParams = new URLSearchParams(this.props.location.search.slice(1));
     searchParams.set("status", tab);
 
@@ -49,7 +51,6 @@ class LogFileMain extends Component {
       tab: tab
     });
 
-    console.log("handleChange", searchParams.toString());
     this.props.changeCondition(this.props.params.containerId, searchParams.toString());
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
   };
@@ -65,7 +66,7 @@ class LogFileMain extends Component {
     return <div>
       <Tabs
         value={this.state.tab}
-        onChange={this.handleChange}
+        onChange={this.handleTabChange}
       >
         <Tab label="Unregistered" value="Unregistered">
           <LogFileList
