@@ -15,6 +15,10 @@ import * as Config from "./store/Configuration";
 //Needed for React Developer Tools
 window.React = React;
 
+// Performance Tools
+import Perf from 'react/lib/ReactDefaultPerf'
+window.Perf = Perf;
+
 //Needed for onTouchTap
 //Can go away when react 1.0 release
 //Check this repo:

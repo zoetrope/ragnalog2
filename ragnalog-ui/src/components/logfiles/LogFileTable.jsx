@@ -21,6 +21,9 @@ class LogFileTable extends Component {
     const update = this.props.logFiles !== nextProps.logFiles
       || this.props.page !== nextProps.page
       || this.props.limit !== nextProps.limit;
+    // if (update) {
+    //   console.log("should update: ", this.props.logFiles, nextProps.logFiles)
+    // }
     return update;
   }
 
