@@ -9,7 +9,9 @@ import {
   REGISTER_LOGFILE_FAILURE,
   UNREGISTER_LOGFILE_REQUEST,
   UNREGISTER_LOGFILE_SUCCESS,
-  UNREGISTER_LOGFILE_FAILURE
+  UNREGISTER_LOGFILE_FAILURE,
+  BULK_SET_LOGTYPE,
+  BULK_SET_EXTRA
 } from './ActionTypes';
 import {push} from 'react-router-redux';
 
@@ -24,6 +26,19 @@ const fetchLogFilesSuccess = createAction(
 const fetchLogFilesFailure = createAction(
   FETCH_LOGFILES_FAILURE,
   ex=>ex.message
+);
+
+const bulkSetLogTypeAction = createAction(
+  BULK_SET_LOGTYPE,
+  (selectedRows, logType) => {
+    return {selectedRows, logType}
+  }
+);
+const bulkSetExtraAction = createAction(
+  BULK_SET_EXTRA,
+  (selectedRows, extra) => {
+    return {selectedRows, extra}
+  }
 );
 
 export function fetchLogFiles(containerId, searchParams) {
@@ -43,3 +58,14 @@ export function changeCondition(containerId, searchParams) {
   }
 }
 
+export function bulkSetLogType(selectedRows, logType) {
+  return dispatch => {
+    dispatch(bulkSetLogTypeAction(selectedRows, logType));
+  }
+}
+
+export function bulkSetExtra(selectedRows, extra) {
+  return dispatch => {
+    dispatch(bulkSetExtraAction(selectedRows, extra));
+  }
+}

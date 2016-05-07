@@ -50,10 +50,12 @@ class LogFileMain extends Component {
 
   handleSetLogType = (selectedRows, logType)=> {
     console.log("set log type: ", selectedRows, logType);
+    this.props.bulkSetLogType(selectedRows, logType);
   };
 
   handleSetExtra = (selectedRows, extra)=> {
     console.log("set extra: ", selectedRows, extra);
+    this.props.bulkSetExtra(selectedRows, extra);
   };
 
   handleTabChange = (tab)=> {

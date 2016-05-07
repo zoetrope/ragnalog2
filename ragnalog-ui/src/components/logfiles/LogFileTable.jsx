@@ -18,7 +18,9 @@ class LogFileTable extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.props.logFiles !== nextProps.logFiles;
+    return this.props.logFiles !== nextProps.logFiles
+      || this.props.page !== nextProps.page
+      || this.props.limit !== nextProps.limit;
   }
 
   render() {
