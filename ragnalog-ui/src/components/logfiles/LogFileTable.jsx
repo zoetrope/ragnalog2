@@ -18,9 +18,10 @@ class LogFileTable extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.props.logFiles !== nextProps.logFiles
+    const update = this.props.logFiles !== nextProps.logFiles
       || this.props.page !== nextProps.page
       || this.props.limit !== nextProps.limit;
+    return update;
   }
 
   render() {
@@ -38,7 +39,7 @@ class LogFileTable extends Component {
       </TableHeader>
       <TableBody displayRowCheckbox={true} showRowHover={true} deselectOnClickaway={false}>
         {this.props.logFiles
-          .map(logFile => {
+          .map((logFile, index) => {
             return <TableRow
               key={logFile.id}
               selectable={true}
@@ -51,6 +52,7 @@ class LogFileTable extends Component {
               <TableRowColumn>
                 <TextField name={logFile.id}
                            value={logFile.extra}
+                           onChange={e => this.props.onExtraChange(e.target.value, index)}
                            onClick={e=>e.stopPropagation()}/>
               </TableRowColumn>
             </TableRow>

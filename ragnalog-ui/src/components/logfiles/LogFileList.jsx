@@ -120,6 +120,7 @@ class LogFileList extends Component {
         limit={this.props.limit}
         onPageChange={this.props.onPageChange}
         onRowSelection={this.handleRowSelection}
+        onExtraChange={(extra, index) => this.props.onSetExtra([index], extra)}
       />
     </div>
   }

@@ -62,6 +62,8 @@ export default handleActions({
         }
         return logFile;
       }),
+      currentPage: state.currentPage,
+      totalCount: state.totalCount,
       isFetching: false,
       error: false,
       errorMessage: ""
@@ -79,6 +81,8 @@ export default handleActions({
         }
         return logFile;
       }),
+      currentPage: state.currentPage,
+      totalCount: state.totalCount,
       isFetching: false,
       error: false,
       errorMessage: ""
@@ -88,5 +92,7 @@ export default handleActions({
   isFetching: false,
   error: false,
   errorMessage: "",
-  logFiles: []
+  logFiles: [],
+  currentPage: 0,
+  totalCount: 0
 });

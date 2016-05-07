@@ -94,7 +94,7 @@ class LogFileMain extends Component {
             onApplyFilter={this.handleApplyFilter}
             onPageChange={this.handlePageChange}
             page={this.props.currentPage}
-            limit={Math.ceil(this.props.totalCount/100) - 1}
+            limit={Math.ceil(this.props.totalCount/20) - 1}
           />
         </Tab>
         <Tab label="Registering" value="Registering">

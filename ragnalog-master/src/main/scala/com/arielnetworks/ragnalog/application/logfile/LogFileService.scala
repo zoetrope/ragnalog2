@@ -75,7 +75,7 @@ class LogFileService
 
   }
 
-  private val pageSize = 100
+  private val pageSize = 20
 
   def search(containerId: String, archiveId: Option[String], status: Option[String], name: Option[String], page: Int): Future[GetLogFilesResponse] = {
     println(s"search: $containerId, $archiveId, $status, $name, $page")
