@@ -24,6 +24,7 @@ class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
     containerId.foreach(id => queries += termQuery("containerId", id))
     archiveId.foreach(id => queries += termQuery("_routing", id))
     status.foreach(s => queries += termQuery("status", s))
+    name.foreach(n => queries += wildcardQuery("logName", s"*$n*"))
     bool(must(queries))
   }
 

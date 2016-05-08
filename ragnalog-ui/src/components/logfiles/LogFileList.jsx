@@ -72,7 +72,7 @@ class LogFileList extends Component {
       <div style={styles.buttonGroup}>
         <TextField
           hintText="filter"
-          // value={this.state.filterValue}
+          value={this.state.filterValue}
           onChange={this.handleFilterValueChange}
         />
         <FlatButton

@@ -46,6 +46,10 @@ class LogFileMain extends Component {
 
   handleApplyFilter = (filterValue)=> {
     console.log("apply filter: ", filterValue);
+    const searchParams = new URLSearchParams(this.props.location.search.slice(1));
+    searchParams.set("name", filterValue);
+    this.props.changeCondition(this.props.params.containerId, searchParams.toString());
+    this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
   };
 
   handleSetLogType = (selectedRows, logType)=> {
