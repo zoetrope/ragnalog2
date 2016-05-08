@@ -18,7 +18,7 @@ object Main {
     val config = ConfigFactory.load()
     logger.info(s"config = ${config.getConfig("ragnalog-node")}")
 
-    system.actorOf(Props[RegistrationBroker], "registration")
+    system.actorOf(Props[RegistrationBroker], "broker")
   }
 
 }

@@ -19,9 +19,9 @@ class RegistrationDispatcher
   //TODO:
   val system = ServiceRegistry.actorSystem
   val config = ConfigFactory.load().getConfig("ragnalog-master")
-  val registrationActorPath = config.getStringList("registration.path")
-  val registrationRef = registrationActorPath.asScala.map(p => system.actorSelection(p))
-  val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], registrationRef))
+  val registrationActorPath = config.getStringList("remote-node.path")
+  val remoteActorRefs = registrationActorPath.asScala.map(p => system.actorSelection(p))
+  val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], remoteActorRefs))
 
   override def register(logFile: LogFile):Future[Unit] = ???
 
