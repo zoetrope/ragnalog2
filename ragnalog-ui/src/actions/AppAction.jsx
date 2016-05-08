@@ -9,12 +9,11 @@ import {
 import {push} from 'react-router-redux';
 
 const fetchLogTypessRequest = createAction(
-  FETCH_LOGTYPES_REQUEST,
-  containerId => containerId
+  FETCH_LOGTYPES_REQUEST
 );
 const fetchLogTypesSuccess = createAction(
   FETCH_LOGTYPES_SUCCESS,
-  logFiles => logFiles
+  logTypes => logTypes
 );
 const fetchLogTypesFailure = createAction(
   FETCH_LOGTYPES_FAILURE,

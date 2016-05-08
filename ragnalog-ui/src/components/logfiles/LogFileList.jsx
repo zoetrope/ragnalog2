@@ -5,6 +5,8 @@ import FlatButton from "material-ui/FlatButton";
 import FontIcon from "material-ui/FontIcon";
 import Dialog from "material-ui/Dialog";
 import LogFileTable from "./LogFileTable";
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 const styles = {
   button: {
@@ -45,15 +47,16 @@ class LogFileList extends Component {
     this.setState({filterValue: e.target.value});
     e.stopPropagation();
   };
-  handleLogTypeChange = (e) => {
-    this.setState({logType: e.target.value});
+  handleLogTypeChange = (e, index, value) => {
+    console.log("handleLogTypeChange", value);
+    this.setState({logType: value});
     e.stopPropagation();
   };
   handleExtraChange = (e) => {
     this.setState({extra: e.target.value});
     e.stopPropagation();
   };
-  
+
   handleRowSelection = (selectedRows) => {
     //CAUTION: material-ui's bug https://github.com/callemall/material-ui/issues/3734
     // When setState is called in onRowSelection handler, selected rows checkbox is cleared.
@@ -94,10 +97,15 @@ class LogFileList extends Component {
           open={this.state.openBulkSetDialog}
           onRequestClose={this.handleCloseBulkSetDialog}
         >
-          <TextField
+          <SelectField
             hintText="log type"
             onChange={this.handleLogTypeChange}
-          />
+            value={this.state.logType}
+          >
+            {this.props.logTypes.map(logType => {
+              return (<MenuItem key={logType.id} value={logType.id} primaryText={logType.name}/>)
+            })}
+          </SelectField>
           <FlatButton
             label="set"
             onTouchTap={e => this.props.onSetLogType}
@@ -120,7 +128,9 @@ class LogFileList extends Component {
         limit={this.props.limit}
         onPageChange={this.props.onPageChange}
         onRowSelection={this.handleRowSelection}
-        onExtraChange={(extra, index) => this.props.onSetExtra([index], extra)}
+        onExtraChange={(index, extra) => this.props.onSetExtra([index], extra)}
+        onLogTypeChange={(index, logType) => this.props.onSetLogType([index], logType)}
+        logTypes={this.props.logTypes}
       />
     </div>
   }

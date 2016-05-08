@@ -95,6 +95,7 @@ class LogFileMain extends Component {
             onPageChange={this.handlePageChange}
             page={this.props.currentPage}
             limit={Math.ceil(this.props.totalCount/20) - 1}
+            logTypes={this.props.logTypes}
           />
         </Tab>
         <Tab label="Registering" value="Registering">
@@ -112,7 +113,8 @@ function mapStateToProps(state) {
   return {
     logFiles: state.LogFileReducer.logFiles,
     currentPage: state.LogFileReducer.currentPage,
-    totalCount: state.LogFileReducer.totalCount
+    totalCount: state.LogFileReducer.totalCount,
+    logTypes: state.AppReducer.logTypes
   };
 }
 

@@ -10,6 +10,8 @@ import {
 } from "material-ui/Table";
 import TextField from 'material-ui/TextField';
 import Pagination from "./Pagination"
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 class LogFileTable extends Component {
 
@@ -51,11 +53,20 @@ class LogFileTable extends Component {
             >
               <TableRowColumn>{logFile.archiveName}</TableRowColumn>
               <TableRowColumn>{logFile.logName}</TableRowColumn>
-              <TableRowColumn>{logFile.logType}</TableRowColumn>
+              <TableRowColumn>
+                <SelectField
+                  value={logFile.logType}
+                  onChange={(e, i, v) => this.props.onLogTypeChange(index, v)}
+                >
+                  {this.props.logTypes.map(logType => {
+                    return (<MenuItem key={logType.id} value={logType.id} primaryText={logType.name}/>)
+                  })}
+                </SelectField>
+              </TableRowColumn>
               <TableRowColumn>
                 <TextField name={logFile.id}
                            value={logFile.extra}
-                           onChange={e => this.props.onExtraChange(e.target.value, index)}
+                           onChange={e => this.props.onExtraChange(index, e.target.value)}
                            onClick={e=>e.stopPropagation()}/>
               </TableRowColumn>
             </TableRow>

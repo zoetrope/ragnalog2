@@ -10,6 +10,15 @@ import {bindActionCreators} from "redux";
 const muiTheme = getMuiTheme(theme);
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentWillMount() {
+    this.props.fetchLogTypes();
+  }
+  
   render() {
     const {children} = this.props;
     return (

@@ -14,7 +14,8 @@ export default handleActions({
     errorMessage: ""
   }),
   [FETCH_LOGTYPES_SUCCESS]: (state, action) => ({
-    ...action.payload,
+    ...state,
+    logTypes: action.payload,
     isFetching: false,
     error: false,
     errorMessage: ""
@@ -26,6 +27,7 @@ export default handleActions({
     errorMessage: action.payload
   }),
   [CHANGE_TITLE]: (state, action) => ({
+    ...state,
     title: action.payload
   })
 }, {

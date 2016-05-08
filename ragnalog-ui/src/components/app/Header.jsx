@@ -30,6 +30,7 @@ class Header extends Component {
           <MenuItem><Link to="/containers/default/logfiles?archiveId=test&status=unregistered">logfiles</Link></MenuItem>
           <MenuItem>Admin</MenuItem>
           <MenuItem><Link to="/containers">containers</Link></MenuItem>
+          
         </Drawer>
       </header>
     );

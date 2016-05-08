@@ -3,7 +3,7 @@ package com.arielnetworks.ragnalog.port.adapter.http.route
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import ch.megard.akka.http.cors.{CorsDirectives, CorsSettings}
-import com.arielnetworks.ragnalog.port.adapter.http.{ArchiveRoute, ContainerRoute, LogFileRoute}
+import com.arielnetworks.ragnalog.port.adapter.http.{AppRoute, ArchiveRoute, ContainerRoute, LogFileRoute}
 
 import scala.concurrent.ExecutionContext
 
@@ -14,7 +14,8 @@ class RestRoute extends RouteService with CorsDirectives {
       cors(CorsSettings.defaultSettings.copy(allowCredentials = false)) {
         (new ContainerRoute).route ~
           (new LogFileRoute).route ~
-          (new ArchiveRoute).route
+          (new ArchiveRoute).route ~
+          (new AppRoute).route
       }
     }
 
