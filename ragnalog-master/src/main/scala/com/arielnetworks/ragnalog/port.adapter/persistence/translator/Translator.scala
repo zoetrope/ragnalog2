@@ -6,35 +6,38 @@ import org.joda.time.format.DateTimeFormat
 
 import scalax.file.Path
 
-trait Translator[ID <: Identifier[String, String], E <: Entity[ID]] {
+trait Translator[ID <: Identifier[String, String], E <: Entity[ID]] extends TranslatorUtil {
   protected def toFieldsFromEntity(entity: E): Map[String, Any]
 
   protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): E
+}
 
+trait TranslatorUtil {
   private val dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"
 
-  protected def fromTimeStamp(dateTime: DateTime): String = {
+  def fromTimeStamp(dateTime: DateTime): String = {
     DateTimeFormat.forPattern(dateTimePattern).print(dateTime)
   }
 
-  protected def fromTimeStampOpt(dateTime: Option[DateTime]): String = {
+  def fromTimeStampOpt(dateTime: Option[DateTime]): String = {
     dateTime.map(f => DateTimeFormat.forPattern(dateTimePattern).print(f)).orNull
   }
 
-  protected def toTimeStamp(value: String): DateTime = {
+  def toTimeStamp(value: String): DateTime = {
     DateTimeFormat.forPattern(dateTimePattern).parseDateTime(value)
   }
 
-  protected def toTimeStampOpt(value: String): Option[DateTime] = {
+  def toTimeStampOpt(value: String): Option[DateTime] = {
     if (value != null) Some(DateTimeFormat.forPattern(dateTimePattern).parseDateTime(value)) else None
   }
 
-  protected def fromPathOpt(value: Option[Path]): String = {
+  def fromPathOpt(value: Option[Path]): String = {
     value.map(_.path).orNull
   }
 
-  protected def toPathOpt(value: String): Option[Path] = {
+  def toPathOpt(value: String): Option[Path] = {
     if (value != null) Some(Path(value, '/')) else None
   }
 }
 
+object TranslatorUtil extends TranslatorUtil

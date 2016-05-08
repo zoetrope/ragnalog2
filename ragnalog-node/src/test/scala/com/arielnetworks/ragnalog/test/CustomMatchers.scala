@@ -5,9 +5,7 @@ import java.util
 import org.scalatest.matchers.{MatchResult, Matcher}
 import org.yaml.snakeyaml.Yaml
 
-import scala.collection.JavaConversions._
-
-//TODO: deprecated
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 trait CustomMatchers {
@@ -22,26 +20,26 @@ trait CustomMatchers {
 
   class SameYamlMatcher(expected: String, ignoreFields: Set[String] = Set.empty) extends Matcher[String] {
 
-    private def checkEqual(left: java.util.Map[String, Object], right: java.util.Map[String, Object])(implicit diffs: mutable.ListBuffer[Difference]): Unit = {
+    private def checkEqual(left: util.Map[String, Object], right: util.Map[String, Object])(implicit diffs: mutable.ListBuffer[Difference]): Unit = {
 
-      val onlyRight: mutable.Map[String, Object] = new util.HashMap[String, Object](right)
+      val onlyRight: mutable.Map[String, Object] = new util.HashMap[String, Object](right).asScala
 
-      for (entry <- left.entrySet()) {
+      for (entry <- left.entrySet().asScala) {
         val leftKey = entry.getKey
         val leftValue = entry.getValue
         if (ignoreFields.contains(leftKey)) {
-          if (right.contains(leftKey)) {
+          if (right.containsKey(leftKey)) {
             onlyRight.remove(leftKey)
           }
-        } else if (right.contains(leftKey)) {
+        } else if (right.containsKey(leftKey)) {
           onlyRight.remove(leftKey)
 
           val rightValue = right.get(leftKey)
 
-          if (leftValue.isInstanceOf[java.util.Map[_, _]] && rightValue.isInstanceOf[java.util.Map[_, _]]) {
+          if (leftValue.isInstanceOf[util.Map[_, _]] && rightValue.isInstanceOf[util.Map[_, _]]) {
             checkEqual(
-              leftValue.asInstanceOf[java.util.Map[String, Object]],
-              rightValue.asInstanceOf[java.util.Map[String, Object]])
+              leftValue.asInstanceOf[util.Map[String, Object]],
+              rightValue.asInstanceOf[util.Map[String, Object]])
           } else if (rightValue != leftValue) {
             diffs += new Differing(leftKey, leftValue, rightValue)
           }
@@ -55,8 +53,8 @@ trait CustomMatchers {
 
     override def apply(left: String): MatchResult = {
 
-      val expectedYaml = new Yaml().load(expected).asInstanceOf[java.util.Map[String, Object]]
-      val actualYaml = new Yaml().load(left).asInstanceOf[java.util.Map[String, Object]]
+      val expectedYaml = new Yaml().load(expected).asInstanceOf[util.Map[String, Object]]
+      val actualYaml = new Yaml().load(left).asInstanceOf[util.Map[String, Object]]
 
       val diff = new mutable.ListBuffer[Difference]
       checkEqual(expectedYaml, actualYaml)(diff)

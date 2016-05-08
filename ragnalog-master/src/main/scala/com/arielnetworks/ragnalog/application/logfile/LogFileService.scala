@@ -5,6 +5,7 @@ import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.logfile._
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
 import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
+import com.arielnetworks.ragnalog.port.adapter.persistence.translator.TranslatorUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -81,8 +82,6 @@ class LogFileService
   private val pageSize = 20
 
   def search(containerId: String, archiveId: Option[String], status: Option[String], name: Option[String], page: Int): Future[GetLogFilesResponse] = {
-    println(s"search: $containerId, $archiveId, $status, $name, $page")
-    //TODO: pagination
     for {
       count <- logFileRepository.countAll(Some(containerId), archiveId, status, name)
       logFiles <- logFileRepository.searchAll(page * pageSize, pageSize, Some(containerId), archiveId, status, name)
@@ -96,8 +95,8 @@ class LogFileService
           logFile.logType,
           logFile.status.toString,
           logFile.indexName,
-          logFile.from.map(_.toString), //TODO: format
-          logFile.to.map(_.toString), //TODO: format
+          Option(TranslatorUtil.fromTimeStampOpt(logFile.from)),
+          Option(TranslatorUtil.fromTimeStampOpt(logFile.to)),
           logFile.extra,
           logFile.count
         )),
