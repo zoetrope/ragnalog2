@@ -14,7 +14,7 @@ import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: String = ".ragnalog2")
-  extends RepositoryOnElasticsearch[LogFileId, LogFile, ArchiveId](elasticClient, indexName, "logFile")
+  extends RepositoryOnElasticsearch[LogFileId, LogFile](elasticClient, indexName, "logFile")
     with LogFileRepository
     with LogFileTranslator {
   override def countRegisteredLogFilesByType(fileType: String, parent: ArchiveId): Future[Long] = ???
@@ -59,7 +59,7 @@ class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
           from start
           size limit
       ) onComplete {
-        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.getSource)))
+        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.fieldOpt("_parent").map(_.getValue[String]).get, hit.getSource)))
         case Failure(e) => p.failure(e)
       }
     } catch {
@@ -77,7 +77,32 @@ class LogFileRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
         elasticClient.execute(
           bulk(
             entities.map(entity => {
-              index into indexName / typeName id entity.id.value parent parentId.value opType OpType.CREATE fields toFieldsFromEntity(entity)
+              index into indexName / typeName id entity.id.id parent parentId.id opType OpType.CREATE fields toFieldsFromEntity(entity)
+            })
+          )
+        )
+
+      ret onComplete {
+        case Success(r) =>
+          if (!r.hasFailures) p.success(Unit)
+          else p.failure(new RepositoryIOException("could not create entity."))
+        case Failure(e) => p.failure(e)
+      }
+    } catch {
+      case e: Throwable => p.failure(e)
+    }
+    p.future
+  }
+
+  override def saveAll(entities: Seq[LogFile]): Future[Unit] = {
+    println(s"saveAll: $entities")
+    val p = Promise[Unit]()
+    try {
+      val ret =
+        elasticClient.execute(
+          bulk(
+            entities.map(entity => {
+              index into indexName / typeName id entity.id.id parent entity.id.parent opType OpType.INDEX fields toFieldsFromEntity(entity)
             })
           )
         )

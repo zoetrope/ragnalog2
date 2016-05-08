@@ -1,7 +1,8 @@
 package com.arielnetworks.ragnalog.domain.model.common
 
-trait Identifier[+I] {
-  def value: I
+trait Identifier[+I, +P] {
+  def id: I
+  def parent: P
 }
 
-case class EmptyId(value: String = "") extends Identifier[String]
+case class EmptyId(id: String = "", parent: String = "") extends Identifier[String, String]

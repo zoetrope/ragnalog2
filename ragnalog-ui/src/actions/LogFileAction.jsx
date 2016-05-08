@@ -85,6 +85,7 @@ export function registerLogFile(containerId, targets) {
         targets.map(target=> {
           return {
             id: target.id,
+            archiveId: target.archiveId,
             logType: target.logType,
             extra: target.extra || undefined
           }

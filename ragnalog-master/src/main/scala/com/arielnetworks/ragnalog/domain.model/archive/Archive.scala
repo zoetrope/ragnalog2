@@ -12,7 +12,7 @@ import org.joda.time.DateTime
 
 import scalax.file.Path
 
-case class ArchiveId(value: String) extends Identifier[String]
+case class ArchiveId(id: String, parent: String) extends Identifier[String, String]
 
 case class Archive
 (
@@ -26,7 +26,7 @@ case class Archive
 ) extends Entity[ArchiveId] {
 
   def extractLogFiles(containerId: ContainerId): Seq[LogFile] = {
-    ArchiveUtil.getFileList(filePath).map(file => logFile(file, containerId))
+    ArchiveUtil.getFileList(filePath).map(logFile)
   }
 
   //TODO:
@@ -40,11 +40,11 @@ case class Archive
     MessageDigest.getInstance("MD5").digest(text.getBytes).map("%02x".format(_)).mkString
   }
 
-  private def logFile(logName: String, containerId: ContainerId): LogFile = {
+  private def logFile(logName: String): LogFile = {
     val logFileId = md5(id + logName) //TODO:
     val logType = detector.detect(logName)
 
-    val log = new LogFile(LogFileId(logFileId), containerId, fileName, logName, logType, Unregistered, None, None, None, None, None, None, None)
+    val log = new LogFile(LogFileId(logFileId, id.id), id.parent, fileName, logName, logType, Unregistered, None, None, None, None, None, None, None)
     println(s"logFile: ${log}")
     log
   }

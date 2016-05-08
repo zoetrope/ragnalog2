@@ -5,18 +5,20 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.ServiceRegistry
-import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest}
+import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest, RegisterLogFileResponse}
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveUploader
 import spray.json.{DefaultJsonProtocol, _}
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 trait LogFileJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val logFileResponseFormat = jsonFormat10(LogFileResponse)
+  implicit val logFileResponseFormat = jsonFormat11(LogFileResponse)
   implicit val logFileListResponseFormat = jsonFormat3(GetLogFilesResponse)
 
-  implicit val registerLogFileFormat = jsonFormat3(RegisterLogFileRequest)
+  implicit val registerLogFileRequestFormat = jsonFormat4(RegisterLogFileRequest)
+  implicit val registerLogFileResponseFormat = jsonFormat1(RegisterLogFileResponse)
 }
 
 class LogFileRoute extends RouteService with ArchiveUploader with LogFileJsonSupport {
@@ -37,8 +39,9 @@ class LogFileRoute extends RouteService with ArchiveUploader with LogFileJsonSup
           } ~
             (put & entity(as[Seq[RegisterLogFileRequest]])) { req =>
               println(req)
-              //              logFileService.registerLogFile()
-              complete(req.toJson)
+              onSuccess(logFileService.registerLogFile(req)) {
+                case res => complete(res.toJson)
+              }
             }
         } ~
           delete {

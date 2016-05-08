@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.application.logfile
 
-import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest}
+import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest, RegisterLogFileResponse}
 import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.logfile._
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
@@ -22,27 +22,30 @@ class LogFileService
     logFileRepository.addAll(logFiles, archiveId)
   }
 
-  def removeAll(id: String): Future[Unit] = {
-    val archiveId = ArchiveId(id)
+  def removeAll(archiveId: ArchiveId): Future[Unit] = {
     for {
-      count <- logFileRepository.countAll(None, Some(archiveId.value), None, None)
-      logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], None, Some(archiveId.value), None, None)
-      _ <- Future.sequence(logFiles.map(logFile => unregisterLogFile(logFile.id.value)))
+      count <- logFileRepository.countAll(None, Some(archiveId.id), None, None)
+      logFiles <- logFileRepository.searchAll(0, count.asInstanceOf[Int], None, Some(archiveId.id), None, None)
+      _ <- Future.sequence(logFiles.map(logFile => unregisterLogFile(logFile.id)))
       _ <- Future.sequence(logFiles.map(logFile => logFileRepository.deleteById(logFile.id)))
     } yield ()
   }
 
-  def registerLogFile(req: RegisterLogFileRequest) = {
+  def registerLogFile(requests: Seq[RegisterLogFileRequest]): Future[RegisterLogFileResponse] = {
     for {
-      logFile <- logFileRepository.resolveById(LogFileId(req.id))
 
-      _ = logFile.startRegistering(req.logType, req.extra)
+      logFiles <- Future.sequence(requests.map(request => {
+        for {
+          logFile <- logFileRepository.resolveById(LogFileId(request.id, request.archiveId))
+          updatedLogFile = logFile.startRegistering(request.logType, request.extra)
+        } yield updatedLogFile
+      }))
 
-      _ <- logFileRepository.save(logFile)
+      _ <- logFileRepository.saveAll(logFiles)
 
-      _ = registrationService.register(logFile)
+    //      _ = registrationService.register(logFiles)
 
-    } yield ()
+    } yield new RegisterLogFileResponse("ok")
   }
 
   def postRegistrationLogFile(id: LogFileId): Future[Unit] = {
@@ -62,9 +65,9 @@ class LogFileService
   }
 
 
-  def unregisterLogFile(id: String) = {
+  def unregisterLogFile(id: LogFileId) = {
     for {
-      logFile <- logFileRepository.resolveById(LogFileId(id))
+      logFile <- logFileRepository.resolveById(id)
 
       _ = registrationService.unregister(logFile)
 
@@ -86,7 +89,8 @@ class LogFileService
     } yield {
       new GetLogFilesResponse(
         logFiles.map(logFile => new LogFileResponse(
-          logFile.id.value,
+          logFile.id.id,
+          logFile.id.parent,
           logFile.archiveName,
           logFile.logName,
           logFile.logType,

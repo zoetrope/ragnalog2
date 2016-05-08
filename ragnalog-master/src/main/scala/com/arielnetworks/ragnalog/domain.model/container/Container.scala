@@ -9,7 +9,7 @@ object ContainerStatus extends Enumeration {
 }
 
 
-case class ContainerId(value: String) extends Identifier[String]
+case class ContainerId(id: String, parent: String = null) extends Identifier[String, String]
 
 case class Container
 (
@@ -21,6 +21,7 @@ case class Container
   extends Entity[ContainerId] {
 
   def activate(): Future[Unit] = ???
+
   // containerRepository, indexPattern, index.close
 
   def deactivate(): Future[Unit] = ???

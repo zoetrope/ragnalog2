@@ -4,7 +4,7 @@ import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId
 
 trait ContainerTranslator extends Translator[ContainerId, Container] {
 
-  protected def toFieldsFromEntity(container: Container): Map[String, Any] = {
+  override protected def toFieldsFromEntity(container: Container): Map[String, Any] = {
     Map(
       "name" -> container.name,
       "description" -> container.description.getOrElse(""),
@@ -12,7 +12,7 @@ trait ContainerTranslator extends Translator[ContainerId, Container] {
     )
   }
 
-  protected def toEntityFromFields(id: String, fields: java.util.Map[String, Object]): Container = {
+  override protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): Container = {
     new Container(
       ContainerId(id),
       fields.get("name").asInstanceOf[String],

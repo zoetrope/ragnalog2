@@ -29,14 +29,13 @@ class ContainerService
     val container = new Container(ContainerId(req.id), name, req.description, ContainerStatus.Active)
     containerRepository
       .add(container)
-      .map(_ => new ContainerResponse(container.id.value, container.name, container.description, container.status.toString))
+      .map(_ => new ContainerResponse(container.id.id, container.name, container.description, container.status.toString))
   }
 
-  def removeContainer(id: String): Future[Unit] = {
-    val containerId = ContainerId(id)
+  def removeContainer(containerId: ContainerId): Future[Unit] = {
     for {
       container <- containerRepository.resolveById(containerId)
-      _ <- archiveService.removeAll(id)
+      _ <- archiveService.removeAll(containerId)
       _ <- containerRepository.deleteById(containerId)
     } yield Unit
   }

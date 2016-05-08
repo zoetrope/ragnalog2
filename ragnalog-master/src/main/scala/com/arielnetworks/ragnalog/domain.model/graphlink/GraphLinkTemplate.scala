@@ -2,7 +2,7 @@ package com.arielnetworks.ragnalog.domain.model.graphlink
 
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 
-case class GraphLinkTemplateId(value: String) extends Identifier[String]
+case class GraphLinkTemplateId(id: String, parent: String = null) extends Identifier[String, String]
 
 case class GraphLinkTemplate
 (

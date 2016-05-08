@@ -21,7 +21,7 @@ class ArchiveService
     val lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parseDateTime(info.lastModified)
 
     val archive = new Archive(
-      ArchiveId(info.identifier),
+      ArchiveId(info.identifier, info.containerId),
       info.filename,
       info.uploadedFilePath,
       info.totalSize,
@@ -32,32 +32,32 @@ class ArchiveService
     println(s"createArchive: $archive")
 
     for {
-      _ <- archiveRepository.add(archive, Some(ContainerId(info.containerId)))
+      _ <- archiveRepository.add(archive)
       logFiles = archive.extractLogFiles(ContainerId(info.containerId))
       _ <- logFileService.addLogFiles(logFiles, archive.id)
     } yield ()
   }
 
-  def removeArchive(id: String) = {
-    val archiveId = ArchiveId(id)
+  def removeArchive(archiveId: ArchiveId) = {
     for {
-      _ <- logFileService.removeAll(id)
+      _ <- logFileService.removeAll(archiveId)
       archive <- archiveRepository.resolveById(archiveId)
       _ = archive.remove()
       _ <- archiveRepository.deleteById(archiveId)
     } yield ()
   }
 
-  def archives(containerId: String): Future[GetArchivesResponse] = {
+  def archives(containerId: ContainerId): Future[GetArchivesResponse] = {
 
     val list = for {
-      count <- archiveRepository.count(ContainerId(containerId))
-      archives <- archiveRepository.allArchives(0, count.asInstanceOf[Int], ContainerId(containerId))
+      count <- archiveRepository.count(containerId)
+      archives <- archiveRepository.allArchives(0, count.asInstanceOf[Int], containerId)
     } yield archives
 
     list.map(list => new GetArchivesResponse(
       list.map(a => new ArchiveResponse(
-        a.id.value,
+        a.id.id,
+        a.id.parent,
         a.fileName,
         a.filePath.path,
         a.size,
@@ -68,7 +68,7 @@ class ArchiveService
     ))
   }
 
-  def removeAll(containerId: String): Future[Unit] = ???
+  def removeAll(containerId: ContainerId): Future[Unit] = ???
 
   def activateAll(containerId: ContainerId): Future[Unit] = ???
 

@@ -1,5 +1,6 @@
 package com.arielnetworks.ragnalog.domain.model.logfile
 
+import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.common.{Entity, Identifier}
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import org.joda.time.DateTime
@@ -25,12 +26,12 @@ case object Unregistered extends LogStatus
 
 case object Error extends LogStatus
 
-case class LogFileId(value: String) extends Identifier[String]
+case class LogFileId(id: String, parent: String) extends Identifier[String, String]
 
 case class LogFile
 (
   id: LogFileId,
-  containerId: ContainerId,
+  containerId: String,
   archiveName: String,
   logName: String,
   logType: Option[String],
@@ -44,7 +45,7 @@ case class LogFile
   registrationSetting: Option[Path]
 ) extends Entity[LogFileId] {
 
-  def startRegistering(logType: String, extra: Option[String]) = ???
+  def startRegistering(logType: String, extra: Option[String]): LogFile = copy(status = Registering, logType = Some(logType), extra = extra)
 
   def completeRegistering(log: Path, setting: Path) = ???
 

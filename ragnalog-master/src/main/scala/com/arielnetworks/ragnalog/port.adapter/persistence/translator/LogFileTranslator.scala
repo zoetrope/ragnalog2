@@ -1,5 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.persistence.translator
 
+import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus}
 
@@ -7,9 +8,9 @@ import scalax.file.Path
 
 trait LogFileTranslator extends Translator[LogFileId, LogFile] {
 
-  protected def toFieldsFromEntity(logFile: LogFile): Map[String, Any] = {
+  override protected def toFieldsFromEntity(logFile: LogFile): Map[String, Any] = {
     Map(
-      "containerId" -> logFile.containerId.value,
+      "containerId" -> logFile.containerId,
       "archiveName" -> logFile.archiveName,
       "logName" -> logFile.logName,
       "logType" -> logFile.logType.orNull,
@@ -24,10 +25,10 @@ trait LogFileTranslator extends Translator[LogFileId, LogFile] {
     )
   }
 
-  protected def toEntityFromFields(id: String, fields: java.util.Map[String, Object]): LogFile = {
+  override protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): LogFile = {
     new LogFile(
-      LogFileId(id),
-      ContainerId(fields.get("containerId").asInstanceOf[String]),
+      LogFileId(id, parent),
+      fields.get("containerId").asInstanceOf[String],
       fields.get("archiveName").asInstanceOf[String],
       fields.get("logName").asInstanceOf[String],
       Option(fields.get("logType").asInstanceOf[String]),

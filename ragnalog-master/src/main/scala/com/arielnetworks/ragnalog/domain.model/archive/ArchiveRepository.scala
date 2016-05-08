@@ -5,7 +5,7 @@ import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 
 import scala.concurrent.Future
 
-trait ArchiveRepository extends Repository[ArchiveId, Archive, ContainerId] {
+trait ArchiveRepository extends Repository[ArchiveId, Archive] {
 
   def count(parent: ContainerId): Future[Long]
 

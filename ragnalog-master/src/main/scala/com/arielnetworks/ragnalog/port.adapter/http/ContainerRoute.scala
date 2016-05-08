@@ -31,7 +31,7 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
           complete {
             //TODO: add converter (and move to application layer)
             containerService.activeContainers()
-              .map(list => list.map(c => new ContainerResponse(c.id.value, c.name, c.description, c.status.toString).toJson))
+              .map(list => list.map(c => new ContainerResponse(c.id.id, c.name, c.description, c.status.toString).toJson))
           }
         } ~
           (post & entity(as[AddContainerRequest])) { req =>

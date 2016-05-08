@@ -4,6 +4,7 @@ import com.arielnetworks.ragnalog.application.archive.ArchiveService
 import com.arielnetworks.ragnalog.application.container.ContainerService
 import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
 import com.arielnetworks.ragnalog.application.logfile.LogFileService
+import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.{ArchiveRepositoryOnElasticsearch, ContainerRepositoryOnElasticsearch, LogFileRepositoryOnElasticsearch}
 import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, KibanaAdapter, RegistrationDispatcher}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
@@ -125,7 +126,7 @@ class ContainerServiceSpec
       it("should fail to create a container") {
         val future = for {
           _ <- containerService.createContainer(new AddContainerRequest("test_id_5", Some("test-name"), Some("test-description")))
-          _ <- containerService.removeContainer("test_id_5")
+          _ <- containerService.removeContainer(ContainerId("test_id_5"))
         } yield ()
 
         whenReady(future, timeout(testTimeout)) {

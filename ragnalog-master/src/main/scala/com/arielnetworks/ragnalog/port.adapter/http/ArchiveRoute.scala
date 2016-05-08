@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.ServiceRegistry
 import com.arielnetworks.ragnalog.application.archive.data.{ArchiveResponse, GetArchivesResponse}
+import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveUploader
 import spray.json.DefaultJsonProtocol
@@ -16,7 +17,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 trait ArchiveJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val archiveResponseFormat = jsonFormat7(ArchiveResponse)
+  implicit val archiveResponseFormat = jsonFormat8(ArchiveResponse)
   implicit val archiveListResponseFormat = jsonFormat1(GetArchivesResponse)
 }
 
@@ -31,7 +32,7 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
         pathEndOrSingleSlash {
           get {
             complete {
-              archiveService.archives(containerId).map(_.toJson)
+              archiveService.archives(ContainerId(containerId)).map(_.toJson)
             }
           }
         } ~

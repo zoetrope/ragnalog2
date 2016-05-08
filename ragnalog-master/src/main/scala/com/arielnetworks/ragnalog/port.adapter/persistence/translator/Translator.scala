@@ -6,11 +6,10 @@ import org.joda.time.format.DateTimeFormat
 
 import scalax.file.Path
 
-trait Translator[ID <: Identifier[String], E <: Entity[ID]] {
+trait Translator[ID <: Identifier[String, String], E <: Entity[ID]] {
   protected def toFieldsFromEntity(entity: E): Map[String, Any]
 
-  //TODO: parent
-  protected def toEntityFromFields(id: String, fields: java.util.Map[String, Object]): E
+  protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): E
 
   private val dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"
 

@@ -3,6 +3,7 @@ package com.arielnetworks.ragnalog.application.logfile.data
 case class LogFileResponse
 (
   id: String,
+  archiveId: String,
   archiveName: String,
   logName: String,
   logType: Option[String],

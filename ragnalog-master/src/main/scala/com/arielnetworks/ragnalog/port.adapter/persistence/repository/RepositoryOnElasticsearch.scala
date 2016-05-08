@@ -10,21 +10,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
-abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[ID], PARENT <: Identifier[String]]
+abstract class RepositoryOnElasticsearch[ID <: Identifier[String, String], E <: Entity[ID]]
 (
   protected val elasticClient: ElasticClient,
   protected val indexName: String,
   protected val typeName: String
 )
-  extends Repository[ID, E, PARENT]
+  extends Repository[ID, E]
     with Translator[ID, E] {
 
-  override def add(entity: E, parentId: Option[PARENT]): Future[Unit] = {
+  override def add(entity: E): Future[Unit] = {
     val p = Promise[Unit]()
     try {
       val ret =
         elasticClient.execute(
-          index into indexName / typeName id entity.id.value parent parentId.map(_.value).orNull opType OpType.CREATE fields toFieldsFromEntity(entity)
+          index into indexName / typeName id entity.id.id parent entity.id.parent opType OpType.CREATE fields toFieldsFromEntity(entity)
         )
 
       ret onComplete {
@@ -44,7 +44,7 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
     try {
       elasticClient.execute(
         search in indexName / typeName query {
-          termQuery("_id", id.value)
+          termQuery("_id", id.id)
         }
           size 0
           terminateAfter 1
@@ -62,7 +62,7 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
     val p = Promise[Unit]()
     try {
       elasticClient.execute(
-        update(entity.id.value) in indexName / typeName doc toFieldsFromEntity(entity)
+        update(entity.id.id) in indexName / typeName parent entity.id.parent doc toFieldsFromEntity(entity)
       ) onComplete {
         case Success(r) => p.success(Unit)
         case Failure(e) => p.failure(e)
@@ -77,11 +77,11 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
     val p = Promise[Unit]()
     try {
       elasticClient.execute(
-        delete(id.value) from indexName / typeName
+        delete(id.id) from indexName / typeName parent id.parent
       ) onComplete {
         case Success(r) =>
           if (r.isFound) p.success(Unit)
-          else p.failure(new RepositoryIOException(s"could not delete entity(id:${id.value})."))
+          else p.failure(new RepositoryIOException(s"could not delete entity(id:${id.id})."))
         case Failure(e) => p.failure(e)
       }
     } catch {
@@ -91,14 +91,18 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String], E <: Entity[I
   }
 
   override def resolveById(id: ID): Future[E] = {
+    println(s"resolved: $id")
     val p = Promise[E]()
     try {
       elasticClient.execute(
-        get id id.value from indexName / typeName
+        get id id.id from indexName / typeName parent id.parent
       ) onComplete {
         case Success(r) =>
-          if (r.isExists) p.success(toEntityFromFields(r.getId, r.source))
-          else p.failure(new RepositoryIOException(s"could not resolve entity(id:${id.value})."))
+          if (r.isExists) {
+            println(s"resolved: $r")
+            p.success(toEntityFromFields(r.getId, r.fieldOpt("_parent").map(_.getValue.toString).get, r.source))
+          }
+          else p.failure(new RepositoryIOException(s"could not resolve entity(id:${id.id})."))
         case Failure(e) => p.failure(e)
       }
     } catch {
