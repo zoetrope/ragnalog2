@@ -1,24 +1,22 @@
 package com.arielnetworks.ragnalog.port.adapter.http
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.Multipart
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.ServiceRegistry
-import com.arielnetworks.ragnalog.application.archive.data.{ArchiveResponse, GetArchivesResponse}
-import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse}
+import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest}
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveUploader
-import spray.json.DefaultJsonProtocol
-import spray.json._
+import spray.json.{DefaultJsonProtocol, _}
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
 
 trait LogFileJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val logFileResponseFormat = jsonFormat10(LogFileResponse)
   implicit val logFileListResponseFormat = jsonFormat3(GetLogFilesResponse)
+
+  implicit val registerLogFileFormat = jsonFormat3(RegisterLogFileRequest)
 }
 
 class LogFileRoute extends RouteService with ArchiveUploader with LogFileJsonSupport {
@@ -36,20 +34,16 @@ class LogFileRoute extends RouteService with ArchiveUploader with LogFileJsonSup
                 logFileService.search(containerId, archiveId, status, name, page).map(_.toJson)
               }
             }
-          }
+          } ~
+            (put & entity(as[Seq[RegisterLogFileRequest]])) { req =>
+              println(req)
+              //              logFileService.registerLogFile()
+              complete(req.toJson)
+            }
         } ~
-          path(Segment) { identifier =>
-            get {
-              //TODO: download archive
-              complete("not implemented")
-            } ~
-              post {
-                complete("not implemented")
-              } ~
-              delete {
-                //TODO: delete archive
-                complete("not implemented")
-              }
+          delete {
+            //TODO: delete logFile
+            complete("not implemented")
           }
       }
     }

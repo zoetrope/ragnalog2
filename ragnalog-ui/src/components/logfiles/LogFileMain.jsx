@@ -40,8 +40,13 @@ class LogFileMain extends Component {
     // })
   }
 
-  handleRegister = (selectRows)=> {
-    console.log("register: ", selectRows);
+  handleRegister = (selectedRows)=> {
+    console.log("register: ", selectedRows);
+    const targets = this.props.logFiles
+      .filter((logFile, index)=> {
+        return selectedRows === "all" || (selectedRows !== "none" && selectedRows.indexOf(index) !== -1)
+      });
+    this.props.registerLogFile(this.props.params.containerId, targets);
   };
 
   handleApplyFilter = (filterValue)=> {

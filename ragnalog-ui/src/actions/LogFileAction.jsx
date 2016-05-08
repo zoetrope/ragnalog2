@@ -28,6 +28,25 @@ const fetchLogFilesFailure = createAction(
   ex=>ex.message
 );
 
+const registerLogFileRequest = createAction(
+  REGISTER_LOGFILE_REQUEST,
+  (id, logType, extra) => {
+    return {
+      id,
+      logType,
+      extra
+    }
+  }
+);
+const registerLogFileSuccess = createAction(
+  REGISTER_LOGFILE_SUCCESS,
+  res => res
+);
+const registerLogFileFailure = createAction(
+  REGISTER_LOGFILE_FAILURE,
+  ex=>ex.message
+);
+
 const bulkSetLogTypeAction = createAction(
   BULK_SET_LOGTYPE,
   (selectedRows, logType) => {
@@ -49,6 +68,32 @@ export function fetchLogFiles(containerId, searchParams) {
       .then(res => res.json())
       .then(json => dispatch(fetchLogFilesSuccess(json)))
       .catch(ex => dispatch(fetchLogFilesFailure(ex)))
+  }
+}
+
+export function registerLogFile(containerId, targets) {
+  console.log("registerLogFile!!", containerId, targets);
+  return dispatch => {
+    dispatch(registerLogFileRequest());
+    return fetch(Config.apiHost + "/api/containers/" + containerId + "/logfiles", {
+      method: "PUT",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+        targets.map(target=> {
+          return {
+            id: target.id,
+            logType: target.logType,
+            extra: target.extra || undefined
+          }
+        })
+      )
+    })
+      .then(res => res.json())
+      .then(json => dispatch(registerLogFileSuccess(json)))
+      .catch(ex => dispatch(registerLogFileFailure(ex)))
   }
 }
 

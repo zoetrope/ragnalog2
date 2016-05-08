@@ -6,3 +6,4 @@ case class RegisterLogFileRequest
   logType: String,
   extra: Option[String]
 )
+

@@ -39,7 +39,8 @@ export default handleActions({
     errorMessage: ""
   }),
   [REGISTER_LOGFILE_SUCCESS]: (state, action) => ({
-    ...action.payload,
+    ...state,
+    // ...action.payload,
     isFetching: false,
     error: false,
     errorMessage: ""
