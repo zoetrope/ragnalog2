@@ -6,7 +6,13 @@ import {
   FETCH_CONTAINERS_FAILURE,
   ADD_CONTAINER_REQUEST,
   ADD_CONTAINER_SUCCESS,
-  ADD_CONTAINER_FAILURE
+  ADD_CONTAINER_FAILURE,
+  DELETE_CONTAINER_REQUEST,
+  DELETE_CONTAINER_SUCCESS,
+  DELETE_CONTAINER_FAILURE,
+  UPDATE_CONTAINER_REQUEST,
+  UPDATE_CONTAINER_SUCCESS,
+  UPDATE_CONTAINER_FAILURE
 } from './ActionTypes';
 import {push} from 'react-router-redux';
 
@@ -66,6 +72,42 @@ export function addContainer(id, name, description) {
       .catch(ex => {
         console.log("failed to add container", ex);
         dispatch(addContainerFailure(ex))
+      })
+  }
+}
+
+const updateContainerRequest = createAction(
+  UPDATE_CONTAINER_REQUEST
+);
+const updateContainerSuccess = createAction(
+  UPDATE_CONTAINER_SUCCESS,
+  container => container
+);
+const updateContainerFailure = createAction(
+  UPDATE_CONTAINER_FAILURE,
+  ex=>ex.message
+);
+
+export function updateContainer(id, name, description) {
+  console.log("updateContainer!!", id, name, description);
+  return dispatch => {
+    dispatch(updateContainerRequest());
+    return fetch(Config.apiHost + "/api/containers/" + id, {
+      method: "PUT",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        description: description || undefined
+      })
+    })
+      .then(res => res.json())
+      .then(json => dispatch(updateContainerSuccess(json)))
+      .catch(ex => {
+        console.log("failed to update container", ex);
+        dispatch(updateContainerFailure(ex))
       })
   }
 }

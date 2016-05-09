@@ -7,6 +7,12 @@ case class AddContainerRequest
   description: Option[String]
 )
 
+case class UpdateContainerRequest
+(
+  name: Option[String],
+  description: Option[String]
+)
+
 case class ContainerResponse
 (
   id: String,

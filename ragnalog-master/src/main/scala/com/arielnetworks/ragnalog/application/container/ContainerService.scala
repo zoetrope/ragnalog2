@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.application.container
 
 import com.arielnetworks.ragnalog.application.archive.ArchiveService
-import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
+import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse, UpdateContainerRequest}
 import com.arielnetworks.ragnalog.domain.model.container.{Container, ContainerId, ContainerRepository, ContainerStatus}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -54,11 +54,12 @@ class ContainerService
     } yield containers
   }
 
-  def updateContainer(containerId: ContainerId, name: Option[String], description: Option[String]): Future[Unit] = {
+  def updateContainer(containerId: ContainerId, req: UpdateContainerRequest): Future[ContainerResponse] = {
     for {
       container <- containerRepository.resolveById(containerId)
-      _ <- containerRepository.save(new Container(containerId, name.getOrElse(container.name), description, container.status))
-    } yield Unit
+      updatedContainer = container.change(req.name.getOrElse(container.name), req.description)
+      _ <- containerRepository.save(updatedContainer)
+    } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)
   }
 
   def activateContainer(containerId: ContainerId): Future[Unit] = {

@@ -44,7 +44,7 @@ class ArchiveRepositoryOnElasticsearch(elasticClient: ElasticClient, indexName: 
           from start
           size limit
       ) onComplete {
-        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.fieldOpt("_parent").map(_.getValue[String]).get, hit.getSource)))
+        case Success(r) => p.success(r.hits.map(hit => toEntityFromFields(hit.getId, hit.fieldOpt("_parent").map(_.getValue[String]), hit.getSource)))
         case Failure(e) => p.failure(e)
       }
     } catch {

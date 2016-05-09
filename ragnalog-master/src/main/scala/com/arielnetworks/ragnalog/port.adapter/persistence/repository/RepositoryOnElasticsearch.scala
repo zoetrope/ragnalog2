@@ -100,7 +100,7 @@ abstract class RepositoryOnElasticsearch[ID <: Identifier[String, String], E <: 
         case Success(r) =>
           if (r.isExists) {
             println(s"resolved: $r")
-            p.success(toEntityFromFields(r.getId, r.fieldOpt("_parent").map(_.getValue.toString).get, r.source))
+            p.success(toEntityFromFields(r.getId, r.fieldOpt("_parent").map(_.getValue.toString), r.source))
           }
           else p.failure(new RepositoryIOException(s"could not resolve entity(id:${id.id})."))
         case Failure(e) => p.failure(e)

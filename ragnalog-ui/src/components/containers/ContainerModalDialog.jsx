@@ -7,6 +7,7 @@ class ContainerModalDialog extends Component {
 
   constructor(props) {
     super(props);
+    console.log("constructor", props)
     this.state = {
       open: false,
       idFieldValue: "",
@@ -19,7 +20,12 @@ class ContainerModalDialog extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.open) {
-      this.setState({open: nextProps.open});
+      this.setState({
+        open: nextProps.open,
+        idFieldValue: nextProps.target ? nextProps.target.id : "",
+        nameFieldValue: nextProps.target ? nextProps.target.name : "",
+        descriptionFieldValue: nextProps.target ? nextProps.target.description : ""
+      });
       // this.refs.idField is either of correct instance or undefined in this timing.
       setTimeout(()=> {
         if (this.refs.idField) {
@@ -133,6 +139,7 @@ class ContainerModalDialog extends Component {
         <TextField
           ref="idField"
           hintText="ID (used as a part of URL)"
+          disabled={!this.props.create}
           value={this.state.idFieldValue}
           onKeyDown={this.handleKeyDownIdField}
           onChange={this.handleChangeIdField}

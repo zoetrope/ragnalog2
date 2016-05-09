@@ -18,9 +18,9 @@ trait ArchiveTranslator extends Translator[ArchiveId, Archive] {
     )
   }
 
-  override protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): Archive = {
+  override protected def toEntityFromFields(id: String, parent: Option[String], fields: java.util.Map[String, Object]): Archive = {
     new Archive(
-      ArchiveId(id, parent),
+      ArchiveId(id, parent.get),
       fields.get("fileName").asInstanceOf[String],
       Path(fields.get("filePath").asInstanceOf[String], '/'),
       fields.get("size").asInstanceOf[Int],

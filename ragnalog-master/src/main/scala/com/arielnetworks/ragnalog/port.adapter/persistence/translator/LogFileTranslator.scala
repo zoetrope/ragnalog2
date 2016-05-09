@@ -25,9 +25,9 @@ trait LogFileTranslator extends Translator[LogFileId, LogFile] {
     )
   }
 
-  override protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): LogFile = {
+  override protected def toEntityFromFields(id: String, parent: Option[String], fields: java.util.Map[String, Object]): LogFile = {
     new LogFile(
-      LogFileId(id, parent),
+      LogFileId(id, parent.get),
       fields.get("containerId").asInstanceOf[String],
       fields.get("archiveName").asInstanceOf[String],
       fields.get("logName").asInstanceOf[String],

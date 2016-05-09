@@ -9,7 +9,7 @@ import scalax.file.Path
 trait Translator[ID <: Identifier[String, String], E <: Entity[ID]] extends TranslatorUtil {
   protected def toFieldsFromEntity(entity: E): Map[String, Any]
 
-  protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): E
+  protected def toEntityFromFields(id: String, parent: Option[String], fields: java.util.Map[String, Object]): E
 }
 
 trait TranslatorUtil {

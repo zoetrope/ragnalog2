@@ -12,7 +12,7 @@ trait ContainerTranslator extends Translator[ContainerId, Container] {
     )
   }
 
-  override protected def toEntityFromFields(id: String, parent: String, fields: java.util.Map[String, Object]): Container = {
+  override protected def toEntityFromFields(id: String, parent: Option[String], fields: java.util.Map[String, Object]): Container = {
     new Container(
       ContainerId(id),
       fields.get("name").asInstanceOf[String],

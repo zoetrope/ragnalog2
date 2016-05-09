@@ -20,6 +20,8 @@ case class Container
 )
   extends Entity[ContainerId] {
 
+  def change(name: String, description: Option[String]): Container = copy(name = name, description = description)
+
   def activate(): Future[Unit] = ???
 
   // containerRepository, indexPattern, index.close

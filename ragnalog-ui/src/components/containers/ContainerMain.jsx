@@ -30,14 +30,17 @@ class ContainerMain extends Component {
     ),
 
     fetchContainers: PropTypes.func.isRequired,
-    addContainer: PropTypes.func.isRequired
+    addContainer: PropTypes.func.isRequired,
+    updateContainer: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
     this.state = {
       openMessage: false,
-      openDialog: false
+      openDialog: false,
+      create: false,
+      target: null
     };
   }
 
@@ -52,7 +55,11 @@ class ContainerMain extends Component {
   }
 
   handleOpenDialog = () => {
-    this.setState({openDialog: true});
+    this.setState({
+      openDialog: true,
+      create: true,
+      target: null
+    });
   };
 
   handleCloseDialog = () => {
@@ -76,6 +83,11 @@ class ContainerMain extends Component {
   };
 
   handleEditContainer = (container)=> {
+    this.setState({
+      openDialog: true,
+      create: false,
+      target: container
+    });
   };
 
   handleDeleteContainer = (container)=> {
@@ -92,7 +104,9 @@ class ContainerMain extends Component {
       />
       <ContainerModalDialog
         open={this.state.openDialog}
-        onSubmit={this.props.addContainer}
+        create={this.state.create}
+        target={this.state.target}
+        onSubmit={(id, name, desc) => this.state.create ? this.props.addContainer(id, name, desc) : this.props.updateContainer(id, name, desc)}
       />
       <Tabs>
         <Tab label="Active Containers"
