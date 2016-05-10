@@ -9,8 +9,13 @@ case class AddContainerRequest
 
 case class UpdateContainerRequest
 (
-  name: Option[String],
+  name: String,
   description: Option[String]
+)
+
+case class ChangeContainerStatusRequest
+(
+  status: String
 )
 
 case class ContainerResponse

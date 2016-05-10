@@ -4,7 +4,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.ServiceRegistry
-import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse, GetContainersResult, UpdateContainerRequest}
+import com.arielnetworks.ragnalog.application.container.data._
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import spray.json._
@@ -18,6 +18,7 @@ trait ContainerJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val addContainerRequestFormat = jsonFormat3(AddContainerRequest)
   implicit val addContainerResponseFormat = jsonFormat4(ContainerResponse)
   implicit val updateContainerResponseFormat = jsonFormat2(UpdateContainerRequest)
+  implicit val changeContainerResponseFormat = jsonFormat1(ChangeContainerStatusRequest)
 
   implicit val containersFormat = jsonFormat1(GetContainersResult)
 }
@@ -53,12 +54,31 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
             // get container
             complete(s"get $containerId")
           } ~
-            (put & entity(as[UpdateContainerRequest])) { req =>
-              // update container
-              println(s"update container: $containerId")
-              onSuccess(containerService.updateContainer(new ContainerId(containerId), req)) {
-                case container => complete(container.toJson)
-              }
+            put {
+              entity(as[ChangeContainerStatusRequest]) { req =>
+                // activate/deactivate container
+                println(s"change container: $containerId")
+                val container = req.status.toLowerCase match {
+                  case "active" =>
+                    onSuccess(containerService.activateContainer(new ContainerId(containerId))) {
+                      case container => complete(container.toJson)
+                    }
+                  case "inactive" =>
+                    onSuccess(containerService.deactivateContainer(new ContainerId(containerId))) {
+                      case container => complete(container.toJson)
+                    }
+                  case _ => complete(500 -> "failed to change container status")
+                }
+                complete("ok")
+              } ~
+                entity(as[UpdateContainerRequest]) { req =>
+                  // update container
+                  println(s"update container: $containerId")
+                  onSuccess(containerService.updateContainer(new ContainerId(containerId), req)) {
+                    case container => complete(container.toJson)
+                  }
+                  complete("ok")
+                }
             } ~
             delete {
               // delete container

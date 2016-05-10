@@ -55,9 +55,10 @@ class ContainerService
   }
 
   def updateContainer(containerId: ContainerId, req: UpdateContainerRequest): Future[ContainerResponse] = {
+    //TODO: if name is null or empty, then failed to update
     for {
       container <- containerRepository.resolveById(containerId)
-      updatedContainer = container.change(req.name.getOrElse(container.name), req.description)
+      updatedContainer = container.change(req.name, req.description)
       _ <- containerRepository.save(updatedContainer)
     } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)
   }
