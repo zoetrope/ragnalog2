@@ -22,10 +22,10 @@ case class Container
 
   def change(name: String, description: Option[String]): Container = copy(name = name, description = description)
 
-  def activate(): Future[Unit] = ???
+  def activate(): Container = copy(status = ContainerStatus.Active)
 
   // containerRepository, indexPattern, index.close
 
-  def deactivate(): Future[Unit] = ???
+  def deactivate(): Container = copy(status = ContainerStatus.Inactive)
 
 }

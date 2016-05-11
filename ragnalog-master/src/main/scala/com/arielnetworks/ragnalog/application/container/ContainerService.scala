@@ -63,22 +63,22 @@ class ContainerService
     } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)
   }
 
-  def activateContainer(containerId: ContainerId): Future[Unit] = {
+  def activateContainer(containerId: ContainerId): Future[ContainerResponse] = {
     for {
       container <- containerRepository.resolveById(containerId)
-      _ <- container.activate()
-      _ <- archiveService.activateAll(containerId)
-      _ <- containerRepository.save(container)
-    } yield Unit
+      updatedContainer = container.activate()
+      //      _ <- archiveService.activateAll(containerId)
+      _ <- containerRepository.save(updatedContainer)
+    } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)
   }
 
-  def deactivateContainer(containerId: ContainerId): Future[Unit] = {
+  def deactivateContainer(containerId: ContainerId): Future[ContainerResponse] = {
     for {
       container <- containerRepository.resolveById(containerId)
-      _ <- container.deactivate()
-      _ <- archiveService.deactivateAll(containerId)
-      _ <- containerRepository.save(container)
-    } yield Unit
+      updatedContainer = container.deactivate()
+      //      _ <- archiveService.deactivateAll(containerId)
+      _ <- containerRepository.save(updatedContainer)
+    } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)
   }
 
 

@@ -58,7 +58,7 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
               entity(as[ChangeContainerStatusRequest]) { req =>
                 // activate/deactivate container
                 println(s"change container: $containerId")
-                val container = req.status.toLowerCase match {
+                req.status.toLowerCase match {
                   case "active" =>
                     onSuccess(containerService.activateContainer(new ContainerId(containerId))) {
                       case container => complete(container.toJson)
@@ -69,7 +69,6 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
                     }
                   case _ => complete(500 -> "failed to change container status")
                 }
-                complete("ok")
               } ~
                 entity(as[UpdateContainerRequest]) { req =>
                   // update container
