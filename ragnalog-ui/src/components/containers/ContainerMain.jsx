@@ -77,11 +77,11 @@ class ContainerMain extends Component {
   };
 
   handleActivateContainer = (container)=> {
-    this.props.activateContainer(container.id);
+    this.props.changeContainerStatus(container.id, "active");
   };
 
   handleDeactivateContainer = (container) => {
-    this.props.deactivateContainer(container.id);
+    this.props.changeContainerStatus(container.id, "inactive");
   };
 
   handleEditContainer = (container)=> {

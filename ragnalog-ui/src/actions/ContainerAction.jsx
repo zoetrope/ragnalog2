@@ -13,12 +13,9 @@ import {
   UPDATE_CONTAINER_REQUEST,
   UPDATE_CONTAINER_SUCCESS,
   UPDATE_CONTAINER_FAILURE,
-  ACTIVATE_CONTAINER_REQUEST,
-  ACTIVATE_CONTAINER_SUCCESS,
-  ACTIVATE_CONTAINER_FAILURE,
-  DEACTIVATE_CONTAINER_REQUEST,
-  DEACTIVATE_CONTAINER_SUCCESS,
-  DEACTIVATE_CONTAINER_FAILURE
+  CHANGE_CONTAINERSTATUS_REQUEST,
+  CHANGE_CONTAINERSTATUS_SUCCESS,
+  CHANGE_CONTAINERSTATUS_FAILURE
 } from './ActionTypes';
 import {push} from 'react-router-redux';
 
@@ -118,22 +115,23 @@ export function updateContainer(id, name, description) {
   }
 }
 
-const activateContainerRequest = createAction(
-  ACTIVATE_CONTAINER_REQUEST
+const changeContainerStatusRequest = createAction(
+  CHANGE_CONTAINERSTATUS_REQUEST,
+  status => status
 );
-const activateContainerSuccess = createAction(
-  ACTIVATE_CONTAINER_SUCCESS,
+const changeContainerStatusSuccess = createAction(
+  CHANGE_CONTAINERSTATUS_SUCCESS,
   container => container
 );
-const activateContainerFailure = createAction(
-  ACTIVATE_CONTAINER_FAILURE,
+const changeContainerStatusFailure = createAction(
+  CHANGE_CONTAINERSTATUS_FAILURE,
   ex=>ex.message
 );
 
-export function activateContainer(id) {
-  console.log("activateContainer!!");
+export function changeContainerStatus(id, status) {
+  console.log("changeContainerStatus!!");
   return dispatch => {
-    dispatch(activateContainerRequest());
+    dispatch(changeContainerStatusRequest(status));
     return fetch(Config.apiHost + "/api/containers/" + id, {
       method: "PUT",
       headers: {
@@ -141,49 +139,14 @@ export function activateContainer(id) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        status: "active"
+        status: status
       })
     })
       .then(res => res.json())
-      .then(json => dispatch(activateContainerSuccess(json)))
+      .then(json => dispatch(changeContainerStatusSuccess(json)))
       .catch(ex => {
         console.log("failed to activate container", ex);
-        dispatch(activateContainerFailure(ex))
-      })
-  }
-}
-
-const deactivateContainerRequest = createAction(
-  DEACTIVATE_CONTAINER_REQUEST
-);
-const deactivateContainerSuccess = createAction(
-  DEACTIVATE_CONTAINER_SUCCESS,
-  container => container
-);
-const deactivateContainerFailure = createAction(
-  DEACTIVATE_CONTAINER_FAILURE,
-  ex=>ex.message
-);
-
-export function deactivateContainer(id) {
-  console.log("deactivateContainer!!", id);
-  return dispatch => {
-    dispatch(deactivateContainerRequest());
-    return fetch(Config.apiHost + "/api/containers/" + id, {
-      method: "PUT",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        status: "inactive"
-      })
-    })
-      .then(res => res.json())
-      .then(json => dispatch(deactivateContainerSuccess(json)))
-      .catch(ex => {
-        console.log("failed to deactivate container", ex);
-        dispatch(deactivateContainerFailure(ex))
+        dispatch(changeContainerStatusFailure(ex))
       })
   }
 }

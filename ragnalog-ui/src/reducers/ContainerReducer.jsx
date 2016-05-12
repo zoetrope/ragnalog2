@@ -12,12 +12,9 @@ import {
   UPDATE_CONTAINER_REQUEST,
   UPDATE_CONTAINER_SUCCESS,
   UPDATE_CONTAINER_FAILURE,
-  ACTIVATE_CONTAINER_REQUEST,
-  ACTIVATE_CONTAINER_SUCCESS,
-  ACTIVATE_CONTAINER_FAILURE,
-  DEACTIVATE_CONTAINER_REQUEST,
-  DEACTIVATE_CONTAINER_SUCCESS,
-  DEACTIVATE_CONTAINER_FAILURE
+  CHANGE_CONTAINERSTATUS_REQUEST,
+  CHANGE_CONTAINERSTATUS_SUCCESS,
+  CHANGE_CONTAINERSTATUS_FAILURE
 } from '../actions/ActionTypes';
 
 export default handleActions({
@@ -70,6 +67,24 @@ export default handleActions({
     errorMessage: ""
   }),
   [UPDATE_CONTAINER_FAILURE]: (state, action) => ({
+    ...state,
+    isFetching: false,
+    error: true,
+    errorMessage: action.payload
+  }),
+  [CHANGE_CONTAINERSTATUS_REQUEST]: state => ({
+    ...state,
+    isFetching: true,
+    error: false,
+    errorMessage: ""
+  }),
+  [CHANGE_CONTAINERSTATUS_SUCCESS]: (state, action) => ({
+    ...action.payload,
+    isFetching: false,
+    error: false,
+    errorMessage: ""
+  }),
+  [CHANGE_CONTAINERSTATUS_FAILURE]: (state, action) => ({
     ...state,
     isFetching: false,
     error: true,
