@@ -152,6 +152,12 @@ export function changeContainerStatus(id, status) {
   }
 }
 
+export function changeStatus(status) {
+  return dispatch => {
+    dispatch(push("/containers?status=" + status));
+  }
+}
+
 export function navigateToViewContainer(id) {
   return dispatch => {
     dispatch(push("/containers/" + id));

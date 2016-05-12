@@ -80,7 +80,6 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
                   onSuccess(containerService.updateContainer(new ContainerId(containerId), req)) {
                     case container => complete(container.toJson)
                   }
-                  complete("ok")
                 }
             } ~
             delete {

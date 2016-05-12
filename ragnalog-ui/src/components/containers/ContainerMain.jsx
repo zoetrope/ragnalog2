@@ -31,7 +31,8 @@ class ContainerMain extends Component {
 
     fetchContainers: PropTypes.func.isRequired,
     addContainer: PropTypes.func.isRequired,
-    updateContainer: PropTypes.func.isRequired
+    updateContainer: PropTypes.func.isRequired,
+    changeStatus: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -88,7 +89,7 @@ class ContainerMain extends Component {
       tab: tab
     });
 
-    // this.props.changeCondition(this.props.params.containerId, searchParams.toString());
+    this.props.changeStatus(tab);
     this.props.fetchContainers(tab);
   };
 
@@ -171,7 +172,6 @@ class ContainerMain extends Component {
 }
 
 function mapStateToProps(state) {
-  console.log(state.ContainerReducer);
   return {
     isFetching: state.ContainerReducer.isFetching,
     error: state.ContainerReducer.error,

@@ -43,7 +43,7 @@ export default handleActions({
     errorMessage: ""
   }),
   [ADD_CONTAINER_SUCCESS]: (state, action) => ({
-    ...action.payload,
+    containers: [...state.containers, action.payload],
     isFetching: false,
     error: false,
     errorMessage: ""
@@ -60,12 +60,19 @@ export default handleActions({
     error: false,
     errorMessage: ""
   }),
-  [UPDATE_CONTAINER_SUCCESS]: (state, action) => ({
-    ...action.payload,
-    isFetching: false,
-    error: false,
-    errorMessage: ""
-  }),
+  [UPDATE_CONTAINER_SUCCESS]: (state, action) => {
+    const index = state.containers.findIndex(c => c.id === action.payload.id);
+    return ({
+      containers: [
+        ...state.containers.slice(0, index),
+        action.payload,
+        ...state.containers.slice(index + 1)
+      ],
+      isFetching: false,
+      error: false,
+      errorMessage: ""
+    });
+  },
   [UPDATE_CONTAINER_FAILURE]: (state, action) => ({
     ...state,
     isFetching: false,
@@ -78,13 +85,44 @@ export default handleActions({
     error: false,
     errorMessage: ""
   }),
-  [CHANGE_CONTAINERSTATUS_SUCCESS]: (state, action) => ({
-    ...action.payload,
+  [CHANGE_CONTAINERSTATUS_SUCCESS]: (state, action) => {
+    const index = state.containers.findIndex(c => c.id === action.payload.id);
+    return ({
+      containers: [
+        ...state.containers.slice(0, index),
+        action.payload,
+        ...state.containers.slice(index + 1)
+      ],
+      isFetching: false,
+      error: false,
+      errorMessage: ""
+    });
+  },
+  [CHANGE_CONTAINERSTATUS_FAILURE]: (state, action) => ({
+    ...state,
     isFetching: false,
+    error: true,
+    errorMessage: action.payload
+  }),
+  [DELETE_CONTAINER_REQUEST]: state => ({
+    ...state,
+    isFetching: true,
     error: false,
     errorMessage: ""
   }),
-  [CHANGE_CONTAINERSTATUS_FAILURE]: (state, action) => ({
+  [DELETE_CONTAINER_SUCCESS]: (state, action) => {
+    const index = state.containers.findIndex(c => c.id === action.payload.id);
+    return ({
+      containers: [
+        ...state.containers.slice(0, index),
+        ...state.containers.slice(index + 1)
+      ],
+      isFetching: false,
+      error: false,
+      errorMessage: ""
+    });
+  },
+  [DELETE_CONTAINER_FAILURE]: (state, action) => ({
     ...state,
     isFetching: false,
     error: true,
