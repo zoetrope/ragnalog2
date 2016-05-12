@@ -40,18 +40,18 @@ class ContainerService
     } yield Unit
   }
 
-  def activeContainers(): Future[Seq[Container]] = {
+  def activeContainers(): Future[Seq[ContainerResponse]] = {
     for {
       count <- containerRepository.countByStatus(ContainerStatus.Active)
       containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Active)
-    } yield containers
+    } yield containers.map(c => new ContainerResponse(c.id.id, c.name, c.description, c.status.toString))
   }
 
-  def inactiveContainers(): Future[Seq[Container]] = {
+  def inactiveContainers(): Future[Seq[ContainerResponse]] = {
     for {
       count <- containerRepository.countByStatus(ContainerStatus.Inactive)
       containers <- containerRepository.searchByStatus(0, count.asInstanceOf[Int], ContainerStatus.Inactive)
-    } yield containers
+    } yield containers.map(c => new ContainerResponse(c.id.id, c.name, c.description, c.status.toString))
   }
 
   def updateContainer(containerId: ContainerId, req: UpdateContainerRequest): Future[ContainerResponse] = {

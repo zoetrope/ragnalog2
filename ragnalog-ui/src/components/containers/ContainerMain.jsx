@@ -40,12 +40,18 @@ class ContainerMain extends Component {
       openMessage: false,
       openDialog: false,
       create: false,
-      target: null
+      target: null,
+      tab: "active"
     };
   }
 
   componentWillMount() {
-    this.props.fetchContainers();
+    const searchParams = new URLSearchParams(this.props.location.search.slice(1));
+    const status = searchParams.get("status") || "active";
+    this.props.fetchContainers(status);
+    this.setState({
+      tab: status
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -70,6 +76,20 @@ class ContainerMain extends Component {
     this.setState({
       openMessage: false
     });
+  };
+
+  handleTabChange = (tab)=> {
+    console.log("handleChange", tab);
+
+    const searchParams = new URLSearchParams(this.props.location.search.slice(1));
+    searchParams.set("status", tab);
+
+    this.setState({
+      tab: tab
+    });
+
+    // this.props.changeCondition(this.props.params.containerId, searchParams.toString());
+    this.props.fetchContainers(tab);
   };
 
   handleViewContainer = (container)=> {
@@ -110,8 +130,12 @@ class ContainerMain extends Component {
         target={this.state.target}
         onSubmit={(id, name, desc) => this.state.create ? this.props.addContainer(id, name, desc) : this.props.updateContainer(id, name, desc)}
       />
-      <Tabs>
+      <Tabs
+        value={this.state.tab}
+        onChange={this.handleTabChange}
+      >
         <Tab label="Active Containers"
+             value="active"
              icon={<FontIcon className="material-icons">favorite</FontIcon>}
         >
           <ContainerList
@@ -124,6 +148,7 @@ class ContainerMain extends Component {
           />
         </Tab>
         <Tab label="Inactive Containers"
+             value="inactive"
              icon={<FontIcon className="material-icons">do_not_disturb_alt</FontIcon>}
         >
           <ContainerList

@@ -20,7 +20,8 @@ import {
 import {push} from 'react-router-redux';
 
 const fetchContainersRequest = createAction(
-  FETCH_CONTAINERS_REQUEST
+  FETCH_CONTAINERS_REQUEST,
+  status => status
 );
 const fetchContainersSuccess = createAction(
   FETCH_CONTAINERS_SUCCESS,
@@ -28,14 +29,14 @@ const fetchContainersSuccess = createAction(
 );
 const fetchContainersFailure = createAction(
   FETCH_CONTAINERS_FAILURE,
-  ex=>ex.message
+  ex => ex.message
 );
 
-export function fetchContainers() {
-  console.log("fetchContainers!!");
+export function fetchContainers(status) {
+  console.log("fetchContainers!!", status);
   return dispatch => {
-    dispatch(fetchContainersRequest());
-    return fetch(Config.apiHost + "/api/containers")
+    dispatch(fetchContainersRequest(status));
+    return fetch(Config.apiHost + "/api/containers?status=" + status)
       .then(res => res.json())
       .then(json => dispatch(fetchContainersSuccess(json)))
       .catch(ex => dispatch(fetchContainersFailure(ex)))
@@ -51,7 +52,7 @@ const addContainerSuccess = createAction(
 );
 const addContainerFailure = createAction(
   ADD_CONTAINER_FAILURE,
-  ex=>ex.message
+  ex => ex.message
 );
 
 export function addContainer(id, name, description) {
@@ -88,7 +89,7 @@ const updateContainerSuccess = createAction(
 );
 const updateContainerFailure = createAction(
   UPDATE_CONTAINER_FAILURE,
-  ex=>ex.message
+  ex => ex.message
 );
 
 export function updateContainer(id, name, description) {
@@ -125,7 +126,7 @@ const changeContainerStatusSuccess = createAction(
 );
 const changeContainerStatusFailure = createAction(
   CHANGE_CONTAINERSTATUS_FAILURE,
-  ex=>ex.message
+  ex => ex.message
 );
 
 export function changeContainerStatus(id, status) {

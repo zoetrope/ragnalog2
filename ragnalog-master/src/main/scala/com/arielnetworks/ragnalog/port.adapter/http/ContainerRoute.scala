@@ -31,10 +31,14 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
     pathPrefix("containers") {
       pathEndOrSingleSlash {
         get {
-          complete {
-            //TODO: add converter (and move to application layer)
-            containerService.activeContainers()
-              .map(list => list.map(c => new ContainerResponse(c.id.id, c.name, c.description, c.status.toString).toJson))
+          parameters('status.?) { (status) =>
+            complete {
+              status match {
+                case Some("active") => containerService.activeContainers().map(_.map(_.toJson))
+                case Some("inactive") => containerService.inactiveContainers().map(_.map(_.toJson))
+                case _ => containerService.activeContainers().map(_.map(_.toJson))
+              }
+            }
           }
         } ~
           (post & entity(as[AddContainerRequest])) { req =>
