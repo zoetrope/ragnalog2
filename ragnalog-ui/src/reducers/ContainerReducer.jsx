@@ -25,6 +25,7 @@ export default handleActions({
     errorMessage: ""
   }),
   [FETCH_CONTAINERS_SUCCESS]: (state, action) => ({
+    ...state,
     containers: action.payload,
     isFetching: false,
     error: false,
@@ -43,6 +44,7 @@ export default handleActions({
     errorMessage: ""
   }),
   [ADD_CONTAINER_SUCCESS]: (state, action) => ({
+    ...state,
     containers: [...state.containers, action.payload],
     isFetching: false,
     error: false,
@@ -65,6 +67,7 @@ export default handleActions({
   [UPDATE_CONTAINER_SUCCESS]: (state, action) => {
     const index = state.containers.findIndex(c => c.id === action.payload.id);
     return ({
+      ...state,
       containers: [
         ...state.containers.slice(0, index),
         action.payload,
@@ -92,6 +95,7 @@ export default handleActions({
   [CHANGE_CONTAINERSTATUS_SUCCESS]: (state, action) => {
     const index = state.containers.findIndex(c => c.id === action.payload.id);
     return ({
+      ...state,
       containers: [
         ...state.containers.slice(0, index),
         action.payload,
@@ -117,6 +121,7 @@ export default handleActions({
   [DELETE_CONTAINER_SUCCESS]: (state, action) => {
     const index = state.containers.findIndex(c => c.id === action.payload.id);
     return ({
+      ...state,
       containers: [
         ...state.containers.slice(0, index),
         ...state.containers.slice(index + 1)

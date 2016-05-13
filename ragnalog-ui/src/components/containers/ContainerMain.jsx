@@ -34,6 +34,7 @@ class ContainerMain extends Component {
         status: PropTypes.string.isRequired
       })
     ),
+    openDialog: PropTypes.bool.isRequired,
 
     fetchContainers: PropTypes.func.isRequired,
     addContainer: PropTypes.func.isRequired,
@@ -49,7 +50,8 @@ class ContainerMain extends Component {
       openDialog: false,
       create: false,
       target: null,
-      tab: "active"
+      tab: "active",
+      filterValue: ""
     };
   }
 
@@ -121,11 +123,26 @@ class ContainerMain extends Component {
     this.props.deleteContainer(container.id);
   };
 
+  handleFilterValueChange = (e) => {
+    this.setState({filterValue: e.target.value});
+    e.stopPropagation();
+  };
+
+  filterContainer = (container) => {
+    return container.id.indexOf(this.state.filterValue) !== -1 ||
+      container.name.indexOf(this.state.filterValue) !== -1 ||
+      container.name.indexOf(this.state.filterValue) !== -1;
+  };
+
   render() {
 
     return <div>
       <div style={styles.buttonGroup}>
-        <TextField hintText="Filter"/>
+        <TextField
+          hintText="Filter"
+          value={this.state.filterValue}
+          onChange={this.handleFilterValueChange}
+        />
         <RaisedButton
           label="Add Container" style={styles.rightButton}
           icon={<FontIcon className="material-icons">add_circle</FontIcon>}
@@ -147,7 +164,7 @@ class ContainerMain extends Component {
              icon={<FontIcon className="material-icons">favorite</FontIcon>}
         >
           <ContainerList
-            containers={this.props.containers}
+            containers={this.props.containers.filter(this.filterContainer)}
             active={true}
             onView={this.handleViewContainer}
             onDeactivate={this.handleDeactivateContainer}
@@ -160,7 +177,7 @@ class ContainerMain extends Component {
              icon={<FontIcon className="material-icons">do_not_disturb_alt</FontIcon>}
         >
           <ContainerList
-            containers={this.props.containers}
+            containers={this.props.containers.filter(this.filterContainer)}
             active={false}
             onActivate={this.handleActivateContainer}
             onEdit={this.handleEditContainer}
