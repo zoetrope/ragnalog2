@@ -46,13 +46,15 @@ export default handleActions({
     containers: [...state.containers, action.payload],
     isFetching: false,
     error: false,
-    errorMessage: ""
+    errorMessage: "",
+    openDialog: false
   }),
   [ADD_CONTAINER_FAILURE]: (state, action) => ({
     ...state,
     isFetching: false,
     error: true,
-    errorMessage: action.payload
+    errorMessage: action.payload,
+    openDialog: true
   }),
   [UPDATE_CONTAINER_REQUEST]: state => ({
     ...state,
@@ -70,14 +72,16 @@ export default handleActions({
       ],
       isFetching: false,
       error: false,
-      errorMessage: ""
+      errorMessage: "",
+      openDialog: false
     });
   },
   [UPDATE_CONTAINER_FAILURE]: (state, action) => ({
     ...state,
     isFetching: false,
     error: true,
-    errorMessage: action.payload
+    errorMessage: action.payload,
+    openDialog: true
   }),
   [CHANGE_CONTAINERSTATUS_REQUEST]: state => ({
     ...state,
@@ -132,6 +136,7 @@ export default handleActions({
   isFetching: false,
   error: false,
   errorMessage: "",
-  containers: []
+  containers: [],
+  openDialog: false
 });
 

@@ -10,8 +10,14 @@ import Snackbar from "material-ui/Snackbar";
 import {Tabs, Tab} from "material-ui/Tabs";
 import ContainerList from "./ContainerList";
 
-const style = {
-  margin: 12
+const styles = {
+  rightButton: {
+    margin: "5px 0",
+    float: 'right'
+  },
+  buttonGroup: {
+    margin: "5px 10px"
+  }
 };
 
 class ContainerMain extends Component {
@@ -32,7 +38,8 @@ class ContainerMain extends Component {
     fetchContainers: PropTypes.func.isRequired,
     addContainer: PropTypes.func.isRequired,
     updateContainer: PropTypes.func.isRequired,
-    changeStatus: PropTypes.func.isRequired
+    changeStatus: PropTypes.func.isRequired,
+    deleteContainer: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -57,7 +64,8 @@ class ContainerMain extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      openMessage: nextProps.error
+      openMessage: nextProps.error,
+      openDialog: nextProps.openDialog
     });
   }
 
@@ -67,10 +75,6 @@ class ContainerMain extends Component {
       create: true,
       target: null
     });
-  };
-
-  handleCloseDialog = () => {
-    this.setState({openDialog: false});
   };
 
   handleCloseMessage = () => {
@@ -120,18 +124,20 @@ class ContainerMain extends Component {
   render() {
 
     return <div>
-      <TextField hintText="Filter"/>
-      <RaisedButton
-        label="Add Container" style={style}
-        icon={<FontIcon className="material-icons">add_circle</FontIcon>}
-        onTouchTap={this.handleOpenDialog}
-      />
-      <ContainerModalDialog
-        open={this.state.openDialog}
-        create={this.state.create}
-        target={this.state.target}
-        onSubmit={(id, name, desc) => this.state.create ? this.props.addContainer(id, name, desc) : this.props.updateContainer(id, name, desc)}
-      />
+      <div style={styles.buttonGroup}>
+        <TextField hintText="Filter"/>
+        <RaisedButton
+          label="Add Container" style={styles.rightButton}
+          icon={<FontIcon className="material-icons">add_circle</FontIcon>}
+          onTouchTap={this.handleOpenDialog}
+        />
+        <ContainerModalDialog
+          open={this.state.openDialog}
+          create={this.state.create}
+          target={this.state.target}
+          onSubmit={(id, name, desc) => this.state.create ? this.props.addContainer(id, name, desc) : this.props.updateContainer(id, name, desc)}
+        />
+      </div>
       <Tabs
         value={this.state.tab}
         onChange={this.handleTabChange}
@@ -177,7 +183,8 @@ function mapStateToProps(state) {
     isFetching: state.ContainerReducer.isFetching,
     error: state.ContainerReducer.error,
     errorMessage: state.ContainerReducer.errorMessage,
-    containers: state.ContainerReducer.containers
+    containers: state.ContainerReducer.containers,
+    openDialog: state.ContainerReducer.openDialog
   };
 }
 
