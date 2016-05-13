@@ -32,12 +32,13 @@ class ContainerService
       .map(_ => new ContainerResponse(container.id.id, container.name, container.description, container.status.toString))
   }
 
-  def removeContainer(containerId: ContainerId): Future[Unit] = {
+  def removeContainer(containerId: ContainerId): Future[ContainerResponse] = {
     for {
       container <- containerRepository.resolveById(containerId)
-      _ <- archiveService.removeAll(containerId)
+      //TODO:
+      //      _ <- archiveService.removeAll(containerId)
       _ <- containerRepository.deleteById(containerId)
-    } yield Unit
+    } yield new ContainerResponse(container.id.id, container.name, container.description, container.status.toString)
   }
 
   def activeContainers(): Future[Seq[ContainerResponse]] = {
@@ -67,6 +68,7 @@ class ContainerService
     for {
       container <- containerRepository.resolveById(containerId)
       updatedContainer = container.activate()
+      //TODO:
       //      _ <- archiveService.activateAll(containerId)
       _ <- containerRepository.save(updatedContainer)
     } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)
@@ -76,6 +78,7 @@ class ContainerService
     for {
       container <- containerRepository.resolveById(containerId)
       updatedContainer = container.deactivate()
+      //TODO:
       //      _ <- archiveService.deactivateAll(containerId)
       _ <- containerRepository.save(updatedContainer)
     } yield new ContainerResponse(updatedContainer.id.id, updatedContainer.name, updatedContainer.description, updatedContainer.status.toString)

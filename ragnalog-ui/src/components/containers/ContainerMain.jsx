@@ -114,6 +114,7 @@ class ContainerMain extends Component {
   };
 
   handleDeleteContainer = (container)=> {
+    this.props.deleteContainer(container.id);
   };
 
   render() {

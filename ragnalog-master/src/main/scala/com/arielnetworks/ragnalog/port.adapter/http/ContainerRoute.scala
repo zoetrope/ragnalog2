@@ -84,7 +84,9 @@ class ContainerRoute extends RouteService with ContainerJsonSupport {
             } ~
             delete {
               // delete container
-              complete(s"delete $containerId")
+              onSuccess(containerService.removeContainer(new ContainerId(containerId))) {
+                case container => complete(container.toJson)
+              }
             }
         }
     }

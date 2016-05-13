@@ -44,7 +44,12 @@ export function fetchContainers(status) {
 }
 
 const addContainerRequest = createAction(
-  ADD_CONTAINER_REQUEST
+  ADD_CONTAINER_REQUEST,
+  (id, name, description) => ({
+    id: id,
+    name: name,
+    description: description
+  })
 );
 const addContainerSuccess = createAction(
   ADD_CONTAINER_SUCCESS,
@@ -58,7 +63,7 @@ const addContainerFailure = createAction(
 export function addContainer(id, name, description) {
   console.log("addContainer!!", id, name, description);
   return dispatch => {
-    dispatch(addContainerRequest());
+    dispatch(addContainerRequest(id, name, description));
     return fetch(Config.apiHost + "/api/containers", {
       method: "POST",
       headers: {
@@ -81,7 +86,12 @@ export function addContainer(id, name, description) {
 }
 
 const updateContainerRequest = createAction(
-  UPDATE_CONTAINER_REQUEST
+  UPDATE_CONTAINER_REQUEST,
+  (id, name, description) => ({
+  id: id,
+  name: name,
+  description: description
+})
 );
 const updateContainerSuccess = createAction(
   UPDATE_CONTAINER_SUCCESS,
@@ -95,7 +105,7 @@ const updateContainerFailure = createAction(
 export function updateContainer(id, name, description) {
   console.log("updateContainer!!", id, name, description);
   return dispatch => {
-    dispatch(updateContainerRequest());
+    dispatch(updateContainerRequest(id, name, description));
     return fetch(Config.apiHost + "/api/containers/" + id, {
       method: "PUT",
       headers: {
@@ -148,6 +158,35 @@ export function changeContainerStatus(id, status) {
       .catch(ex => {
         console.log("failed to activate container", ex);
         dispatch(changeContainerStatusFailure(ex))
+      })
+  }
+}
+
+const deleteContainerRequest = createAction(
+  DELETE_CONTAINER_REQUEST,
+  id => id
+);
+const deleteContainerSuccess = createAction(
+  DELETE_CONTAINER_SUCCESS,
+  container => container
+);
+const deleteContainerFailure = createAction(
+  DELETE_CONTAINER_FAILURE,
+  ex => ex.message
+);
+
+export function deleteContainer(id) {
+  console.log("deleteContainer!!");
+  return dispatch => {
+    dispatch(deleteContainerRequest(id));
+    return fetch(Config.apiHost + "/api/containers/" + id, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(json => dispatch(deleteContainerSuccess(json)))
+      .catch(ex => {
+        console.log("failed to activate container", ex);
+        dispatch(deleteContainerFailure(ex))
       })
   }
 }
