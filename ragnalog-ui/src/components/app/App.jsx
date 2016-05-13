@@ -9,6 +9,16 @@ import {bindActionCreators} from "redux";
 
 const muiTheme = getMuiTheme(theme);
 
+const styles = {
+  content: {
+    height: "100%"
+  },
+  children: {
+    background: "#f0f0f0",
+    height: document.body.clientHeight - 64
+  }
+};
+
 class App extends Component {
 
   constructor(props) {
@@ -18,14 +28,14 @@ class App extends Component {
   componentWillMount() {
     this.props.fetchLogTypes();
   }
-  
+
   render() {
     const {children} = this.props;
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <div>
+        <div style={styles.content}>
           <Header title={this.props.title}/>
-          <div>{children}</div>
+          <div style={styles.children}>{children}</div>
         </div>
       </MuiThemeProvider>
     );

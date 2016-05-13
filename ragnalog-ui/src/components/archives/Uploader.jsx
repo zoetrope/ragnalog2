@@ -33,13 +33,19 @@ class Uploader extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const dropArea = nextProps.dropArea;
+    console.log("assignDrop", dropArea);
+    this.flow.assignDrop(dropArea);
+  }
+  
   componentDidMount() {
     const uploadFileButton = ReactDOM.findDOMNode(this.refs.uploadFileButton);
     const uploadFolderButton = ReactDOM.findDOMNode(this.refs.uploadFolderButton);
-    const dropArea = ReactDOM.findDOMNode(this.refs.dropArea);
+    // const dropArea = ReactDOM.findDOMNode(this.refs.dropArea);
 
     //TODO: move to reducer?
-    const flow = new Flow({
+    this.flow = new Flow({
         'target': (file, chunk) => {
           const target = Config.apiHost + '/api/containers/' + this.props.containerId + '/archives/' + file.uniqueIdentifier;
           console.log(target);
@@ -55,37 +61,34 @@ class Uploader extends Component {
         }
       }
     );
-    flow.assignBrowse(uploadFileButton);
-    flow.assignBrowse(uploadFolderButton, true);
-    flow.assignDrop(dropArea);
-    flow.on('fileAdded', (file, event) => {
+    this.flow.assignBrowse(uploadFileButton);
+    this.flow.assignBrowse(uploadFolderButton, true);
+    this.flow.on('fileAdded', (file, event) => {
       console.log("fileAdded", file, event);
     });
-    flow.on('fileSuccess', (file, message) => {
+    this.flow.on('fileSuccess', (file, message) => {
       console.log("fileSuccess", file, message);
-      flow.removeFile(file);
-      if (flow.files.length === 0) {
+      this.flow.removeFile(file);
+      if (this.flow.files.length === 0) {
         this.setState({uploading: false});
       }
     });
-    flow.on('fileError', (file, message) => {
+    this.flow.on('fileError', (file, message) => {
       console.log("fileError", file, message);
-      flow.removeFile(file);
-      if (flow.files.length === 0) {
+      this.flow.removeFile(file);
+      if (this.flow.files.length === 0) {
         this.setState({uploading: false});
       }
     });
-    flow.on('filesSubmitted', (files, event) => {
+    this.flow.on('filesSubmitted', (files, event) => {
       console.log("filesSubmitted", files, event);
-      flow.upload();
+      this.flow.upload();
       this.setState({uploading: true});
     });
-    flow.on('progress', () => {
-      console.log("progres", flow.progress());
-      this.setState({completed: flow.progress() * 100});
+    this.flow.on('progress', () => {
+      console.log("progres", this.flow.progress());
+      this.setState({completed: this.flow.progress() * 100});
     });
-    // this.props.flow.assignBrowse(uploadFileButton);
-    // this.props.flow.assignDrop(uploadFolderButton);
   }
 
   render() {
