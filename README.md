@@ -52,7 +52,7 @@ sbt node/run
 sbt master/run
 ~~~
 
-* If you want to a custom configuration file, you can use `-Dconfig.file` option.
+* If you want to use a custom configuration file, you can use `-Dconfig.file` option.
 
 ~~~
 sbt -Dconfig.file=my.conf master/run
