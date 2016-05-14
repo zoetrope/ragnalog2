@@ -1,13 +1,22 @@
 import React, {Component, PropTypes} from "react";
 import Header from "./Header";
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from "material-ui/styles/getMuiTheme";
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import * as theme from "../../RagnalogTheme";
 import * as Actions from "../../actions/AppAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import {IntlProvider, addLocaleData} from "react-intl";
+import enMessages from "../../i18n/messages.en-US.json";
+import jaMessages from "../../i18n/messages.ja-JP.json";
+import localeData from "../../i18n/localeData";
 
 const muiTheme = getMuiTheme(theme);
+
+const messages = {
+  "en": enMessages,
+  "ja": jaMessages
+};
 
 const styles = {
   content: {
@@ -21,22 +30,27 @@ const styles = {
 
 class App extends Component {
 
+
   constructor(props) {
     super(props);
+    this.language = "ja";
   }
 
   componentWillMount() {
     this.props.fetchLogTypes();
+    addLocaleData(localeData(this.language));
   }
 
   render() {
     const {children} = this.props;
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <div style={styles.content}>
-          <Header title={this.props.title}/>
-          <div style={styles.children}>{children}</div>
-        </div>
+        <IntlProvider locale={this.language} messages={messages[this.language]}>
+          <div style={styles.content}>
+            <Header title={this.props.title}/>
+            <div style={styles.children}>{children}</div>
+          </div>
+        </IntlProvider>
       </MuiThemeProvider>
     );
   }

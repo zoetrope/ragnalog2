@@ -9,6 +9,7 @@ import {bindActionCreators} from "redux";
 import Snackbar from "material-ui/Snackbar";
 import {Tabs, Tab} from "material-ui/Tabs";
 import ContainerList from "./ContainerList";
+import {FormattedMessage} from "react-intl";
 
 const styles = {
   rightButton: {
@@ -144,7 +145,7 @@ class ContainerMain extends Component {
           onChange={this.handleFilterValueChange}
         />
         <RaisedButton
-          label="Add Container" style={styles.rightButton}
+          label={<FormattedMessage id="add.container" />} style={styles.rightButton}
           icon={<FontIcon className="material-icons">add_circle</FontIcon>}
           onTouchTap={this.handleOpenDialog}
         />
