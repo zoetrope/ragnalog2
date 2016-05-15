@@ -2,6 +2,8 @@ import React, {Component, PropTypes} from "react";
 import ReactDOM from "react-dom";
 import RaisedButton from "material-ui/RaisedButton";
 import FontIcon from "material-ui/FontIcon";
+import TextField from 'material-ui/TextField';
+import FlatButton from "material-ui/FlatButton";
 import Paper from "material-ui/Paper";
 import LinearProgress from "material-ui/LinearProgress";
 import * as theme from "../../RagnalogTheme";
@@ -12,6 +14,13 @@ import md5 from "blueimp-md5"
 const styles = {
   button: {
     margin: 12
+  },
+  rightButton: {
+    margin: 12,
+    float: 'right'
+  },
+  buttonGroup: {
+    margin: "0 20px"
   },
   paper: {
     height: 200,
@@ -38,7 +47,7 @@ class Uploader extends Component {
     console.log("assignDrop", dropArea);
     this.flow.assignDrop(dropArea);
   }
-  
+
   componentDidMount() {
     const uploadFileButton = ReactDOM.findDOMNode(this.refs.uploadFileButton);
     const uploadFolderButton = ReactDOM.findDOMNode(this.refs.uploadFolderButton);
@@ -93,30 +102,41 @@ class Uploader extends Component {
 
   render() {
 
+    // <h1><FontIcon className="material-icons">cloud_upload</FontIcon> Upload File</h1>
+    //
+    // <p>
+    // Drop files here or click the button below to upload
+    // </p>
+
     const progress = this.state.uploading ?
       <LinearProgress mode="determinate" value={this.state.completed}/> : null;
 
-    return <div>
-      <Paper ref="dropArea" style={styles.paper} zDepth={2}>
-        <h1><FontIcon className="material-icons">cloud_upload</FontIcon> Upload File</h1>
-
-        <p>
-          Drop files here or click the button below to upload
-        </p>
-
-        <RaisedButton
-          ref="uploadFileButton"
-          label="File" style={styles.button}
-          primary={true}
-          icon={<FontIcon className="material-icons">insert_drive_file</FontIcon>}
+    return <div style={styles.buttonGroup}>
+      <div>
+        <TextField
+          hintText="filter"
+          value={this.state.filterValue}
+          onChange={this.handleFilterValueChange}
+        />
+        <FlatButton
+          label="Filter" style={styles.button}
+          onTouchTap={e => this.props.onApplyFilter(this.state.filterValue)}
         />
         <RaisedButton
+          style={styles.rightButton}
           ref="uploadFolderButton"
-          label="Folder" style={styles.button}
+          label="Folder"
           primary={true}
           icon={<FontIcon className="material-icons">folder</FontIcon>}
         />
-      </Paper>
+        <RaisedButton
+          style={styles.rightButton}
+          ref="uploadFileButton"
+          label="File"
+          primary={true}
+          icon={<FontIcon className="material-icons">insert_drive_file</FontIcon>}
+        />
+      </div>
       {progress}
     </div>
   }
