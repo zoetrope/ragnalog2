@@ -5,6 +5,7 @@ import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 import IconButton from "material-ui/IconButton";
 import * as theme from "../../RagnalogTheme";
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from "material-ui/Table";
+import FileSizeFilter from "../../filters/FileSizeFilter"
 
 class ArchiveList extends Component {
 
@@ -41,7 +42,7 @@ class ArchiveList extends Component {
           .map(archive => {
             return <TableRow key={archive.id}>
               <TableRowColumn>{archive.fileName}</TableRowColumn>
-              <TableRowColumn>{archive.size}</TableRowColumn>
+              <TableRowColumn>{FileSizeFilter(archive.size, 1)}</TableRowColumn>
               <TableRowColumn>{archive.uploadedDate}</TableRowColumn>
               <TableRowColumn>{archive.modifiedDate}</TableRowColumn>
               <TableRowColumn style={{width:40}}>{rightIconMenu(archive)}</TableRowColumn>
