@@ -16,7 +16,7 @@ const styles = {
     margin: 12,
     float: 'right'
   },
-  buttonGroup: {
+  controlBar: {
     margin: "0 20px"
   }
 };
@@ -69,7 +69,7 @@ class LogFileList extends Component {
   render() {
 
     return <div>
-      <div style={styles.buttonGroup}>
+      <div style={styles.controlBar}>
         <TextField
           hintText="filter"
           value={this.state.filterValue}

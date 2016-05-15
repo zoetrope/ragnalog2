@@ -2,8 +2,6 @@ import React, {Component, PropTypes} from "react";
 import ReactDOM from "react-dom";
 import RaisedButton from "material-ui/RaisedButton";
 import FontIcon from "material-ui/FontIcon";
-import TextField from 'material-ui/TextField';
-import FlatButton from "material-ui/FlatButton";
 import Paper from "material-ui/Paper";
 import LinearProgress from "material-ui/LinearProgress";
 import * as theme from "../../RagnalogTheme";
@@ -19,7 +17,7 @@ const styles = {
     margin: 12,
     float: 'right'
   },
-  buttonGroup: {
+  controlBar: {
     margin: "0 20px"
   },
   paper: {
@@ -111,17 +109,7 @@ class Uploader extends Component {
     const progress = this.state.uploading ?
       <LinearProgress mode="determinate" value={this.state.completed}/> : null;
 
-    return <div style={styles.buttonGroup}>
-      <div>
-        <TextField
-          hintText="filter"
-          value={this.state.filterValue}
-          onChange={this.handleFilterValueChange}
-        />
-        <FlatButton
-          label="Filter" style={styles.button}
-          onTouchTap={e => this.props.onApplyFilter(this.state.filterValue)}
-        />
+    return <span style={styles.controlBar}>
         <RaisedButton
           style={styles.rightButton}
           ref="uploadFolderButton"
@@ -136,9 +124,8 @@ class Uploader extends Component {
           primary={true}
           icon={<FontIcon className="material-icons">insert_drive_file</FontIcon>}
         />
-      </div>
       {progress}
-    </div>
+    </span>
   }
 }
 

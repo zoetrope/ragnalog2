@@ -16,7 +16,7 @@ const styles = {
     margin: "5px 0",
     float: 'right'
   },
-  buttonGroup: {
+  controlBar: {
     margin: "5px 10px"
   }
 };
@@ -138,7 +138,7 @@ class ContainerMain extends Component {
   render() {
 
     return <div>
-      <div style={styles.buttonGroup}>
+      <div style={styles.controlBar}>
         <TextField
           hintText="Filter"
           value={this.state.filterValue}

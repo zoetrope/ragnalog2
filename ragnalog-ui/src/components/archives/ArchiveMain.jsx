@@ -1,15 +1,19 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes} from "react";
 import ReactDOM from "react-dom";
-import Uploader from "./Uploader"
+import Uploader from "./Uploader";
 import * as Actions from "../../actions/ArchiveAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
 import ArchiveList from "./ArchiveList";
+import TextField from "material-ui/TextField";
 
 const styles = {
   dropArea: {
     height: "100%"
+  },
+  controlBar: {
+    margin: "0 20px 20px"
   }
 };
 class ArchiveMain extends Component {
@@ -17,7 +21,8 @@ class ArchiveMain extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dropArea: {}
+      dropArea: {},
+      filterValue: ""
     }
   }
 
@@ -45,15 +50,33 @@ class ArchiveMain extends Component {
   handleDeleteContainer = (archive)=> {
   };
 
+  handleFilterValueChange = (e) => {
+    this.setState({filterValue: e.target.value});
+    e.stopPropagation();
+  };
+
+  filterArchive = (archive) => {
+    return archive.fileName.indexOf(this.state.filterValue) !== -1;
+  };
+
   render() {
 
     return <div ref="dropArea" style={styles.dropArea}>
-      <Uploader
-        containerId={this.props.params.containerId}
-        dropArea={this.state.dropArea}
-      />
+      <div style={styles.controlBar}>
+      <span>
+        <TextField
+          hintText="filter"
+          value={this.state.filterValue}
+          onChange={this.handleFilterValueChange}
+        />
+      </span>
+        <Uploader
+          containerId={this.props.params.containerId}
+          dropArea={this.state.dropArea}
+        />
+      </div>
       <ArchiveList
-        archives={this.props.archives}
+        archives={this.props.archives.filter(this.filterArchive)}
         onView={this.handleViewContainer}
         onDelete={this.handleDeleteContainer}
       />
