@@ -47,7 +47,8 @@ class ArchiveMain extends Component {
     this.props.navigateToViewArchive(this.props.params.containerId, archive.id)
   };
 
-  handleDeleteContainer = (archive)=> {
+  handleDeleteArchive = (archive)=> {
+    this.props.deleteArchive(this.props.params.containerId, archive.id);
   };
 
   handleFilterValueChange = (e) => {
@@ -78,7 +79,7 @@ class ArchiveMain extends Component {
       <ArchiveList
         archives={this.props.archives.filter(this.filterArchive)}
         onView={this.handleViewContainer}
-        onDelete={this.handleDeleteContainer}
+        onDelete={this.handleDeleteArchive}
       />
     </div>
   }

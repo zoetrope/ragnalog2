@@ -38,13 +38,24 @@ class ArchiveService
     } yield ()
   }
 
-  def removeArchive(archiveId: ArchiveId) = {
+  def removeArchive(archiveId: ArchiveId): Future[ArchiveResponse] = {
+    println(s"delete archive: $archiveId")
     for {
-      _ <- logFileService.removeAll(archiveId)
+    //TODO: unregister all logfiles
+    //      _ <- logFileService.removeAll(archiveId)
       archive <- archiveRepository.resolveById(archiveId)
-      _ = archive.remove()
+      //TODO: delete uploaded file
+      //      _ = archive.remove()
       _ <- archiveRepository.deleteById(archiveId)
-    } yield ()
+    } yield new ArchiveResponse(
+      archive.id.id,
+      archive.id.parent,
+      archive.fileName,
+      archive.filePath.path,
+      archive.size,
+      archive.uploadedDate.toString(),
+      archive.modifiedDate.toString(),
+      archive.fileNameEncoding)
   }
 
   def archives(containerId: ContainerId): Future[GetArchivesResponse] = {

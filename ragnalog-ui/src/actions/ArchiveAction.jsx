@@ -37,6 +37,35 @@ export function fetchArchives(containerId) {
   }
 }
 
+const deleteArchiveRequest = createAction(
+  DELETE_ARCHIVE_REQUEST,
+  (containerId, archiveId) => ({
+    containerId: containerId,
+    archiveId: archiveId
+  })
+);
+const deleteArchiveSuccess = createAction(
+  DELETE_ARCHIVE_SUCCESS,
+  archives => archives
+);
+const deleteArchiveFailure = createAction(
+  DELETE_ARCHIVE_FAILURE,
+  ex=>ex.message
+);
+
+export function deleteArchive(containerId, archiveId) {
+  console.log("deleteArchive!!", containerId, archiveId);
+  return dispatch => {
+    dispatch(deleteArchiveRequest(containerId, archiveId));
+    return fetch(Config.apiHost + "/api/containers/" + containerId + "/archives/" + archiveId, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(json => dispatch(deleteArchiveSuccess(json)))
+      .catch(ex => dispatch(deleteArchiveFailure(ex)))
+  }
+}
+
 export function navigateToViewArchive(containerId, archiveId) {
   return dispatch => {
     dispatch(push("/containers/" + containerId + "/logfiles?archiveId=" + archiveId + "&status=Unregistered"));

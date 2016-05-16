@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.ServiceRegistry
 import com.arielnetworks.ragnalog.application.archive.data.{ArchiveResponse, GetArchivesResponse}
+import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveUploader
@@ -36,14 +37,14 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
             }
           }
         } ~
-          path(Segment) { identifier =>
+          path(Segment) { archiveId =>
             get {
               //TODO: download archive
               complete("not implemented")
             } ~
               post {
                 entity(as[Multipart.FormData]) { (formData: Multipart.FormData) =>
-                  upload(containerId, identifier, formData) { info =>
+                  upload(containerId, archiveId, formData) { info =>
                     archiveService.registerArchive(info)
                       .onComplete{
                         //TODO: error handling
@@ -56,8 +57,9 @@ class ArchiveRoute extends RouteService with ArchiveUploader with ArchiveJsonSup
                 }
               } ~
               delete {
-                //TODO: delete archive
-                complete("not implemented")
+                onSuccess(archiveService.removeArchive(ArchiveId(archiveId, containerId))){
+                  case  archive => complete(archive.toJson)
+                }
               }
           }
       }

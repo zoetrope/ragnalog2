@@ -47,6 +47,31 @@ export default handleActions({
     isFetching: false,
     error: true,
     errorMessage: action.payload
+  }),
+  [DELETE_ARCHIVE_REQUEST]: state => ({
+    ...state,
+    isFetching: true,
+    error: false,
+    errorMessage: ""
+  }),
+  [DELETE_ARCHIVE_SUCCESS]: (state, action) => {
+    const index = state.archives.findIndex(archive => archive.id === action.payload.id);
+    return ({
+      ...state,
+      archives: [
+        ...state.archives.slice(0, index),
+        ...state.archives.slice(index + 1)
+      ],
+      isFetching: false,
+      error: false,
+      errorMessage: ""
+    });
+  },
+  [DELETE_ARCHIVE_FAILURE]: (state, action) => ({
+    ...state,
+    isFetching: false,
+    error: true,
+    errorMessage: action.payload
   })
 }, {
   isFetching: false,
