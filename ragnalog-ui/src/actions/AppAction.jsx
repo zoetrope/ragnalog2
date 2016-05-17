@@ -36,7 +36,7 @@ export function fetchLogTypes() {
 
 export function changeTitle(title) {
   return dispatch => {
-    document.title = title;
+    document.title = title + " - Ragnalog";
     dispatch(changeTitleAction(title));
   }
 }

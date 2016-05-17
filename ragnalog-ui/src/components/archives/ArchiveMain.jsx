@@ -1,7 +1,8 @@
 import React, {Component, PropTypes} from "react";
 import ReactDOM from "react-dom";
 import Uploader from "./Uploader";
-import * as Actions from "../../actions/ArchiveAction";
+import * as ArchiveActions from "../../actions/ArchiveAction";
+import * as AppActions from "../../actions/AppAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
@@ -30,6 +31,9 @@ class ArchiveMain extends Component {
     console.log("Archives will mount", this.props.params);
 
     this.props.fetchArchives(this.props.params.containerId);
+
+    //TODO: use container name instead of id
+    this.props.changeTitle(this.props.params.containerId + "'s Archives");
   }
 
   componentDidMount() {
@@ -92,7 +96,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Actions, dispatch);
+  return bindActionCreators({...ArchiveActions, ...AppActions}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ArchiveMain);

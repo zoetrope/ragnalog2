@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import * as Actions from "../../actions/LogFileAction";
+import * as LogFileActions from "../../actions/LogFileAction";
+import * as AppActions from "../../actions/AppAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
@@ -26,7 +27,11 @@ class LogFileMain extends Component {
     const status = searchParams.get("status");
     this.setState({
       tab: status
-    })
+    });
+    
+    //TODO: use archive name instead of id
+    const title = searchParams.has("archiveId") ? searchParams.get("archiveId") + "'s LogFiles" : this.props.params.containerId + "'s LogFiles";
+    this.props.changeTitle(title);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -128,7 +133,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Actions, dispatch);
+  return bindActionCreators({...LogFileActions, ...AppActions}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LogFileMain);

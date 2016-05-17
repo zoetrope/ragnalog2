@@ -3,7 +3,18 @@ import {AppBar, Styles} from "material-ui";
 import Drawer from "material-ui/Drawer";
 import MenuItem from "material-ui/MenuItem";
 import {Link} from 'react-router'
+import {ToolbarSeparator} from 'material-ui/Toolbar';
+import * as theme from "../../RagnalogTheme";
 
+const styles = {
+  separator: {
+    backgroundColor: theme.palette.primary2Color
+  },
+  subtitle: {
+    marginLeft: "25px",
+    fontSize: "80%"
+  }
+};
 class Header extends Component {
 
   constructor(props) {
@@ -16,8 +27,10 @@ class Header extends Component {
   };
 
   render() {
-    
-    const appBar = <AppBar title={this.props.title} onLeftIconButtonTouchTap={this.handleToggle}/>;
+
+    const title = <span>Ragnalog<ToolbarSeparator style={styles.separator}/><span
+      style={styles.subtitle}>{this.props.title}</span></span>;
+    const appBar = <AppBar title={title} onLeftIconButtonTouchTap={this.handleToggle}/>;
 
     return (
       <header className="header">
@@ -27,10 +40,11 @@ class Header extends Component {
           <MenuItem>Container</MenuItem>
           <MenuItem><Link to="/">Home</Link></MenuItem>
           <MenuItem><Link to="/containers/default">default</Link></MenuItem>
-          <MenuItem><Link to="/containers/default/logfiles?archiveId=test&status=unregistered">logfiles</Link></MenuItem>
+          <MenuItem><Link
+            to="/containers/default/logfiles?archiveId=test&status=unregistered">logfiles</Link></MenuItem>
           <MenuItem>Admin</MenuItem>
           <MenuItem><Link to="/containers">containers</Link></MenuItem>
-          
+
         </Drawer>
       </header>
     );

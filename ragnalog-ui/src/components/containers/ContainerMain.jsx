@@ -3,7 +3,8 @@ import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import FontIcon from "material-ui/FontIcon";
 import ContainerModalDialog from "./ContainerModalDialog";
-import * as Actions from "../../actions/ContainerAction";
+import * as ContainerActions from "../../actions/ContainerAction";
+import * as AppActions from "../../actions/AppAction";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import Snackbar from "material-ui/Snackbar";
@@ -62,7 +63,8 @@ class ContainerMain extends Component {
     this.props.fetchContainers(status);
     this.setState({
       tab: status
-    })
+    });
+    this.props.changeTitle("Containers");
   }
 
   componentWillReceiveProps(nextProps) {
@@ -207,7 +209,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Actions, dispatch);
+  return bindActionCreators({...ContainerActions, ...AppActions}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContainerMain);
