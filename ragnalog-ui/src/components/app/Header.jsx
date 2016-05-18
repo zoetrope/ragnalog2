@@ -5,6 +5,8 @@ import MenuItem from "material-ui/MenuItem";
 import {Link} from 'react-router'
 import {ToolbarSeparator} from 'material-ui/Toolbar';
 import * as theme from "../../RagnalogTheme";
+import Badge from 'material-ui/Badge';
+import FontIcon from "material-ui/FontIcon";
 
 const styles = {
   separator: {
@@ -13,6 +15,9 @@ const styles = {
   subtitle: {
     marginLeft: "25px",
     fontSize: "80%"
+  },
+  badge:{
+    padding: "12px 18px 12px 12px"
   }
 };
 class Header extends Component {
@@ -28,9 +33,23 @@ class Header extends Component {
 
   render() {
 
+    const notification = (<div>
+      <Badge
+        badgeContent={0}
+        primary={true}
+        style={styles.badge}
+      >
+        <FontIcon className="material-icons" color={theme.palette.accent2Color}>notifications</FontIcon>
+      </Badge>
+    </div>);
+
     const title = <span>Ragnalog<ToolbarSeparator style={styles.separator}/><span
       style={styles.subtitle}>{this.props.title}</span></span>;
-    const appBar = <AppBar title={title} onLeftIconButtonTouchTap={this.handleToggle}/>;
+    const appBar = <AppBar
+      title={title}
+      onLeftIconButtonTouchTap={this.handleToggle}
+      iconElementRight={notification}
+    />;
 
     return (
       <header className="header">
@@ -44,7 +63,6 @@ class Header extends Component {
             to="/containers/default/logfiles?archiveId=test&status=unregistered">logfiles</Link></MenuItem>
           <MenuItem>Admin</MenuItem>
           <MenuItem><Link to="/containers">containers</Link></MenuItem>
-
         </Drawer>
       </header>
     );
