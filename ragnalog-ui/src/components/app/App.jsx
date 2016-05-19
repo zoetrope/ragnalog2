@@ -39,7 +39,10 @@ class App extends Component {
   componentWillMount() {
     this.props.fetchLogTypes();
     addLocaleData(localeData(this.language));
-  }
+    this.props.addMessage("test1");
+    this.props.addMessage("test2");
+    this.props.addMessage("test3");
+   }
 
   render() {
     const {children} = this.props;
@@ -47,7 +50,11 @@ class App extends Component {
       <MuiThemeProvider muiTheme={muiTheme}>
         <IntlProvider locale={this.language} messages={messages[this.language]}>
           <div style={styles.content}>
-            <Header title={this.props.title}/>
+            <Header 
+              title={this.props.title}
+              messages={this.props.messages}
+              onMessageRead={this.props.readMessage}
+            />
             <div style={styles.children}>{children}</div>
           </div>
         </IntlProvider>
@@ -58,7 +65,8 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    title: state.AppReducer.title
+    title: state.AppReducer.title,
+    messages: state.AppReducer.messages
   };
 }
 

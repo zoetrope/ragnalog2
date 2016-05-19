@@ -7,6 +7,7 @@ import {ToolbarSeparator} from 'material-ui/Toolbar';
 import * as theme from "../../RagnalogTheme";
 import Badge from 'material-ui/Badge';
 import FontIcon from "material-ui/FontIcon";
+import IconMenu from 'material-ui/IconMenu';
 
 const styles = {
   separator: {
@@ -16,7 +17,7 @@ const styles = {
     marginLeft: "25px",
     fontSize: "80%"
   },
-  badge:{
+  badge: {
     padding: "12px 18px 12px 12px"
   }
 };
@@ -32,15 +33,33 @@ class Header extends Component {
   };
 
   render() {
+    const messages = this.props.messages;
+    const unreadNum = messages.filter(m => m.unread).length;
 
-    const notification = (<div>
+    const icon = unreadNum === 0 ?
+      <FontIcon style={styles.badge} className="material-icons" color={theme.palette.accent2Color}>notifications</FontIcon> :
       <Badge
-        badgeContent={0}
+        badgeContent={unreadNum}
         primary={true}
         style={styles.badge}
       >
         <FontIcon className="material-icons" color={theme.palette.accent2Color}>notifications</FontIcon>
-      </Badge>
+      </Badge>;
+
+    const notification = (<div>
+      <IconMenu
+        iconButtonElement={icon}
+        targetOrigin={{horizontal: 'right', vertical: 'top'}}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      >
+        {messages.map(m =>
+          <MenuItem
+            focusState="none"
+            key={m.id}
+            primaryText={m.message}
+            secondaryText={m.date.toISOString()}
+          /> )}
+      </IconMenu>
     </div>);
 
     const title = <span>Ragnalog<ToolbarSeparator style={styles.separator}/><span

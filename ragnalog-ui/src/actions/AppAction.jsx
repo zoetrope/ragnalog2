@@ -4,7 +4,9 @@ import {
   FETCH_LOGTYPES_REQUEST,
   FETCH_LOGTYPES_SUCCESS,
   FETCH_LOGTYPES_FAILURE,
-  CHANGE_TITLE
+  CHANGE_TITLE,
+  ADD_MESSAGE,
+  READ_MESSAGE
 } from '../actions/ActionTypes';
 import {push} from 'react-router-redux';
 
@@ -19,10 +21,6 @@ const fetchLogTypesFailure = createAction(
   FETCH_LOGTYPES_FAILURE,
   ex=>ex.message
 );
-const changeTitleAction = createAction(
-  CHANGE_TITLE,
-  title => title
-);
 
 export function fetchLogTypes() {
   return dispatch => {
@@ -34,6 +32,10 @@ export function fetchLogTypes() {
   }
 }
 
+const changeTitleAction = createAction(
+  CHANGE_TITLE,
+  title => title
+);
 export function changeTitle(title) {
   return dispatch => {
     document.title = title + " - Ragnalog";
@@ -41,3 +43,22 @@ export function changeTitle(title) {
   }
 }
 
+const addMessageAction = createAction(
+  ADD_MESSAGE,
+  message => message
+);
+export function addMessage(message) {
+  return dispatch => {
+    dispatch(addMessageAction(message));
+  }
+}
+
+const readMessageAction = createAction(
+  READ_MESSAGE,
+  id => id
+);
+export function readMessage(id) {
+  return dispatch => {
+    dispatch(readMessageAction(id));
+  }
+}
