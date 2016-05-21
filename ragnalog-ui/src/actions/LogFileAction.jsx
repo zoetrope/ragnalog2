@@ -13,6 +13,7 @@ import {
   PREVIEW_LOGFILE_REQUEST,
   PREVIEW_LOGFILE_SUCCESS,
   PREVIEW_LOGFILE_FAILURE,
+  CLOSE_PREVIEW_DIALOG,
   BULK_SET_LOGTYPE,
   BULK_SET_EXTRA
 } from './ActionTypes';
@@ -109,6 +110,16 @@ export function previewLogFile(containerId, logFile) {
       .then(res => res.json())
       .then(json => dispatch(previewLogFileSuccess(json)))
       .catch(ex => dispatch(previewLogFileFailure(ex)))
+  }
+}
+
+const closePreviewDialogAction = createAction(
+  CLOSE_PREVIEW_DIALOG
+);
+
+export function closePreviewDialog() {
+  return dispatch => {
+    dispatch(closePreviewDialogAction());
   }
 }
 

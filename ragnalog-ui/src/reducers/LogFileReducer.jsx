@@ -12,6 +12,7 @@ import {
   PREVIEW_LOGFILE_REQUEST,
   PREVIEW_LOGFILE_SUCCESS,
   PREVIEW_LOGFILE_FAILURE,
+  CLOSE_PREVIEW_DIALOG,
   BULK_SET_LOGTYPE,
   BULK_SET_EXTRA
 } from '../actions/ActionTypes';
@@ -74,6 +75,10 @@ export default handleActions({
     isFetching: false,
     error: true,
     errorMessage: action.payload
+  }),
+  [CLOSE_PREVIEW_DIALOG]: (state, action) => ({
+    ...state,
+    preview: false
   }),
   [BULK_SET_LOGTYPE]: (state, action) => {
     const {selectedRows, logType} = action.payload;

@@ -98,12 +98,17 @@ class LogFileMain extends Component {
     this.props.previewLogFile(this.props.params.containerId, logFile);
   };
 
+  handleClosePreview = () => {
+    this.props.closePreviewDialog();
+  };
+
   render() {
     return <div>
       <Dialog
         title="Preview LogFile"
         modal={false}
         open={this.props.preview}
+        onRequestClose={this.handleClosePreview}
       >
         {this.props.previewContent}
       </Dialog>
