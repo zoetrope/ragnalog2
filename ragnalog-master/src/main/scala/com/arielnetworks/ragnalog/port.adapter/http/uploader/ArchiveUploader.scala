@@ -31,7 +31,7 @@ trait ArchiveUploader {
         val chunkFile = File.createTempFile("upload", "tmp")
         chunkFile.deleteOnExit()
         println(chunkFile.getAbsolutePath)
-        body.entity.dataBytes.runWith(FileIO.toFile(chunkFile)).map(_ => body.name -> chunkFile)
+        body.entity.dataBytes.runWith(FileIO.toPath(chunkFile.toPath)).map(_ => body.name -> chunkFile)
 
       case body: BodyPart =>
         println(s"bodyPart: ${body.additionalDispositionParams}, ${body.dispositionParams}")
