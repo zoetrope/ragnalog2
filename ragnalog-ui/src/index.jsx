@@ -16,7 +16,7 @@ import * as Config from "./store/Configuration";
 window.React = React;
 
 // Performance Tools
-import Perf from 'react/lib/ReactDefaultPerf'
+import Perf from 'react-addons-perf'
 window.Perf = Perf;
 
 //Needed for onTouchTap
