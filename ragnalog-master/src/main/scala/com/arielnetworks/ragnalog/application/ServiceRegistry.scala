@@ -30,7 +30,7 @@ object ServiceRegistry {
   val visualizationAdapter = new KibanaAdapter
   val registrationAdapter = new RegistrationDispatcher
 
-  val logFileService = new LogFileService(logFileRepository, registrationAdapter, visualizationAdapter)
+  val logFileService = new LogFileService(logFileRepository, archiveRepository, registrationAdapter, visualizationAdapter)
   val archiveService = new ArchiveService(archiveRepository, logFileService)
   val containerService = new ContainerService(containerRepository, archiveService, idSpec)
 

@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Tabs, Tab} from "material-ui/Tabs";
 import LogFileList from "./LogFileList";
+import Dialog from "material-ui/Dialog";
 
 class LogFileMain extends Component {
 
@@ -17,18 +18,18 @@ class LogFileMain extends Component {
 
   componentWillMount() {
     //TODO: for Development
-    this.props.params.containerId = "test";
-    const testParam = "archiveId=2548922f3dfe82e4e86b2154c91d0a14&status=Unregistered";
-    const searchParams = new URLSearchParams(testParam);
+    // this.props.params.containerId = "test";
+    // const testParam = "archiveId=2548922f3dfe82e4e86b2154c91d0a14&status=Unregistered";
+    // const searchParams = new URLSearchParams(testParam);
 
-    // const searchParams = new URLSearchParams(this.props.location.search.slice(1));
+    const searchParams = new URLSearchParams(this.props.location.search.slice(1));
     console.log("Archives will mount", this.props.params, searchParams.toString());
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
     const status = searchParams.get("status");
     this.setState({
       tab: status
     });
-    
+
     //TODO: use archive name instead of id
     const title = searchParams.has("archiveId") ? searchParams.get("archiveId") + "'s LogFiles" : this.props.params.containerId + "'s LogFiles";
     this.props.changeTitle(title);
@@ -93,8 +94,19 @@ class LogFileMain extends Component {
     this.props.fetchLogFiles(this.props.params.containerId, searchParams.toString());
   };
 
+  handlePreview = (logFile) => {
+    this.props.previewLogFile(this.props.params.containerId, logFile);
+  };
+
   render() {
     return <div>
+      <Dialog
+        title="Preview LogFile"
+        modal={false}
+        open={this.props.preview}
+      >
+        {this.props.previewContent}
+      </Dialog>
       <Tabs
         value={this.state.tab}
         onChange={this.handleTabChange}
@@ -107,8 +119,9 @@ class LogFileMain extends Component {
             onSetExtra={this.handleSetExtra}
             onApplyFilter={this.handleApplyFilter}
             onPageChange={this.handlePageChange}
+            onPreview={this.handlePreview}
             page={this.props.currentPage}
-            limit={Math.ceil(this.props.totalCount/20) - 1}
+            limit={Math.ceil(this.props.totalCount / 20) - 1}
             logTypes={this.props.logTypes}
           />
         </Tab>
@@ -128,6 +141,8 @@ function mapStateToProps(state) {
     logFiles: state.LogFileReducer.logFiles,
     currentPage: state.LogFileReducer.currentPage,
     totalCount: state.LogFileReducer.totalCount,
+    preview: state.LogFileReducer.preview,
+    previewContent: state.LogFileReducer.previewContent,
     logTypes: state.AppReducer.logTypes
   };
 }

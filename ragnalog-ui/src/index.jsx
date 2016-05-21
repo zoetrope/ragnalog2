@@ -32,7 +32,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={ArchiveMain}/>
+        <IndexRoute component={LogFileMain}/>
         <Route path="/containers" component={ContainerMain}/>
         <Route path="/containers/:containerId" component={ArchiveMain}/>
         <Route path="/containers/:containerId/logfiles" component={LogFileMain}/>

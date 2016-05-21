@@ -1,11 +1,14 @@
 package com.arielnetworks.ragnalog.application.logfile
 
-import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest, RegisterLogFileResponse}
-import com.arielnetworks.ragnalog.domain.model.archive.ArchiveId
+import java.io.{BufferedReader, InputStreamReader}
+
+import com.arielnetworks.ragnalog.application.logfile.data._
+import com.arielnetworks.ragnalog.domain.model.archive.{ArchiveId, ArchiveRepository}
 import com.arielnetworks.ragnalog.domain.model.logfile._
 import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
 import com.arielnetworks.ragnalog.domain.model.visualization.VisualizationAdapter
 import com.arielnetworks.ragnalog.port.adapter.persistence.translator.TranslatorUtil
+import com.arielnetworks.ragnalog.support.ArchiveUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -15,6 +18,7 @@ import scala.util.{Failure, Success}
 class LogFileService
 (
   logFileRepository: LogFileRepository,
+  archiveRepository: ArchiveRepository,
   registrationService: RegistrationService,
   visualizationService: VisualizationAdapter
 ) {
@@ -104,6 +108,23 @@ class LogFileService
         page
       )
     }
+  }
+
+  def preview(containerId: String, archiveId: String, logFileId: String): Future[PreviewResponse] = {
+    for {
+      archive <- archiveRepository.resolveById(ArchiveId(archiveId, containerId))
+      logFile <- logFileRepository.resolveById(LogFileId(logFileId, archiveId))
+      stream = ArchiveUtil.getTargetStream(archive.filePath, logFile.logName)
+
+      lines = stream.map(s => {
+        val br = new BufferedReader(new InputStreamReader(s))
+        try {
+          Iterator.continually(br.readLine()).takeWhile(_ != null).take(5).mkString(System.lineSeparator())
+        } finally {
+          br.close()
+        }
+      }).getOrElse("")
+    } yield PreviewResponse(logFile.archiveName, logFile.logName, lines)
   }
 
 }

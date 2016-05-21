@@ -27,10 +27,10 @@ class ContainerServiceSpec
   val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient, indexName)
   val visualizationAdapter = new KibanaAdapter
   val registrationAdapter = new RegistrationDispatcher
-  val logFileRepository = new LogFileRepositoryOnElasticsearch(elasticClient, indexName)
-  val logFileService = new LogFileService(logFileRepository, registrationAdapter, visualizationAdapter)
-  val administrator = new AdministratorOnElasticsearch(elasticClient)
   val archiveRepository = new ArchiveRepositoryOnElasticsearch(elasticClient, indexName)
+  val logFileRepository = new LogFileRepositoryOnElasticsearch(elasticClient, indexName)
+  val logFileService = new LogFileService(logFileRepository, archiveRepository, registrationAdapter, visualizationAdapter)
+  val administrator = new AdministratorOnElasticsearch(elasticClient)
   val archiveService = new ArchiveService(archiveRepository, logFileService)
   val containerService = new ContainerService(containerRepository, archiveService, idSpec)
 

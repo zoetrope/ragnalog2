@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.arielnetworks.ragnalog.application.ServiceRegistry
-import com.arielnetworks.ragnalog.application.logfile.data.{GetLogFilesResponse, LogFileResponse, RegisterLogFileRequest, RegisterLogFileResponse}
+import com.arielnetworks.ragnalog.application.logfile.data._
 import com.arielnetworks.ragnalog.port.adapter.http.route.RouteService
 import com.arielnetworks.ragnalog.port.adapter.http.uploader.ArchiveUploader
 import spray.json.{DefaultJsonProtocol, _}
@@ -19,6 +19,8 @@ trait LogFileJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val registerLogFileRequestFormat = jsonFormat4(RegisterLogFileRequest)
   implicit val registerLogFileResponseFormat = jsonFormat1(RegisterLogFileResponse)
+
+  implicit val previewResponseFormat = jsonFormat3(PreviewResponse)
 }
 
 class LogFileRoute extends RouteService with ArchiveUploader with LogFileJsonSupport {
@@ -44,9 +46,18 @@ class LogFileRoute extends RouteService with ArchiveUploader with LogFileJsonSup
               }
             }
         } ~
-          delete {
-            //TODO: delete logFile
-            complete("not implemented")
+          path(Segment) { logFileId =>
+            parameters('archiveId) { (archiveId) =>
+              get {
+                complete(
+                  logFileService.preview(containerId, archiveId, logFileId)
+                )
+              } ~
+                delete {
+                  //TODO: delete logFile
+                  complete("not implemented")
+                }
+            }
           }
       }
     }

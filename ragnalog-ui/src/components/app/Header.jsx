@@ -73,7 +73,11 @@ class Header extends Component {
     return (
       <header className="header">
         {appBar}
-        <Drawer open={this.state.open}>
+        <Drawer
+          open={this.state.open}
+          onRequestChange={(open) => this.setState({open})}
+          docked={false}
+        >
           {appBar}
           <MenuItem>Container</MenuItem>
           <MenuItem><Link to="/">Home</Link></MenuItem>

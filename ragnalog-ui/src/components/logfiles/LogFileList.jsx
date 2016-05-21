@@ -108,7 +108,6 @@ class LogFileList extends Component {
           </SelectField>
           <FlatButton
             label="set"
-            onTouchTap={e => this.props.onSetLogType}
             onTouchTap={e => this.props.onSetLogType(this.state.selectedRows, this.state.logType)}
           />
           <br/>
@@ -130,6 +129,7 @@ class LogFileList extends Component {
         onRowSelection={this.handleRowSelection}
         onExtraChange={(index, extra) => this.props.onSetExtra([index], extra)}
         onLogTypeChange={(index, logType) => this.props.onSetLogType([index], logType)}
+        onPreview={this.props.onPreview}
         logTypes={this.props.logTypes}
       />
     </div>
