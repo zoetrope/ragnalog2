@@ -14,7 +14,7 @@ lazy val baseSettings = Seq(
   resolvers += "embulk-bintray" at "http://dl.bintray.com/embulk/maven/"
 )
 
-val akkaVersion = "2.4.4"
+val akkaVersion = "2.4.6"
 
 lazy val libraries = Seq(
   "org.scala-lang" % "scala-reflect" % "2.11.8",
@@ -26,7 +26,7 @@ lazy val libraries = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-remote" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "ch.megard" %% "akka-http-cors" % "0.1.1",
+  "ch.megard" %% "akka-http-cors" % "0.1.2",
 
   "com.sksamuel.elastic4s" %% "elastic4s-core" % "2.3.0",
   "com.sksamuel.elastic4s" %% "elastic4s-streams" % "2.3.0",
@@ -36,9 +36,9 @@ lazy val libraries = Seq(
   "com.github.scala-incubator.io" %% "scala-io-core" % "0.4.3",
   "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.3",
 
-  "org.apache.commons" % "commons-compress" % "1.9",
+  "org.apache.commons" % "commons-compress" % "1.11",
 
-  "io.reactivex" %% "rxscala" % "0.26.0",
+  "io.reactivex" %% "rxscala" % "0.26.1",
 
   "ch.qos.logback" % "logback-classic" % "1.1.7",
 
