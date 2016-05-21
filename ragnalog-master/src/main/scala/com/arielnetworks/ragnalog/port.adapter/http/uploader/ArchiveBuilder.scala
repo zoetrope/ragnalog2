@@ -3,6 +3,7 @@ package com.arielnetworks.ragnalog.port.adapter.http.uploader
 import java.io.{File, FileInputStream, FileOutputStream}
 
 import com.arielnetworks.ragnalog.support.LoanSupport
+import com.typesafe.config.ConfigFactory
 
 import scala.collection.mutable
 import scalax.file.Path
@@ -35,6 +36,8 @@ case class ArchiveInfo
 class ArchiveBuilder(val containerId: String, val identifier: String) extends LoanSupport {
 
   val chunks = mutable.ListBuffer[ArchiveChunk]()
+  val config = ConfigFactory.load().getConfig("ragnalog-master.uploader")
+  val uploadedFilesDirectory = Path(config.getString("uploaded-files-directory"), '/')
 
   //TODO: error handling
   def append(parts: Map[String, Any]): Option[ArchiveInfo] = {
@@ -76,7 +79,7 @@ class ArchiveBuilder(val containerId: String, val identifier: String) extends Lo
 
     val archiveName = chunks.head.filename
 
-    val archivePath = Path("/", "tmp", containerId, archiveName) //TODO: set correct path
+    val archivePath = uploadedFilesDirectory / Path(containerId, archiveName)
     archivePath.deleteIfExists()
     archivePath.createFile()
     val dest = archivePath match {
