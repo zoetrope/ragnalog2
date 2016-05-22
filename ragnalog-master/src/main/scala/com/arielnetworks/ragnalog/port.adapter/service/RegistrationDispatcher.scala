@@ -13,6 +13,7 @@ class RegistrationDispatcher
 )
   extends RegistrationService {
 
+  import DispatcherProtocol._
 
   override def register(logFile: LogFile): Future[Unit] = {
 

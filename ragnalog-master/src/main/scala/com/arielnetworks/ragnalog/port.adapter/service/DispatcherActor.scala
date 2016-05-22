@@ -1,9 +1,13 @@
 package com.arielnetworks.ragnalog.port.adapter.service
 
+import java.io.ByteArrayOutputStream
+import java.util.zip.ZipOutputStream
+
 import akka.actor.{Actor, ActorSelection}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.arielnetworks.ragnalog.application.RegistrationProtocol
+import com.arielnetworks.ragnalog.support.ArchiveUtil
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,6 +15,7 @@ import scala.concurrent.Future
 
 class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
   import RegistrationProtocol._
+  import DispatcherProtocol._
 
   val jobQueue: ListBuffer[RegistrationJob] = ListBuffer.empty
 
@@ -60,10 +65,15 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
         _ <- actorOpt match {
           case Some(actor) => {
             println(s"** dispatch sent")
+
+            val bas = new ByteArrayOutputStream()
+            val zipStream = new ZipOutputStream(bas)
+            val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath,firstMsg.logName)
+
             actor ? Registration(
-              firstMsg.logFile.logType.getOrElse(""),
-              firstMsg.logFile.extra,
-              "ragnalog-" + firstMsg.logFile.archiveName + "-" + firstMsg.logFile.logName,
+              firstMsg.logType,
+              firstMsg.extra,
+              "ragnalog-" + firstMsg.archiveName + "-" + firstMsg.logName,
               null,
               this.self
             )

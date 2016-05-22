@@ -17,6 +17,7 @@ class DispatcherActorSpec
     with BeforeAndAfterAll {
 
   import RegistrationProtocol._
+  import DispatcherProtocol._
 
   override def afterAll(): Unit = {
     system.terminate()
