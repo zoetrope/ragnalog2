@@ -63,7 +63,7 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
             actor ? EmbulkInvokeRegistrationMessage(
               firstMsg.logFile.logType.getOrElse(""),
               firstMsg.logFile.extra,
-              "ragnalog-" + firstMsg.logFile.archiveName + firstMsg.logFile.logName,
+              "ragnalog-" + firstMsg.logFile.archiveName + "-" + firstMsg.logFile.logName,
               null,
               this.self
             )
