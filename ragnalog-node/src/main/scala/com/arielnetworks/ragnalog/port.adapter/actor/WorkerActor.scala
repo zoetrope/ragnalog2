@@ -1,14 +1,13 @@
 package com.arielnetworks.ragnalog.port.adapter.actor
 
 import akka.actor.Actor
-import akka.actor.Actor.Receive
-import com.arielnetworks.ragnalog.application.{InvokeRegistrationMessage, RegistrationResult}
-
-import scalax.file.Path
+import com.arielnetworks.ragnalog.application.{RegistrationProtocol, RegistrationResult}
 
 class WorkerActor extends Actor {
+  import RegistrationProtocol._
+
   override def receive: Receive = {
-    case msg: InvokeRegistrationMessage =>
+    case msg: EmbulkInvokeRegistrationMessage =>
       println(s"WorkerActor.receive: $msg")
       Thread.sleep(10000)
       msg.sender ! new RegistrationResult("SUCCESS", "YAML PATH", Array.empty[Byte])

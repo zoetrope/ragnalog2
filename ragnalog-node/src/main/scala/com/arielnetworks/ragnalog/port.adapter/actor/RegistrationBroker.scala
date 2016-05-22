@@ -3,16 +3,15 @@ package com.arielnetworks.ragnalog.port.adapter.actor
 import akka.actor.{Actor, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.arielnetworks.ragnalog.application.{AcceptedMessage, InvokeRegistrationMessage, NotAcceptedMessage, RegistrationResult}
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.arielnetworks.ragnalog.application._
 
 class RegistrationBroker extends Actor {
+  import RegistrationProtocol._
 
   val workerLimit = 3
 
   def receive: Receive = {
-    case command: InvokeRegistrationMessage => {
+    case command: EmbulkInvokeRegistrationMessage => {
       println(s"BrokerActor.receive: $command")
 
       import scala.concurrent.duration._

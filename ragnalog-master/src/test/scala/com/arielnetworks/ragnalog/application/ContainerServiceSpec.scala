@@ -1,14 +1,16 @@
 package com.arielnetworks.ragnalog.application
 
+import akka.actor.Props
 import com.arielnetworks.ragnalog.application.archive.ArchiveService
 import com.arielnetworks.ragnalog.application.container.ContainerService
 import com.arielnetworks.ragnalog.application.container.data.{AddContainerRequest, ContainerResponse}
 import com.arielnetworks.ragnalog.application.logfile.LogFileService
 import com.arielnetworks.ragnalog.domain.model.container.ContainerId
 import com.arielnetworks.ragnalog.port.adapter.persistence.repository.{ArchiveRepositoryOnElasticsearch, ContainerRepositoryOnElasticsearch, LogFileRepositoryOnElasticsearch}
-import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, KibanaAdapter, RegistrationDispatcher}
+import com.arielnetworks.ragnalog.port.adapter.service.{AdministratorOnElasticsearch, DispatcherActor, KibanaAdapter, RegistrationDispatcher}
 import com.arielnetworks.ragnalog.port.adapter.specification.ElasticsearchIdPatternSpecification
 import com.arielnetworks.ragnalog.test.ElasticsearchTestSupport
+import com.typesafe.config.ConfigFactory
 import org.elasticsearch.index.engine.DocumentAlreadyExistsException
 import org.elasticsearch.transport.RemoteTransportException
 import org.scalatest.concurrent.ScalaFutures
@@ -26,7 +28,7 @@ class ContainerServiceSpec
   val idSpec = new ElasticsearchIdPatternSpecification
   val containerRepository = new ContainerRepositoryOnElasticsearch(elasticClient, indexName)
   val visualizationAdapter = new KibanaAdapter
-  val registrationAdapter = new RegistrationDispatcher
+  val registrationAdapter = new RegistrationDispatcher(null)
   val archiveRepository = new ArchiveRepositoryOnElasticsearch(elasticClient, indexName)
   val logFileRepository = new LogFileRepositoryOnElasticsearch(elasticClient, indexName)
   val logFileService = new LogFileService(logFileRepository, archiveRepository, registrationAdapter, visualizationAdapter)

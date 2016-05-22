@@ -5,12 +5,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.RouteResult._
-import akka.util.Timeout
-import com.arielnetworks.ragnalog.application.{InvokeRegistrationMessage, ServiceRegistry}
+import com.arielnetworks.ragnalog.application.ServiceRegistry
 import com.arielnetworks.ragnalog.port.adapter.http.notification.{WSMessage, WebSocketSupport}
 import com.arielnetworks.ragnalog.port.adapter.http.route.RestRoute
 import com.typesafe.config.ConfigFactory
-import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 
 import scala.io.StdIn
@@ -43,13 +41,6 @@ object WebServer extends App {
       path("socket") {
         get {
           handleWebSocketMessages(socket.webSocketFlow)
-        }
-      } ~
-      path("registration") {
-        get {
-          registrationService.invoke(
-            new InvokeRegistrationMessage("containerId", "archiveId", "archiveFileName", "filePath", "logType", "extra", "index", 1, new DateTime().toString, null))
-          complete("ok")
         }
       } ~
       path("long" / IntNumber) { time =>

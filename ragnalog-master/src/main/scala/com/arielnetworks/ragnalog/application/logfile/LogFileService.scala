@@ -48,7 +48,8 @@ class LogFileService
 
       _ <- logFileRepository.saveAll(logFiles)
 
-    //      _ = registrationService.register(logFiles)
+
+      _ <- Future.sequence(logFiles.map(logFile => registrationService.register(logFile)))
 
     } yield new RegisterLogFileResponse("ok")
   }
@@ -74,7 +75,7 @@ class LogFileService
     for {
       logFile <- logFileRepository.resolveById(id)
 
-      _ = registrationService.unregister(logFile)
+      _ <- registrationService.unregister(logFile)
 
       _ <- visualizationService.deactivate(logFile)
 

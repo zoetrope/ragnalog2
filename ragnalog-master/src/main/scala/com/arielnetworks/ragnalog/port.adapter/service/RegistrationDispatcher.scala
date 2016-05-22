@@ -1,42 +1,34 @@
 package com.arielnetworks.ragnalog.port.adapter.service
 
-import akka.actor.Props
-import com.arielnetworks.ragnalog.application.{InvokeRegistrationMessage, ServiceRegistry}
-import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
-import com.typesafe.config.ConfigFactory
-
-import scala.collection.JavaConverters._
-import scala.concurrent.Future
-import akka.pattern.ask
-import akka.util.Timeout
+import akka.actor.ActorRef
 import com.arielnetworks.ragnalog.domain.model.logfile.LogFile
+import com.arielnetworks.ragnalog.domain.model.registration.RegistrationService
+import org.joda.time.DateTime
+
+import scala.concurrent.Future
 
 class RegistrationDispatcher
 (
+  dispatcherActor: ActorRef
 )
   extends RegistrationService {
 
-  //TODO:
-  val system = ServiceRegistry.actorSystem
-  val config = ConfigFactory.load().getConfig("ragnalog-master")
-  val registrationActorPath = config.getStringList("remote-node.path")
-  val remoteActorRefs = registrationActorPath.asScala.map(p => system.actorSelection(p))
-  val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], remoteActorRefs))
 
-  override def register(logFile: LogFile):Future[Unit] = ???
+  override def register(logFile: LogFile): Future[Unit] = {
+
+    val job = new RegistrationJob(logFile, DateTime.now(), 0)
+    dispatcherActor ! job
+
+    Future.successful(Unit)
+  }
 
   override def unregister(logFile: LogFile): Future[Unit] = ???
+
+  override def jobs(): Future[Seq[RegistrationJob]] = ???
 
   override def cancel: Future[Unit] = ???
 
   override def status: Future[Unit] = ???
-
-  def invoke(command: InvokeRegistrationMessage) = {
-    println(s"RegistrationDispatcher.invoke: $command")
-    import scala.concurrent.duration._
-    implicit val timeout = Timeout(100.millisecond)
-    val reply: Future[String] = (dispatcherActor ? command).mapTo[String]
-  }
 
 }
 
