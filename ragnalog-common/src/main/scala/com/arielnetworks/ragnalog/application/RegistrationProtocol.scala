@@ -7,7 +7,7 @@ object RegistrationProtocol {
   case class EmbulkInvokeRegistrationMessage
   (
     logType: String,
-    extra: String,
+    extra: Option[String],
     indexName: String,
     zippedContent: Array[Byte],
     sender: ActorRef

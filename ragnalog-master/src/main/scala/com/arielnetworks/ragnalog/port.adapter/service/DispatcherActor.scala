@@ -61,8 +61,8 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
           case Some(actor) => {
             println(s"** dispatch sent")
             actor ? EmbulkInvokeRegistrationMessage(
-              firstMsg.logFile.logType.toString,
-              firstMsg.logFile.extra.getOrElse(""),
+              firstMsg.logFile.logType.getOrElse(""),
+              firstMsg.logFile.extra,
               "ragnalog-" + firstMsg.logFile.archiveName + firstMsg.logFile.logName,
               null,
               this.self
