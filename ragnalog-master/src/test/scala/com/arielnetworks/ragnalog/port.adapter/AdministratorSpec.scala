@@ -46,7 +46,7 @@ class AdministratorSpec extends FunSpec with DiagrammedAssertions with ScalaFutu
   }
 
   describe("mapping") {
-    it("should be created mapping") {
+    it("should create mapping") {
       val mapping = Source.fromURL(administrator.getClass.getClassLoader.getResource("elasticsearch/mappings.json"))
         .getLines()
         .mkString(System.lineSeparator())
@@ -68,7 +68,7 @@ class AdministratorSpec extends FunSpec with DiagrammedAssertions with ScalaFutu
   }
 
   describe("template") {
-    it("should be created template") {
+    it("should create template") {
       val template = Source.fromURL(administrator.getClass.getClassLoader.getResource("elasticsearch/template.json"))
         .getLines()
         .mkString(System.lineSeparator())

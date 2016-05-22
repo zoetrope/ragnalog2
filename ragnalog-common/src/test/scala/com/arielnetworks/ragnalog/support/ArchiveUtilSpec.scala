@@ -11,21 +11,21 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
 
   describe("getFileList") {
     describe("plain text file") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/a.txt").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list == List("a.txt"))
       }
     }
     describe("gzip") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/c.txt.gz").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list == List("c.txt.gz/c.txt"))
       }
     }
     describe("tar") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list === List(
@@ -41,7 +41,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("zip") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.zip").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list == List(
@@ -57,7 +57,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("tgz") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar.gz").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list == List(
@@ -73,14 +73,14 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("japanese name file created by windows") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/日本語(windows).zip").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list == List("日本語(windows)/a配下/テストa.txt", "日本語(windows)/テストb.txt"))
       }
     }
     describe("japanese name file created by linux") {
-      it("should be expanded") {
+      it("should expand") {
         val path = Path(getClass.getClassLoader.getResource("expander/日本語(linux).tar.gz").getPath, '/')
         val list = ArchiveUtil.getFileList(path)
         assert(list == List("日本語(linux)/テストb.txt", "日本語(linux)/a配下/テストa.txt"))
@@ -89,7 +89,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
   }
   describe("getTargetStream") {
     describe("plain text file") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar.gz").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "z/a.txt")
         val doc = inputStream match {
@@ -100,7 +100,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("gzip") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar.gz").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "z/c.txt.gz/c.txt")
         val doc = inputStream match {
@@ -111,7 +111,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("tar") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar.gz").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "z/flat.tar/b.txt")
         val doc = inputStream match {
@@ -122,7 +122,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("zip") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar.gz").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "z/flat.zip/b.txt")
         val doc = inputStream match {
@@ -133,7 +133,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("tgz") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/z.tar.gz").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "z/flat.tar.gz/b.txt")
         val doc = inputStream match {
@@ -144,7 +144,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("japanese name file created by windows") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/日本語(windows).zip").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "日本語(windows)/a配下/テストa.txt")
         val doc = inputStream match {
@@ -155,7 +155,7 @@ class ArchiveUtilSpec extends FunSpec with DiagrammedAssertions {
       }
     }
     describe("japanese name file created by linux") {
-      it("should be extracted") {
+      it("should extract") {
         val path = Path(getClass.getClassLoader.getResource("expander/日本語(linux).tar.gz").getPath, '/')
         val inputStream = ArchiveUtil.getTargetStream(path, "日本語(linux)/a配下/テストa.txt")
         val doc = inputStream match {

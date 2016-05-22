@@ -69,7 +69,7 @@ class ContainerServiceSpec
 
   describe("create a container") {
     describe("with all valid parameters") {
-      it("should be created a container") {
+      it("should create a container") {
         val future = containerService.createContainer(new AddContainerRequest("test_id_1", Some("test-name"), Some("test-description")))
         whenReady(future, timeout(testTimeout)) {
           container =>
@@ -79,7 +79,7 @@ class ContainerServiceSpec
     }
 
     describe("without name") {
-      it("should be created a container that has the same name as id") {
+      it("should create a container that has the same name as id") {
         val future = containerService.createContainer(new AddContainerRequest("test_id_2", None, Some("test-description")))
         whenReady(future, timeout(testTimeout)) {
           container =>
@@ -89,7 +89,7 @@ class ContainerServiceSpec
     }
 
     describe("without description") {
-      it("should be created a container") {
+      it("should create a container") {
         val future = containerService.createContainer(new AddContainerRequest("test_id_3", Some("test-name"), None))
         whenReady(future, timeout(testTimeout)) {
           container =>

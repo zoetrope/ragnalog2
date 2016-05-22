@@ -31,7 +31,7 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
 
   ignore("run") {
     describe("register apache access log") {
-      it("should be registered to Elasticsearch") {
+      it("should register access log to Elasticsearch") {
         val specificParams = Map[String, Any](
           "input_file" -> getClass.getClassLoader.getResource("log/apache_access_100.log").getPath,
           "extra" -> "ap1",
@@ -74,7 +74,7 @@ class EmbulkFacadeSpec extends FunSpec with DiagrammedAssertions with BeforeAndA
   }
 
   describe("guess") {
-    it("should be guessed grok pattern") {
+    it("should guess as grok pattern") {
       val specificParams = Map[String, Any](
         "input_file" -> getClass.getClassLoader.getResource("log/apache_access_100.log").getPath,
         "extra" -> "ap1",
