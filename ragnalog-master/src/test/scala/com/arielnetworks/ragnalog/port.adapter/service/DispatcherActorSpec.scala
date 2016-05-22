@@ -7,7 +7,7 @@ import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import akka.pattern.ask
-import com.arielnetworks.ragnalog.application.RegistrationProtocol.EmbulkInvokeRegistrationMessage
+import com.arielnetworks.ragnalog.application.RegistrationProtocol
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus, Registering}
 import org.joda.time.DateTime
 
@@ -15,6 +15,8 @@ class DispatcherActorSpec
   extends TestKit(ActorSystem("RagnalogSpec"))
     with FunSpecLike with DiagrammedAssertions
     with BeforeAndAfterAll {
+
+  import RegistrationProtocol._
 
   override def afterAll(): Unit = {
     system.terminate()
@@ -26,6 +28,7 @@ class DispatcherActorSpec
   // * priority
   // * cancel
   // * run the next job
+  // * don't have logType
 
   describe("Registration") {
     it("should accept message") {
@@ -48,12 +51,12 @@ class DispatcherActorSpec
         None,
         None
       )
-      val job = RegistrationJob(log,DateTime.now,0)
+      val job = RegistrationJob(log, DateTime.now, 0)
       dispatcherActor ! job
 
-      brokerProbe.expectMsg("ok")
+      brokerProbe.expectMsg(Acceptable)
       brokerProbe.reply(true)
-      brokerProbe.expectMsg(EmbulkInvokeRegistrationMessage("logType", Some("extra"), "ragnalog-archiveName-logName", null, dispatcherActor))
+      brokerProbe.expectMsg(Registration("logType", Some("extra"), "ragnalog-archiveName-logName", null, dispatcherActor))
 
     }
   }

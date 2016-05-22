@@ -3,7 +3,7 @@ package com.arielnetworks.ragnalog.port.adapter.service
 import akka.actor.{Actor, ActorSelection}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.arielnetworks.ragnalog.application.{RegistrationProtocol, RegistrationResult}
+import com.arielnetworks.ragnalog.application.RegistrationProtocol
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,7 +20,7 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       enqueue(msg)
       dispatch()
     }
-    case res: RegistrationResult => {
+    case res: Registered => {
       println(s"DispatcherActor.receive: $res")
       dispatch()
     }
@@ -50,7 +50,7 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       import scala.concurrent.duration._
       implicit val timeout = Timeout(2.seconds)
       val acceptableActors = registrationActors.map(actor => {
-        (actor ? "ok").mapTo[Boolean].map(b => (b, actor))
+        (actor ? Acceptable).mapTo[Boolean].map(b => (b, actor))
       })
 
       for {
@@ -60,7 +60,7 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
         _ <- actorOpt match {
           case Some(actor) => {
             println(s"** dispatch sent")
-            actor ? EmbulkInvokeRegistrationMessage(
+            actor ? Registration(
               firstMsg.logFile.logType.getOrElse(""),
               firstMsg.logFile.extra,
               "ragnalog-" + firstMsg.logFile.archiveName + "-" + firstMsg.logFile.logName,

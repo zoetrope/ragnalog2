@@ -18,7 +18,7 @@ class EmbulkAdapter(embulkConfiguration: EmbulkConfiguration) extends LogFileReg
   val embulkFacadeFactory = new EmbulkFacadeFactory(embulkConfiguration)
   val generator = new EmbulkYamlGenerator(embulkSetting.workingDirectory, embulkConfiguration.params)
 
-  def register(command: EmbulkInvokeRegistrationMessage): Future[EmbulkRegistrationResult] = {
+  def register(command: Registration): Future[EmbulkRegistrationResult] = {
     try {
       val registrationConfig = registrationsConfig.get(command.logType).get //TODO:
 //      val archiveFilePath = Path(command.archiveFileName, '/')

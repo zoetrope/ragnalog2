@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 
 object RegistrationProtocol {
 
-  case class EmbulkInvokeRegistrationMessage
+  case class Registration
   (
     logType: String,
     extra: Option[String],
@@ -13,8 +13,18 @@ object RegistrationProtocol {
     sender: ActorRef
   )
 
-  case class AcceptedMessage()
+  case class Accepted()
 
-  case class NotAcceptedMessage()
+  case class NotAccepted()
 
+  sealed trait ResultType
+
+  case class Registered
+  (
+    resultType: String,
+    yaml: String,
+    zippedLog: Array[Byte]
+  )
+
+  case class Acceptable()
 }

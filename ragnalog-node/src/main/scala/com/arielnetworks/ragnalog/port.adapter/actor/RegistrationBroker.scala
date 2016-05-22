@@ -11,7 +11,7 @@ class RegistrationBroker extends Actor {
   val workerLimit = 3
 
   def receive: Receive = {
-    case command: EmbulkInvokeRegistrationMessage => {
+    case command: Registration => {
       println(s"BrokerActor.receive: $command")
 
       import scala.concurrent.duration._
@@ -21,14 +21,14 @@ class RegistrationBroker extends Actor {
         println("accepted")
         val worker = context.actorOf(Props[WorkerActor])
         context.watch(worker)
-        sender ! AcceptedMessage
+        sender ! Accepted
         worker ! command
       } else {
         println("not accepted")
-        sender ! NotAcceptedMessage
+        sender ! NotAccepted
       }
     }
-    case msg: String => {
+    case  Acceptable => {
       println(s"BrokerActor.receive: ${context.children.size < workerLimit}")
       sender ! (context.children.size < workerLimit)
     }

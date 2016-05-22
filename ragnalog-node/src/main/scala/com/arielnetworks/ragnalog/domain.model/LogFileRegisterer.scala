@@ -8,5 +8,5 @@ import scala.concurrent.Future
 trait LogFileRegisterer {
   import RegistrationProtocol._ //TODO: remove
 
-  def register(command: EmbulkInvokeRegistrationMessage): Future[EmbulkRegistrationResult]
+  def register(command: Registration): Future[EmbulkRegistrationResult]
 }
