@@ -87,6 +87,27 @@ class ArchiveMain extends Component {
       />
     </div>
   }
+  
+  static propTypes = {
+    isFetching: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
+    errorMessage: PropTypes.node.isRequired,
+    archives: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        fileName: PropTypes.string.isRequired,
+        size: PropTypes.number,
+        uploadedDate: PropTypes.date.isRequired,
+        modifiedDate: PropTypes.date.isRequired
+      })
+    ),
+
+    fetchArchives: PropTypes.func.isRequired,
+    deleteArchive: PropTypes.func.isRequired,
+    navigateToViewArchive: PropTypes.func.isRequired,
+    
+    changeTitle: PropTypes.func.isRequired,
+  };
 }
 
 function mapStateToProps(state) {

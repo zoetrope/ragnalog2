@@ -24,27 +24,6 @@ const styles = {
 
 class ContainerMain extends Component {
 
-  static propTypes = {
-    isFetching: PropTypes.bool.isRequired,
-    error: PropTypes.bool.isRequired,
-    errorMessage: PropTypes.node.isRequired,
-    containers: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        description: PropTypes.string,
-        status: PropTypes.string.isRequired
-      })
-    ),
-    openDialog: PropTypes.bool.isRequired,
-
-    fetchContainers: PropTypes.func.isRequired,
-    addContainer: PropTypes.func.isRequired,
-    updateContainer: PropTypes.func.isRequired,
-    changeStatus: PropTypes.func.isRequired,
-    deleteContainer: PropTypes.func.isRequired
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -196,6 +175,28 @@ class ContainerMain extends Component {
       />
     </div>
   }
+
+  static propTypes = {
+    isFetching: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
+    errorMessage: PropTypes.node.isRequired,
+    containers: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        status: PropTypes.string.isRequired
+      })
+    ),
+    openDialog: PropTypes.bool.isRequired,
+
+    fetchContainers: PropTypes.func.isRequired,
+    addContainer: PropTypes.func.isRequired,
+    updateContainer: PropTypes.func.isRequired,
+    changeStatus: PropTypes.func.isRequired,
+    deleteContainer: PropTypes.func.isRequired
+  };
+
 }
 
 function mapStateToProps(state) {

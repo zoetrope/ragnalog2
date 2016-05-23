@@ -139,6 +139,35 @@ class LogFileMain extends Component {
       </Tabs>
     </div>
   }
+
+  static propTypes = {
+    isFetching: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
+    errorMessage: PropTypes.node.isRequired,
+    logFiles: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        fileName: PropTypes.string.isRequired,
+        size: PropTypes.number,
+        uploadedDate: PropTypes.date.isRequired,
+        modifiedDate: PropTypes.date.isRequired
+      })
+    ),
+    currentPage: PropTypes.number,
+    totalCount: PropTypes.numer,
+    preview: PropTypes.string,
+    previewContent: PropTypes.string,
+
+    fetchLogFiles: PropTypes.func.isRequired,
+    registerLogFile: PropTypes.func.isRequired,
+    previewLogFile: PropTypes.func.isRequired,
+    closePreviewDialog: PropTypes.func.isRequired,
+    bulkSetLogType: PropTypes.func.isRequired,
+    bulkSetExtra: PropTypes.func.isRequired,
+    changeCondition: PropTypes.func.isRequired,
+
+    changeTitle: PropTypes.func.isRequired
+  };
 }
 
 function mapStateToProps(state) {
