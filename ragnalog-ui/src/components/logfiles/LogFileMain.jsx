@@ -147,10 +147,10 @@ class LogFileMain extends Component {
     logFiles: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
-        fileName: PropTypes.string.isRequired,
-        size: PropTypes.number,
-        uploadedDate: PropTypes.date.isRequired,
-        modifiedDate: PropTypes.date.isRequired
+        archiveName: PropTypes.string.isRequired,
+        logName: PropTypes.string.isRequired,
+        logType: PropTypes.string,
+        extra: PropTypes.string
       })
     ),
     currentPage: PropTypes.number,

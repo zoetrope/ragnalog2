@@ -97,8 +97,8 @@ class ArchiveMain extends Component {
         id: PropTypes.string.isRequired,
         fileName: PropTypes.string.isRequired,
         size: PropTypes.number,
-        uploadedDate: PropTypes.date.isRequired,
-        modifiedDate: PropTypes.date.isRequired
+        uploadedDate: PropTypes.string,
+        modifiedDate: PropTypes.string
       })
     ),
 
@@ -106,7 +106,7 @@ class ArchiveMain extends Component {
     deleteArchive: PropTypes.func.isRequired,
     navigateToViewArchive: PropTypes.func.isRequired,
     
-    changeTitle: PropTypes.func.isRequired,
+    changeTitle: PropTypes.func.isRequired
   };
 }
 
