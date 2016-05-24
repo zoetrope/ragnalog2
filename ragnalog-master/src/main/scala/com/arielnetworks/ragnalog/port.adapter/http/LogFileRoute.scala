@@ -17,7 +17,7 @@ trait LogFileJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val logFileResponseFormat = jsonFormat11(LogFileResponse)
   implicit val logFileListResponseFormat = jsonFormat3(GetLogFilesResponse)
 
-  implicit val registerLogFileRequestFormat = jsonFormat4(RegisterLogFileRequest)
+  implicit val registerLogFileRequestFormat = jsonFormat5(RegisterLogFileRequest)
   implicit val registerLogFileResponseFormat = jsonFormat1(RegisterLogFileResponse)
 
   implicit val previewResponseFormat = jsonFormat3(PreviewResponse)

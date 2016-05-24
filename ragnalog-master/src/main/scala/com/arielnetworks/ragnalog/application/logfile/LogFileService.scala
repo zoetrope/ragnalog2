@@ -41,15 +41,14 @@ class LogFileService
 
       logFiles <- Future.sequence(requests.map(request => {
         for {
-          logFile <- logFileRepository.resolveById(LogFileId(request.id, request.archiveId))
+          logFile <- logFileRepository.resolveById(LogFileId(request.logFileId, request.archiveId))
           updatedLogFile = logFile.startRegistering(request.logType, request.extra)
+          archive <- archiveRepository.resolveById(ArchiveId(request.archiveId, request.containerId))
+          _ <- registrationService.register(updatedLogFile, archive)
         } yield updatedLogFile
       }))
 
       _ <- logFileRepository.saveAll(logFiles)
-
-
-      _ <- Future.sequence(logFiles.map(logFile => registrationService.register(logFile)))
 
     } yield new RegisterLogFileResponse("ok")
   }

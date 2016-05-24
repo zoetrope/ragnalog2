@@ -67,8 +67,9 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
             println(s"** dispatch sent")
 
             val bas = new ByteArrayOutputStream()
-            val zipStream = new ZipOutputStream(bas)
-            val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath,firstMsg.logName)
+//            val zipStream = new ZipOutputStream(bas)
+
+//            val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath,firstMsg.logName)
 
             actor ? Registration(
               firstMsg.logType,

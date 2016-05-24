@@ -11,6 +11,8 @@ import com.arielnetworks.ragnalog.application.RegistrationProtocol
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus, Registering}
 import org.joda.time.DateTime
 
+import scalax.file.Path
+
 class DispatcherActorSpec
   extends TestKit(ActorSystem("RagnalogSpec"))
     with FunSpecLike with DiagrammedAssertions
@@ -37,22 +39,15 @@ class DispatcherActorSpec
       val selection = system.actorSelection(brokerProbe.ref.path)
       val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], Seq(selection)))
 
-      val log = LogFile(
-        LogFileId("logFileId", "archiveId"),
-        "containerId",
+      val job = RegistrationJob(
+        Path(""),
         "archiveName",
         "logName",
-        Some("logType"),
-        Registering,
-        None,
-        None,
-        None,
+        "logType",
         Some("extra"),
-        None,
-        None,
-        None
+        DateTime.now,
+        0
       )
-      val job = RegistrationJob(log, DateTime.now, 0)
       dispatcherActor ! job
 
       brokerProbe.expectMsg(Acceptable)

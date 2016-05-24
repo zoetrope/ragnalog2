@@ -2,8 +2,9 @@ package com.arielnetworks.ragnalog.application.logfile.data
 
 case class RegisterLogFileRequest
 (
-  id: String,
+  logFileId: String,
   archiveId: String,
+  containerId: String,
   logType: String,
   extra: Option[String]
 )
