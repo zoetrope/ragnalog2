@@ -89,7 +89,7 @@ object ArchiveUtil {
       }).collectFirst { case Some(i) => i }
   }
 
-  def getTargetStream(archiveFileName: Path,targetFileName : String): Option[InputStream] = {
+  def getTargetStream(archiveFileName: Path, targetFileName: String): Option[InputStream] = {
     val normalizedPath = Path(URLDecoder.decode(archiveFileName.path, "UTF-8"), '/')
 
     val archiveType = ArchiveType.fromExtension(normalizedPath.path)
@@ -102,9 +102,11 @@ object ArchiveUtil {
     } else if (archiveType.isGZip) {
       if (toUngzippedName(normalizedPath.name) == targetFileName) {
         return Some(is)
+      } else {
+        return None
       }
     }
-    None
+    Some(is)
   }
 
   private def toUngzippedName(fileName: String): String = {
