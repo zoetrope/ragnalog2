@@ -32,6 +32,19 @@ class DispatcherActorSpec
   // * cancel
   // * run the next job
   // * don't have logType
+  // * target file not found
+
+  val apacheZipPath = Path(getClass.getClassLoader.getResource("apache10.zip").getPath, '/')
+
+  val job = RegistrationJob(
+    archiveFilePath = apacheZipPath,
+    archiveName = "archiveName",
+    logName = "apache-access.1.log",
+    logType="logType",
+    extra=Some("extra"),
+    invokedTime= DateTime.now,
+    priority = 0
+  )
 
   describe("Registration") {
     it("should accept message") {
@@ -39,21 +52,13 @@ class DispatcherActorSpec
       val selection = system.actorSelection(brokerProbe.ref.path)
       val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], Seq(selection)))
 
-      val job = RegistrationJob(
-        Path(""),
-        "archiveName",
-        "logName",
-        "logType",
-        Some("extra"),
-        DateTime.now,
-        0
-      )
       dispatcherActor ! job
 
       brokerProbe.expectMsg(Acceptable)
       brokerProbe.reply(true)
-      brokerProbe.expectMsg(Registration("logType", Some("extra"), "ragnalog-archiveName-logName", null, dispatcherActor))
-
+      brokerProbe.expectMsgPF(){
+        case Registration("logType", Some("extra"), "ragnalog-archiveName-apache-access.1.log", _, _) => ()
+      }
     }
   }
 

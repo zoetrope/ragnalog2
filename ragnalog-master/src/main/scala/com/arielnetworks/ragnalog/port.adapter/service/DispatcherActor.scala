@@ -1,7 +1,7 @@
 package com.arielnetworks.ragnalog.port.adapter.service
 
 import java.io.ByteArrayOutputStream
-import java.util.zip.ZipOutputStream
+import java.util.zip.{ZipEntry, ZipOutputStream}
 
 import akka.actor.{Actor, ActorSelection}
 import akka.pattern.ask
@@ -14,6 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
+
   import RegistrationProtocol._
   import DispatcherProtocol._
 
@@ -67,15 +68,19 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
             println(s"** dispatch sent")
 
             val bas = new ByteArrayOutputStream()
-//            val zipStream = new ZipOutputStream(bas)
-
-//            val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath,firstMsg.logName)
+            val zos = new ZipOutputStream(bas)
+            val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath, firstMsg.logName)
+            val is = target.get //TODO: errorHandling
+            zos.putNextEntry(new ZipEntry("content"))
+            Stream.continually(is.read).takeWhile(_ != -1).foreach(b => zos.write(b))
+            zos.closeEntry()
+            zos.close()
 
             actor ? Registration(
               firstMsg.logType,
               firstMsg.extra,
               "ragnalog-" + firstMsg.archiveName + "-" + firstMsg.logName,
-              null,
+              bas.toByteArray,
               this.self
             )
             //TODO: not accepted -> enqueue
