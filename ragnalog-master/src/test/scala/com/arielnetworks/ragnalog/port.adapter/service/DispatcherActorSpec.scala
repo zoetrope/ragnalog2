@@ -34,6 +34,10 @@ class DispatcherActorSpec
   // * don't have logType
   // * target file not found
 
+  val brokerProbe = new TestProbe(system)
+  val selection = system.actorSelection(brokerProbe.ref.path)
+  val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], Seq(selection)))
+
   val apacheZipPath = Path(getClass.getClassLoader.getResource("apache10.zip").getPath, '/')
 
   val job = RegistrationJob(
@@ -48,10 +52,6 @@ class DispatcherActorSpec
 
   describe("Registration") {
     it("should accept message") {
-      val brokerProbe = new TestProbe(system)
-      val selection = system.actorSelection(brokerProbe.ref.path)
-      val dispatcherActor = system.actorOf(Props(classOf[DispatcherActor], Seq(selection)))
-
       dispatcherActor ! job
 
       brokerProbe.expectMsg(Acceptable)
@@ -60,6 +60,27 @@ class DispatcherActorSpec
         case Registration("logType", Some("extra"), "ragnalog-archiveName-apache-access.1.log", _, _) => ()
       }
     }
-  }
+    it("should accept high priority message") {
+      val lowJob1 = job.copy(priority = 10, logName = "apache-access.10.log")
+      val highJob = job.copy(priority = 5, logName = "apache-access.5.log")
+      val lowJob2 = job.copy(priority = 9, logName = "apache-access.9.log")
 
+      dispatcherActor ! lowJob1
+      brokerProbe.expectMsg(Acceptable)
+      brokerProbe.reply(false)
+
+      dispatcherActor ! highJob
+      brokerProbe.expectMsg(Acceptable)
+      brokerProbe.reply(false)
+
+      dispatcherActor ! lowJob2
+      brokerProbe.expectMsg(Acceptable)
+      brokerProbe.reply(true)
+
+      brokerProbe.expectMsgPF(){
+        case Registration("logType", Some("extra"), "ragnalog-archiveName-apache-access.5.log", _, _) => ()
+      }
+    }
+  }
 }
+
