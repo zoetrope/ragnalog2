@@ -12,6 +12,7 @@ import com.arielnetworks.ragnalog.support.ArchiveUtil
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
+import scalax.file.Path
 
 class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
 
@@ -59,31 +60,38 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       .collect { case (true, actor: ActorSelection) => actor }.headOption
     println(s"** dispatch firstActor: $firstActor")
 
-    firstActor.foreach(actor => {
-      dequeue().foreach(firstMsg => {
-        println(s"** dispatch firstMsg: $firstMsg")
-        println(s"** dispatch sent")
+    for {
+      actor <- firstActor
+      firstMsg <- dequeue()
+      log <- zippedLog(firstMsg.archiveFilePath, firstMsg.logName) //TODO: notify error to anyone
 
-        val bas = new ByteArrayOutputStream()
-        val zos = new ZipOutputStream(bas)
-        val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath, firstMsg.logName)
-        val is = target.get //TODO: errorHandling
-        zos.putNextEntry(new ZipEntry("content"))
-        Stream.continually(is.read).takeWhile(_ != -1).foreach(b => zos.write(b))
-        zos.closeEntry()
-        zos.close()
+      res = actor ? Registration(
+        firstMsg.logType,
+        firstMsg.extra,
+        "ragnalog-" + firstMsg.archiveName + "-" + firstMsg.logName,
+        log,
+        this.self
+      )
 
-        actor ? Registration(
-          firstMsg.logType,
-          firstMsg.extra,
-          "ragnalog-" + firstMsg.archiveName + "-" + firstMsg.logName,
-          bas.toByteArray,
-          this.self
-        )
-        //TODO: not accepted -> enqueue
-      })
+    //TODO: if not accepted, enqueue
+    } yield ()
+  }
+
+  def zippedLog(archiveFilePath: Path, logName: String): Option[Array[Byte]] = {
+    val bas = new ByteArrayOutputStream()
+    val zos = new ZipOutputStream(bas)
+    val target = ArchiveUtil.getTargetStream(archiveFilePath, logName)
+    val log = target.map(is => {
+      zos.putNextEntry(new ZipEntry("content"))
+      Stream.continually(is.read).takeWhile(_ != -1).foreach(b => zos.write(b))
+      bas.toByteArray
     })
+    zos.closeEntry()
+    zos.close()
+    bas.close()
+    //TODO: use Loan-Pattern
 
+    log
   }
 }
 
