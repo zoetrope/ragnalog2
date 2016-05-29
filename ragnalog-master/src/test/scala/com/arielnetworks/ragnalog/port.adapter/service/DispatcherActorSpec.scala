@@ -80,6 +80,7 @@ class DispatcherActorSpec
       brokerProbe.expectMsgPF(){
         case Registration("logType", Some("extra"), "ragnalog-archiveName-apache-access.5.log", _, _) => ()
       }
+      brokerProbe.expectNoMsg()
     }
   }
 }

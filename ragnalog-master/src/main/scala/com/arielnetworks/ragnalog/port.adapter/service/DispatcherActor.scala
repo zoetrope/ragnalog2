@@ -11,7 +11,7 @@ import com.arielnetworks.ragnalog.support.ArchiveUtil
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
 
@@ -47,52 +47,43 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
     })
   }
 
-  def dispatch() = {
-
+  def dispatch(): Unit = {
     println("** dispatch")
 
-    dequeue().foreach(firstMsg => {
-      println(s"** dispatch firstMsg: $firstMsg")
-      import scala.concurrent.duration._
-      implicit val timeout = Timeout(2.seconds)
-      val acceptableActors = registrationActors.map(actor => {
-        (actor ? Acceptable).mapTo[Boolean].map(b => (b, actor))
-      })
-
-      for {
-        actors <- Future.sequence(acceptableActors)
-        _ = println(actors)
-        actorOpt = actors.collect { case (true, a: ActorSelection) => a }.headOption
-        _ <- actorOpt match {
-          case Some(actor) => {
-            println(s"** dispatch sent")
-
-            val bas = new ByteArrayOutputStream()
-            val zos = new ZipOutputStream(bas)
-            val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath, firstMsg.logName)
-            val is = target.get //TODO: errorHandling
-            zos.putNextEntry(new ZipEntry("content"))
-            Stream.continually(is.read).takeWhile(_ != -1).foreach(b => zos.write(b))
-            zos.closeEntry()
-            zos.close()
-
-            actor ? Registration(
-              firstMsg.logType,
-              firstMsg.extra,
-              "ragnalog-" + firstMsg.archiveName + "-" + firstMsg.logName,
-              bas.toByteArray,
-              this.self
-            )
-            //TODO: not accepted -> enqueue
-          }
-          case None =>
-            println(s"** dispatch enqueue")
-            enqueue(firstMsg)
-            Future.successful(())
-        }
-
-      } yield ()
+    import scala.concurrent.duration._
+    implicit val timeout = Timeout(2.seconds)
+    val acceptableActors = registrationActors.map(actor => {
+      (actor ? Acceptable).mapTo[Boolean].map(b => (b, actor))
     })
+    val firstActor = Await.result(Future.sequence(acceptableActors), 2.seconds) //don't want dispatch() to run in multi-thread
+      .collect { case (true, actor: ActorSelection) => actor }.headOption
+    println(s"** dispatch firstActor: $firstActor")
+
+    firstActor.foreach(actor => {
+      dequeue().foreach(firstMsg => {
+        println(s"** dispatch firstMsg: $firstMsg")
+        println(s"** dispatch sent")
+
+        val bas = new ByteArrayOutputStream()
+        val zos = new ZipOutputStream(bas)
+        val target = ArchiveUtil.getTargetStream(firstMsg.archiveFilePath, firstMsg.logName)
+        val is = target.get //TODO: errorHandling
+        zos.putNextEntry(new ZipEntry("content"))
+        Stream.continually(is.read).takeWhile(_ != -1).foreach(b => zos.write(b))
+        zos.closeEntry()
+        zos.close()
+
+        actor ? Registration(
+          firstMsg.logType,
+          firstMsg.extra,
+          "ragnalog-" + firstMsg.archiveName + "-" + firstMsg.logName,
+          bas.toByteArray,
+          this.self
+        )
+        //TODO: not accepted -> enqueue
+      })
+    })
+
   }
 }
 
