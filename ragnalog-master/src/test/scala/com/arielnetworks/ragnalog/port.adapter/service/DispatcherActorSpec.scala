@@ -7,10 +7,13 @@ import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import akka.pattern.ask
+import akka.util.Timeout
 import com.arielnetworks.ragnalog.application.RegistrationProtocol
 import com.arielnetworks.ragnalog.domain.model.logfile.{LogFile, LogFileId, LogStatus, Registering}
 import org.joda.time.DateTime
 
+import scala.collection.mutable.ListBuffer
+import scala.util.Success
 import scalax.file.Path
 
 class DispatcherActorSpec
@@ -85,8 +88,16 @@ class DispatcherActorSpec
     }
   }
   describe("Monitoring") {
-    val jobs = dispatcherActor ? MonitoringJob
-    assert(jobs === Seq.empty)
+    it("should be empty") {
+
+      import scala.concurrent.duration._
+      implicit val timeout = Timeout(2.seconds)
+      val future = dispatcherActor ? MonitoringJob
+      val Success(jobs: List[_]) = future.value.get
+
+      assert(jobs === Seq.empty)
+
+    }
   }
 }
 

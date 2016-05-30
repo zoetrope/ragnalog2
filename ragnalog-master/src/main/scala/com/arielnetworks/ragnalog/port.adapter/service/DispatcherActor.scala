@@ -28,7 +28,7 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       dispatch()
     }
     case MonitoringJob => {
-      sender ! jobQueue
+      sender ! jobQueue.toList
     }
     case res: Registered => {
       println(s"DispatcherActor.receive: $res")
