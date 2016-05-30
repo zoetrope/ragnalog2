@@ -44,9 +44,9 @@ class DispatcherActorSpec
     archiveFilePath = apacheZipPath,
     archiveName = "archiveName",
     logName = "apache-access.1.log",
-    logType="logType",
-    extra=Some("extra"),
-    invokedTime= DateTime.now,
+    logType = "logType",
+    extra = Some("extra"),
+    invokedTime = DateTime.now,
     priority = 0
   )
 
@@ -56,9 +56,10 @@ class DispatcherActorSpec
 
       brokerProbe.expectMsg(Acceptable)
       brokerProbe.reply(true)
-      brokerProbe.expectMsgPF(){
+      brokerProbe.expectMsgPF() {
         case Registration("logType", Some("extra"), "ragnalog-archiveName-apache-access.1.log", _, _) => ()
       }
+      brokerProbe.expectNoMsg()
     }
     it("should accept high priority message") {
       val lowJob1 = job.copy(priority = 10, logName = "apache-access.10.log")
@@ -77,11 +78,15 @@ class DispatcherActorSpec
       brokerProbe.expectMsg(Acceptable)
       brokerProbe.reply(true)
 
-      brokerProbe.expectMsgPF(){
+      brokerProbe.expectMsgPF() {
         case Registration("logType", Some("extra"), "ragnalog-archiveName-apache-access.5.log", _, _) => ()
       }
       brokerProbe.expectNoMsg()
     }
+  }
+  describe("Monitoring") {
+    val jobs = dispatcherActor ? MonitoringJob
+    assert(jobs === Seq.empty)
   }
 }
 

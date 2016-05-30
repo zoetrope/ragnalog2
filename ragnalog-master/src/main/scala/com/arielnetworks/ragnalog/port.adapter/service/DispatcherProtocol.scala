@@ -17,4 +17,6 @@ object DispatcherProtocol {
     priority: Int
   )
 
+  case class MonitoringJob()
+
 }

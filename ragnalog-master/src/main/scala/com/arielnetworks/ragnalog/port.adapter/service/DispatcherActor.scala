@@ -27,6 +27,9 @@ class DispatcherActor(registrationActors: Seq[ActorSelection]) extends Actor {
       enqueue(msg)
       dispatch()
     }
+    case MonitoringJob => {
+      sender ! jobQueue
+    }
     case res: Registered => {
       println(s"DispatcherActor.receive: $res")
       dispatch()
