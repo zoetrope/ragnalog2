@@ -5,10 +5,8 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.arielnetworks.ragnalog.application._
 
-class RegistrationBroker extends Actor {
+class RegistrationBroker(workerProps: Props, workerLimit: Int) extends Actor {
   import RegistrationProtocol._
-
-  val workerLimit = 3
 
   def receive: Receive = {
     case command: Registration => {
@@ -19,7 +17,7 @@ class RegistrationBroker extends Actor {
 
       if (context.children.size < workerLimit) {
         println("accepted")
-        val worker = context.actorOf(Props[WorkerActor])
+        val worker = context.actorOf(workerProps)
         context.watch(worker)
         sender ! Accepted
         worker ! command

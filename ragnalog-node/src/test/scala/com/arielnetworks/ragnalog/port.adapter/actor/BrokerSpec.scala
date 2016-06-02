@@ -1,6 +1,6 @@
 package com.arielnetworks.ragnalog.port.adapter.actor
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{Actor, ActorSystem, Props}
 import org.scalatest._
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 
@@ -15,6 +15,12 @@ import scala.collection.mutable.ListBuffer
 import scala.util.Success
 import scalax.file.Path
 
+class MockedWorker extends Actor {
+  def receive = {
+    case 'ping => sender ! 'pong
+  }
+}
+
 class BrokerSpec
   extends TestKit(ActorSystem("RagnalogSpec"))
     with FunSpecLike with DiagrammedAssertions
@@ -26,7 +32,7 @@ class BrokerSpec
     system.terminate()
   }
 
-  val brokerActor = system.actorOf(Props(classOf[RegistrationBroker]))
+  val brokerActor = system.actorOf(Props(classOf[RegistrationBroker], Props[MockedWorker], 3))
 
   describe("Registration"){
 
